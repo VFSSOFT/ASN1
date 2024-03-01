@@ -15,6 +15,9 @@
     <Filter Include="Notations">
       <UniqueIdentifier>{e174d865-6934-4cc8-83d8-af01ca89d6e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{3266e3c9-6562-49ed-9aa9-92982816bad1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\common\MyArrays.cpp">
@@ -46,6 +49,15 @@
     </ClCompile>
     <ClCompile Include="..\notations\MyModule.cpp">
       <Filter>Notations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\notations\MyRefTypeValueDef.cpp">
+      <Filter>Notations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\notations\MyNotationCommon.cpp">
+      <Filter>Notations</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parser\MyTokenizer.cpp">
+      <Filter>Parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +99,15 @@
     </ClInclude>
     <ClInclude Include="..\notations\MyModule.h">
       <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyRefTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyNotationCommon.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser\MyTokenizer.h">
+      <Filter>Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

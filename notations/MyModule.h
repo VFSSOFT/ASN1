@@ -1,21 +1,8 @@
 #ifndef _MY_MODULE_H_
 #define _MY_MODULE_H_
 
-#include <MyArray.h>
-#include <MyBuffer.h>
-#include <MyStringA.h>
+#include "MyNotationCommon.h"
 
-
-class NotationBase {
-public:
-	NotationBase() : m_IsValid(false) {}
-
-	bool IsValid() { return m_IsValid; }
-	void SetValid(bool val) { m_IsValid = val; }
-
-protected:
-	bool m_IsValid;
-};
 
 /*
 DefinitiveNumberForm ::= number

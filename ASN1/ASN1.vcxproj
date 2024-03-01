@@ -140,6 +140,9 @@
     <ClCompile Include="..\..\common\MyUtils.cpp" />
     <ClCompile Include="..\..\common\MyWin.cpp" />
     <ClCompile Include="..\notations\MyModule.cpp" />
+    <ClCompile Include="..\notations\MyNotationCommon.cpp" />
+    <ClCompile Include="..\notations\MyRefTypeValueDef.cpp" />
+    <ClCompile Include="..\parser\MyTokenizer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +159,9 @@
     <ClInclude Include="..\..\common\MyValLinkList.h" />
     <ClInclude Include="..\..\common\MyWin.h" />
     <ClInclude Include="..\notations\MyModule.h" />
+    <ClInclude Include="..\notations\MyNotationCommon.h" />
+    <ClInclude Include="..\notations\MyRefTypeValueDef.h" />
+    <ClInclude Include="..\parser\MyTokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
