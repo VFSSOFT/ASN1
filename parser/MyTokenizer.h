@@ -53,6 +53,15 @@ public:
 
 private:
 	char NextChar();
+	int ExpectNextChar(char c, const char* errMsg);
+
+	int ParseTypeRef();
+	int ParseIdentifier();
+	int ParseSingleLineComment();
+	int ParseMultipleLineComment();
+	int ParseNumber();
+	int ParseBStringOrHexString();
+	int ParseCString();
 
 	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 ||c == 12 || c == 13; }
 	static bool IsNewLine(char c) { return c == 10 || c == 11 || c == 12 || c == 13; }
