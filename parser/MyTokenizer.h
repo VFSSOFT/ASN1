@@ -62,12 +62,12 @@ private:
 	int ParseBStringOrHexString();
 	int ParseCString();
 
-	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 ||c == 12 || c == 13; }
+	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 || c == 12 || c == 13 || c == 32; }
 	static bool IsNewLine(char c) { return c == 10 || c == 11 || c == 12 || c == 13; }
 	static bool IsLowerCaseLetter(char c) { return c >= 'a' && c <= 'z'; }
 	static bool IsUpperCaseLetter(char c) { return c >= 'A' && c <= 'Z'; }
 	static bool IsLetter(char c) { return IsLowerCaseLetter(c) || IsUpperCaseLetter(c); }
-	static bool IsDigit(char c) { return  c >= '0' || c <= '9'; }
+	static bool IsDigit(char c) { return  c >= '0' && c <= '9'; }
 
 private:
 	MyStringA m_Content;

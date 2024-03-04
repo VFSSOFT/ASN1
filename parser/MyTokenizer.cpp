@@ -32,7 +32,7 @@ int MyTokenizer::Next() {
 			m_TokenType = TOKEN_XML_SIGNAL_TAG_END;
 			m_Token.Set("/>");
 		} else {
-			if (err = ExpectNextChar('*', "Multiple line comment")) return err;
+			if (c != '*') return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid ASN.1 Schema: Multiple line comment");
 			if (err = ParseMultipleLineComment()) return err;
 		}
 		
@@ -144,6 +144,7 @@ int MyTokenizer::ParseMultipleLineComment() {
 		if (prevChar == '*' && c == '/') {
 			nestedCount--;
 			if (nestedCount == 0) {
+				m_Token.SetLength(m_Token.Length() - 1);
 				break; // done
 			}
 		} else if (prevChar == '/' && c == '*') {
@@ -181,7 +182,7 @@ int MyTokenizer::ParseBStringOrHexString() {
 	while (m_Offset < m_Content.Length()) {
 		char c = m_Content.CharAt(m_Offset++);
 		if (c != '\'') {
-			m_Token.AppendChar(c);
+			if (!IsWhitespace(c)) m_Token.AppendChar(c);
 		} else {
 			c = m_Content.CharAt(m_Offset++);
 			if (c == 'B') m_TokenType = TOKEN_BSTRING;
