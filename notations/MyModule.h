@@ -2,6 +2,7 @@
 #define _MY_MODULE_H_
 
 #include "MyNotationCommon.h"
+#include "MyRelativeObjectIDType.h"
 
 
 /*
@@ -9,7 +10,7 @@ DefinitiveNumberForm ::= number
 */
 class MyDefinitiveNumberForm : public NotationBase {
 public:
-	MyBuffer Number;
+	MyStringA Number;
 };
 
 /*
@@ -29,7 +30,9 @@ DefinitiveObjIdComponent ::=
 */
 class MyDefinitiveObjIdComponent: public NotationBase {
 public:
-
+	MyNameForm                    NameForm;
+	MyDefinitiveNumberForm        DefinitiveNumberForm;
+	MyDefinitiveNameAndNumberForm DefinitiveNameAndNumberForm;
 };
 
 /*
@@ -37,7 +40,9 @@ DefinitiveObjIdComponentList ::=
 		DefinitiveObjIdComponent
 		| DefinitiveObjIdComponent DefinitiveObjIdComponentList
 */
-class MyDefinitiveObjIdComponentList: public MyArray<MyDefinitiveObjIdComponent>, public NotationBase {
+class MyDefinitiveObjIdComponentList: public NotationBase {
+public:
+	MyArray<MyDefinitiveObjIdComponent> DefinitiveObjIdComponents;
 };
 
 
@@ -48,8 +53,8 @@ DefinitiveIdentifier ::=
 */
 class MyDefinitiveID: public NotationBase {
 public:
-	MyDefinitiveObjIdComponentList DefinitiveObjIdComponents;
-	bool Empty;
+	MyDefinitiveObjIdComponentList DefinitiveObjIdComponentList;
+	bool                           Empty;
 };
 
 /*
@@ -59,6 +64,7 @@ ModuleIdentifier ::=
 */
 class MyModuleID: public NotationBase {
 public:
+	MyStringA      ModuleReference;
 	MyDefinitiveID DefinitiveID;
 };
 

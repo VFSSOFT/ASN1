@@ -56,6 +56,9 @@
     <ClCompile Include="..\parser\MyTokenizer.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\parser\MyParser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\MyArray.h">
@@ -105,6 +108,12 @@
     </ClInclude>
     <ClInclude Include="..\parser\MyTokenizer.h">
       <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser\MyParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyRelativeObjectIDType.h">
+      <Filter>Notations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -142,6 +142,7 @@
     <ClCompile Include="..\notations\MyModule.cpp" />
     <ClCompile Include="..\notations\MyNotationCommon.cpp" />
     <ClCompile Include="..\notations\MyRefTypeValueDef.cpp" />
+    <ClCompile Include="..\parser\MyParser.cpp" />
     <ClCompile Include="..\parser\MyTokenizer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,8 @@
     <ClInclude Include="..\notations\MyModule.h" />
     <ClInclude Include="..\notations\MyNotationCommon.h" />
     <ClInclude Include="..\notations\MyRefTypeValueDef.h" />
+    <ClInclude Include="..\notations\MyRelativeObjectIDType.h" />
+    <ClInclude Include="..\parser\MyParser.h" />
     <ClInclude Include="..\parser\MyTokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

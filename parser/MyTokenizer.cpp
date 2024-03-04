@@ -123,6 +123,9 @@ int MyTokenizer::Next() {
 
 int MyTokenizer::Peek() {
 	int err = 0;
+	
+	if (m_Peek) return 0;
+
 	if (err = Next()) return err;
 
 	m_Peek = m_TokenType != TOKEN_EOF;
