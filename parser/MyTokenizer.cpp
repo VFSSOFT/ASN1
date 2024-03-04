@@ -11,21 +11,24 @@ int MyTokenizer::Next() {
 
 	int startOff = m_Offset;
 
-	char c = NO_MORE_CHAR;
-  if (m_Offset < m_Content.Length()) {
-		c = m_Content.CharAt(m_Offset++);
-	}
-	if (c == NO_MORE_CHAR) {
+	if (!HasMoreChar()) {
 		return 0;
 	}
+
+	char c = m_Content.CharAt(m_Offset++);
 
 	if (IsUpperCaseLetter(c)) {
 		if (err = ParseTypeRef()) return err;
 	} else if (IsLowerCaseLetter(c)) {
 		if (err = ParseIdentifier()) return err;
 	} else if (c == '-') {
-		if (err = ExpectNextChar('-', "One line comment")) return err;
-		if (err = ParseSingleLineComment()) return err;
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("-");
+		} else {
+			if (err = ExpectNextChar('-', "One line comment")) return err;
+			if (err = ParseSingleLineComment()) return err;
+		}
 	} else if (c == '/') {
 		c = m_Content.CharAt(m_Offset++);
 		if (c == '>') {
@@ -35,42 +38,79 @@ int MyTokenizer::Next() {
 			if (c != '*') return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid ASN.1 Schema: Multiple line comment");
 			if (err = ParseMultipleLineComment()) return err;
 		}
-		
 	} else if (IsDigit(c)) {
 		if (err = ParseNumber()) return err;
 	} else if (c == '\'') {
-		if (err = ParseBStringOrHexString()) return err;
-	} else if (c == '\"') {
-		if (err = ParseCString()) return err;
-	} else if (c == ':') {
-		if (err = ExpectNextChar(':', "Expect Assignment lexical item")) return err;
-		if (err = ExpectNextChar('=', "Expect Assignment lexical item")) return err;
-		m_TokenType = TOKEN_ASSIGNMENT;
-		m_Token.Set("::=");
-	} else if (c == '.') {
-		if (err = ExpectNextChar('.', "Expect Range/Ellipsis lexical item")) return err;
-
-		char nc = m_Content.CharAt(m_Offset);
-		if (nc == '.') {
-			m_Offset++;
-			m_TokenType = TOKEN_ELLIPSIS;
-			m_Token.Set("...");
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("\'");
 		} else {
-			m_TokenType = TOKEN_RANGE_SEPARATOR;
-			m_Token.Set("..");
+			if (err = ParseBStringOrHexString()) return err;
+		}
+	} else if (c == '\"') {
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("\"");
+		} else {
+			if (err = ParseCString()) return err;
+		}
+	} else if (c == ':') {
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set(":");
+		} else {
+			if (err = ExpectNextChar(':', "Expect Assignment lexical item")) return err;
+			if (err = ExpectNextChar('=', "Expect Assignment lexical item")) return err;
+			m_TokenType = TOKEN_ASSIGNMENT;
+			m_Token.Set("::=");
+		}
+	} else if (c == '.') {
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set(".");
+		} else {
+			if (err = ExpectNextChar('.', "Expect Range/Ellipsis lexical item")) return err;
+
+			char nc = m_Content.CharAt(m_Offset);
+			if (nc == '.') {
+				m_Offset++;
+				m_TokenType = TOKEN_ELLIPSIS;
+				m_Token.Set("...");
+			} else {
+				m_TokenType = TOKEN_RANGE_SEPARATOR;
+				m_Token.Set("..");
+			}
 		}
 	} else if (c == '[') {
-		if (err = ExpectNextChar('[', "Expect Left version brackets")) return err;
-		m_TokenType = TOKEN_LEFT_VERSION_BRACKETS;
-		m_Token.Set("[[");
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("[");
+		} else {
+			if (err = ExpectNextChar('[', "Expect Left version brackets")) return err;
+			m_TokenType = TOKEN_LEFT_VERSION_BRACKETS;
+			m_Token.Set("[[");
+		}
 	} else if (c == ']') {
-		if (err = ExpectNextChar(']', "Expect Right version brackets")) return err;
-		m_TokenType = TOKEN_RIGHT_VERSION_BRACKETS;
-		m_Token.Set("]]");
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("]");
+		} else {
+			if (err = ExpectNextChar(']', "Expect Right version brackets")) return err;
+			m_TokenType = TOKEN_RIGHT_VERSION_BRACKETS;
+			m_Token.Set("]]");
+		}
 	} else if (c == '<') {
-		if (err = ExpectNextChar('/', "Expect XML end tag start item")) return err;
-		m_TokenType = TOKEN_XML_END_TAG_START;
-		m_Token.Set("</");
+		if (!HasMoreChar() || IsNextWhitespace()) {
+			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+			m_Token.Set("<");
+		} else {
+			if (err = ExpectNextChar('/', "Expect XML end tag start item")) return err;
+			m_TokenType = TOKEN_XML_END_TAG_START;
+			m_Token.Set("</");
+		}
+	} else if (IsSingleCharLexicalItem(c)) {
+		m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
+		m_Token.AppendChar(c);
 	}
 	return err;
 }
@@ -234,6 +274,15 @@ int MyTokenizer::ExpectNextChar(char c, const char* errMsg) {
 	}
 	m_Offset++;
 	return 0;
+}
+
+
+bool MyTokenizer::IsSingleCharLexicalItem(char c) {
+	const char* singleCharLexicalItems = "{}<>,.()[]-:=\"\' ;@|!^";
+	for (int i = 0; i < strlen(singleCharLexicalItems); i++) {
+		if (c == singleCharLexicalItems[i]) return true;
+	}
+	return false;
 }
 
 

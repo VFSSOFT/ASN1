@@ -256,3 +256,38 @@ TEST(TokenizerTest, XMLSingleTagEndItemTest) {
 	ASSERT_STREQ(tokenizer.Token()->Deref(), "/>");
 }
 
+TEST(TokenizerTest, SingleCharacterLexicalItemsTest) {
+	int err = 0;
+	char buf[2];
+	buf[1] = ' ';
+	const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	
+	for (int i = 0; i < strlen(data); i++) {	
+		buf[0] = data[i];
+		
+		MyTokenizer tokenizer(buf, 2);
+		err = tokenizer.Next();
+		ASSERT_EQ(err, 0);
+		ASSERT_EQ(tokenizer.TokenType(), TOKEN_SINGLE_CHAR_ITEM);
+		ASSERT_EQ(tokenizer.Token()->Length(), 1);
+		ASSERT_EQ(tokenizer.Token()->CharAt(0), data[i]);
+	}
+}
+
+TEST(TokenizerTest, SingleCharacterLexicalItemsTest2) {
+	int err = 0;
+	char buf[1];
+	const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	
+	for (int i = 0; i < strlen(data); i++) {	
+		buf[0] = data[i];
+		
+		MyTokenizer tokenizer(buf, 1);
+		err = tokenizer.Next();
+		ASSERT_EQ(err, 0);
+		ASSERT_EQ(tokenizer.TokenType(), TOKEN_SINGLE_CHAR_ITEM);
+		ASSERT_EQ(tokenizer.Token()->Length(), 1);
+		ASSERT_EQ(tokenizer.Token()->CharAt(0), data[i]);
+	}
+}
+

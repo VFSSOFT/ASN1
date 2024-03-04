@@ -52,6 +52,8 @@ public:
 	}
 
 private:
+	bool HasMoreChar() { return m_Offset < m_Content.Length(); }
+	bool IsNextWhitespace() { return IsWhitespace(m_Content.CharAt(m_Offset)); }
 	int ExpectNextChar(char c, const char* errMsg);
 
 	int ParseTypeRef();
@@ -61,6 +63,8 @@ private:
 	int ParseNumber();
 	int ParseBStringOrHexString();
 	int ParseCString();
+
+	bool IsSingleCharLexicalItem(char c);
 
 	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 || c == 12 || c == 13 || c == 32; }
 	static bool IsNewLine(char c) { return c == 10 || c == 11 || c == 12 || c == 13; }
