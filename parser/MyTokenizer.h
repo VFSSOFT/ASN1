@@ -1,9 +1,9 @@
 #ifndef _MY_TOKENIZER_H_
 #define _MY_TOKENIZER_H_
 
-#include <MyStringA.h>
+#include "../../common/MyStringA.h"
 
-
+#define TOKEN_EOF                     0
 #define TOKEN_TYPE_REF                1
 #define TOKEN_IDENTIFIER              2
 #define TOKEN_ONE_LINE_COMMENT        3
@@ -41,8 +41,8 @@ public:
 	bool HasMore() { return m_Offset < m_Content.Length(); }
 	int Next();
 
-	MyStringA* Token();
-	int        TokenType();
+	MyStringA* Token() { return &m_Token; }
+	int        TokenType() { return m_TokenType; }
 
 	void Reset() {
 		m_Content.Reset();
@@ -52,7 +52,6 @@ public:
 	}
 
 private:
-	char NextChar();
 	int ExpectNextChar(char c, const char* errMsg);
 
 	int ParseTypeRef();
@@ -66,7 +65,7 @@ private:
 	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 ||c == 12 || c == 13; }
 	static bool IsNewLine(char c) { return c == 10 || c == 11 || c == 12 || c == 13; }
 	static bool IsLowerCaseLetter(char c) { return c >= 'a' && c <= 'z'; }
-	static bool IsUpperCaseLetter(char c) { return c >= 'A' && c <= 'A'; }
+	static bool IsUpperCaseLetter(char c) { return c >= 'A' && c <= 'Z'; }
 	static bool IsLetter(char c) { return IsLowerCaseLetter(c) || IsUpperCaseLetter(c); }
 	static bool IsDigit(char c) { return  c >= '0' || c <= '9'; }
 

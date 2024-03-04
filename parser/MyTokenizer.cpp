@@ -7,29 +7,32 @@
 int MyTokenizer::Next() {
 	int err = 0;
 	m_Token.Reset();
-	m_TokenType = 0;
+	m_TokenType = TOKEN_EOF;
 
 	int startOff = m_Offset;
 
-	char c = NextChar();
-	if (c == NO_MORE_CHAR) { return 0; }
+	char c = NO_MORE_CHAR;
+  if (m_Offset < m_Content.Length()) {
+		c = m_Content.CharAt(m_Offset++);
+	}
+	if (c == NO_MORE_CHAR) {
+		return 0;
+	}
 
 	if (IsUpperCaseLetter(c)) {
 		if (err = ParseTypeRef()) return err;
 	} else if (IsLowerCaseLetter(c)) {
 		if (err = ParseIdentifier()) return err;
 	} else if (c == '-') {
-		c = NextChar();
-		if (c != '-') return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid ASN.1 Schema: One line comment");
-
+		if (err = ExpectNextChar('-', "One line comment")) return err;
 		if (err = ParseSingleLineComment()) return err;
 	} else if (c == '/') {
-		c = NextChar();
+		c = m_Content.CharAt(m_Offset++);
 		if (c == '>') {
 			m_TokenType = TOKEN_XML_SIGNAL_TAG_END;
 			m_Token.Set("/>");
 		} else {
-			if (c != '*') return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid ASN.1 Schema: Multiple line comment");
+			if (err = ExpectNextChar('*', "Multiple line comment")) return err;
 			if (err = ParseMultipleLineComment()) return err;
 		}
 		
@@ -221,20 +224,11 @@ int MyTokenizer::ParseCString() {
 	return 0;
 }
 
-char MyTokenizer::NextChar() {
-	char c = NO_MORE_CHAR;
-	if (m_Offset < m_Content.Length()) {
-		c = m_Content.CharAt(m_Offset);
-		m_Offset++;
-	}
-	return c;
-}
-
 int MyTokenizer::ExpectNextChar(char c, const char* errMsg) {
 	char nc = m_Content.CharAt(m_Offset);
 	if (nc != c) {
 		m_LastErrorCode = MY_ERR_INVALID_PARAMETERS;
-		m_LastErrorMessage.SetWithFormat("Invalid ASN.1 Schema:%s", errMsg);
+		m_LastErrorMessage.SetWithFormat("Invalid ASN.1 Schema: %s", errMsg);
 		return m_LastErrorCode;
 	}
 	m_Offset++;

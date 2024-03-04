@@ -44,9 +44,6 @@
     <ClCompile Include="..\..\common\MyWin.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\notations\MyModule.cpp">
       <Filter>Notations</Filter>
     </ClCompile>

@@ -1,9 +1,9 @@
 #ifndef _MY_NOTATION_COMMON_H_
 #define _MY_NOTATION_COMMON_H_
 
-#include <MyArray.h>
-#include <MyBuffer.h>
-#include <MyStringA.h>
+#include "../../common/MyStringA.h"
+#include "../../common/MyArray.h"
+#include "../../common/MyBuffer.h"
 
 class NotationBase {
 public:
