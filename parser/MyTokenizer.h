@@ -40,6 +40,8 @@ public:
 
 	bool HasMore() { return m_Offset < m_Content.Length(); }
 	int Next();
+	int Peek();
+
 
 	MyStringA* Token() { return &m_Token; }
 	int        TokenType() { return m_TokenType; }
@@ -49,6 +51,7 @@ public:
 		m_Offset = 0;
 		m_Token.Reset();
 		m_TokenType = 0;
+		m_Peek = false;
 	}
 
 private:
@@ -79,6 +82,7 @@ private:
 
 	MyStringA m_Token;
 	int       m_TokenType;
+	bool      m_Peek;
 
 	MY_LAST_ERROR_DECL;
 };

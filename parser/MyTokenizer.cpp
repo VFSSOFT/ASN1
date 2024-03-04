@@ -6,6 +6,12 @@
 
 int MyTokenizer::Next() {
 	int err = 0;
+
+	if (m_Peek) {
+		m_Peek = false;
+		return 0;
+	}
+
 	m_Token.Reset();
 	m_TokenType = TOKEN_EOF;
 
@@ -113,6 +119,14 @@ int MyTokenizer::Next() {
 		m_Token.AppendChar(c);
 	}
 	return err;
+}
+
+int MyTokenizer::Peek() {
+	int err = 0;
+	if (err = Next()) return err;
+
+	m_Peek = m_TokenType != TOKEN_EOF;
+	return 0;
 }
 
 int MyTokenizer::ParseTypeRef() {

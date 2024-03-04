@@ -291,3 +291,25 @@ TEST(TokenizerTest, SingleCharacterLexicalItemsTest2) {
 	}
 }
 
+
+TEST(TokenizerTest, PeekTest) {
+	const char* data = "Abc";
+	int err = 0;
+	MyTokenizer tokenizer(data, strlen(data));
+	
+	err = tokenizer.Peek();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_TYPE_REF);
+	ASSERT_STREQ(tokenizer.Token()->Deref(), "Abc");
+
+	err = tokenizer.Next();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_TYPE_REF);
+	ASSERT_STREQ(tokenizer.Token()->Deref(), "Abc");
+
+	err = tokenizer.Next();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_EOF);
+}
+
+
