@@ -16,7 +16,7 @@
 #define TOKEN_XMLHEXSTRING            10
 #define TOKEN_CSTRING                 11
 #define TOKEN_XMLCSTRING              12
-#define TOKEN_ASSIGMENT               13
+#define TOKEN_ASSIGNMENT              13
 #define TOKEN_RANGE_SEPARATOR         14
 #define TOKEN_ELLIPSIS                15
 #define TOKEN_LEFT_VERSION_BRACKETS   16

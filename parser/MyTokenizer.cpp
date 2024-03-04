@@ -45,7 +45,7 @@ int MyTokenizer::Next() {
 	} else if (c == ':') {
 		if (err = ExpectNextChar(':', "Expect Assignment lexical item")) return err;
 		if (err = ExpectNextChar('=', "Expect Assignment lexical item")) return err;
-		m_TokenType = TOKEN_ASSIGMENT;
+		m_TokenType = TOKEN_ASSIGNMENT;
 		m_Token.Set("::=");
 	} else if (c == '.') {
 		if (err = ExpectNextChar('.', "Expect Range/Ellipsis lexical item")) return err;
@@ -64,7 +64,7 @@ int MyTokenizer::Next() {
 		m_TokenType = TOKEN_LEFT_VERSION_BRACKETS;
 		m_Token.Set("[[");
 	} else if (c == ']') {
-		if (err = ExpectNextChar('[', "Expect Right version brackets")) return err;
+		if (err = ExpectNextChar(']', "Expect Right version brackets")) return err;
 		m_TokenType = TOKEN_RIGHT_VERSION_BRACKETS;
 		m_Token.Set("]]");
 	} else if (c == '<') {
