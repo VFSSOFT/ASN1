@@ -32,6 +32,10 @@ int MyTokenizer::Next() {
 
 	if (IsUpperCaseLetter(c)) {
 		if (err = ParseTypeRef()) return err;
+
+		if (IsReservedWords(m_Token.DerefConst())) {
+			m_TokenType = TOKEN_RESERVED_WORD;
+		}
 	} else if (IsLowerCaseLetter(c)) {
 		if (err = ParseIdentifier()) return err;
 	} else if (c == '-') {
@@ -307,6 +311,39 @@ bool MyTokenizer::IsSingleCharLexicalItem(char c) {
 		if (c == singleCharLexicalItems[i]) return true;
 	}
 	return false;
+}
+
+bool MyTokenizer::IsReservedWords(const char* val) {
+	const char* RESERVED_WRODS[] = {
+		"ABSENT",          "ENCODED",         "INTEGER",          "RELATIVE-OID",
+		"ABSTRACT-SYNTAX", "END",             "INTERSECTION",     "SEQUENCE",
+		"ALL",             "ENUMERATED",      "ISO64String",      "SET",
+		"APPLICATION",     "EXCEPT",          "MAX",              "SIZE",
+		"AUTOMATIC",       "EXPLICIT",        "MIN",              "STRING",
+		"BEGIN",           "EXPORTS",         "MINUS-INFINITY",   "SYNTAX",
+		"BIT",             "EXTENSIBILITY",   "NULL",             "T61String",
+		"BMPString",       "EXTERNAL",        "NumericString",    "TAGS",
+		"BOOLEAN",         "FALSE",           "OBJECT",           "TeletexString",
+		"BY",              "FROM",            "ObjectDescriptor", "TRUE",
+		"CHARACTER",       "GeneralizedTime", "OCTET",            "TYPE-IDENTIFIER",
+		"CHOICE",          "GeneralString",   "OF",               "UNION",
+		"CLASS",           "GraphicString",   "OPTIONAL",         "UNIQUE",
+		"COMPONENT",       "IA5String",       "PATTERN",          "UNIVERSAL",
+		"COMPONENTS",      "IDENTIFIER",      "PDV",              "UniversalString",
+		"CONSTRAINED",     "IMPLICIT",        "PLUS-INFINITY",    "UTCTime",
+		"CONTAINING",      "IMPLIED",         "PRESENT",          "UTF8String",
+		"DEFAULT",         "IMPORTS",         "PrintableString",  "VideotexString",
+		"DEFINITIONS",     "INCLUDES",        "PRIVATE",          "VisibleString",
+		"EMBEDED",         "INSTANCE",        "REAL",             "WITH"
+	};
+
+	for (int i = 0; i < 80; i++) {
+		if (strcmp(val, RESERVED_WRODS[i]) == 0) {
+			return true;
+		}
+	}
+	return false;
+
 }
 
 

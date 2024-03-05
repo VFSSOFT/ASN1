@@ -68,6 +68,7 @@ private:
 	int ParseCString();
 
 	bool IsSingleCharLexicalItem(char c);
+	bool IsReservedWords(const char* val);
 
 	static bool IsWhitespace(char c) { return c == 9 || c == 10 || c == 11 || c == 12 || c == 13 || c == 32; }
 	static bool IsNewLine(char c) { return c == 10 || c == 11 || c == 12 || c == 13; }
