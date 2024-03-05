@@ -22,6 +22,13 @@ int MyTokenizer::Next() {
 	}
 
 	char c = m_Content.CharAt(m_Offset++);
+	while (IsWhitespace(c)) { // SKip all whitesapces
+		if (HasMoreChar()) {
+			c = m_Content.CharAt(m_Offset++);
+		} else {
+			return 0;
+		}
+	}
 
 	if (IsUpperCaseLetter(c)) {
 		if (err = ParseTypeRef()) return err;

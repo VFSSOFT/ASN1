@@ -33,11 +33,11 @@
 
 class MyTokenizer {
 public:
-	MyTokenizer(const char* data, int lenData) {
+	MyTokenizer() {
 		Reset();
-		m_Content.Set(data, lenData);
 	}
 
+	void Set(const char* data, int len) { m_Content.Set(data, len); }
 	bool HasMore() { return m_Offset < m_Content.Length(); }
 	int Next();
 	int Peek();

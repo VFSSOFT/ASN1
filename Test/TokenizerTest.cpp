@@ -5,7 +5,8 @@
 TEST(TokenizerTest, TypeRefTest) {
 	const char* data = "TypeA";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_TYPE_REF);
@@ -19,7 +20,8 @@ TEST(TokenizerTest, TypeRefTest) {
 TEST(TokenizerTest, IdentifiersTest) {
 	const char* data = "identifier";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_IDENTIFIER);
@@ -33,7 +35,8 @@ TEST(TokenizerTest, IdentifiersTest) {
 TEST(TokenizerTest, CommentSingleLineTest) {
 	const char* data = "--abcdefg\r\n";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_ONE_LINE_COMMENT);
@@ -43,7 +46,8 @@ TEST(TokenizerTest, CommentSingleLineTest) {
 TEST(TokenizerTest, CommentSingleLineTest2) {
 	const char* data = "--abcdefg--";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_ONE_LINE_COMMENT);
@@ -53,7 +57,8 @@ TEST(TokenizerTest, CommentSingleLineTest2) {
 TEST(TokenizerTest, CommentSingleLineTest3) {
 	const char* data = "--/*aaa*/--";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_ONE_LINE_COMMENT);
@@ -63,7 +68,8 @@ TEST(TokenizerTest, CommentSingleLineTest3) {
 TEST(TokenizerTest, CommentMultipleLineTest) {
 	const char* data = "/*comment*/";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_MUL_LINE_COMMENT);
@@ -73,7 +79,8 @@ TEST(TokenizerTest, CommentMultipleLineTest) {
 TEST(TokenizerTest, CommentMultipleLineTest2) {
 	const char* data = "/*com\r\n\r\nment*/";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_MUL_LINE_COMMENT);
@@ -83,7 +90,8 @@ TEST(TokenizerTest, CommentMultipleLineTest2) {
 TEST(TokenizerTest, CommentMultipleLineTest3) {
 	const char* data = "/*com--\r\n\r\n--ment*/";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_MUL_LINE_COMMENT);
@@ -93,7 +101,8 @@ TEST(TokenizerTest, CommentMultipleLineTest3) {
 TEST(TokenizerTest, CommentMultipleLineTest4) {
 	const char* data = "/*com/*m*/ent*/";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_MUL_LINE_COMMENT);
@@ -104,7 +113,8 @@ TEST(TokenizerTest, CommentMultipleLineTest4) {
 TEST(TokenizerTest, NumberTest) {
 	const char* data = "123456";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_NUMBER);
@@ -114,7 +124,8 @@ TEST(TokenizerTest, NumberTest) {
 TEST(TokenizerTest, RealNumberTest) {
 	const char* data = "12.3456";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_REAL_NUMBER);
@@ -124,7 +135,8 @@ TEST(TokenizerTest, RealNumberTest) {
 TEST(TokenizerTest, BStringTest) {
 	const char* data = "\'01101100\'B";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_BSTRING);
@@ -134,7 +146,8 @@ TEST(TokenizerTest, BStringTest) {
 TEST(TokenizerTest, BStringTest2) {
 	const char* data = "\'011  011\t00\'B";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_BSTRING);
@@ -144,7 +157,8 @@ TEST(TokenizerTest, BStringTest2) {
 TEST(TokenizerTest, HexStringTest) {
 	const char* data = "\'AB0196\'H";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_HEXSTRING);
@@ -154,7 +168,8 @@ TEST(TokenizerTest, HexStringTest) {
 TEST(TokenizerTest, HexStringTest2) {
 	const char* data = "\'AB  0 196\'H";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_HEXSTRING);
@@ -164,7 +179,8 @@ TEST(TokenizerTest, HexStringTest2) {
 TEST(TokenizerTest, CStringTest) {
 	const char* data = "\"A B C D\"";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_CSTRING);
@@ -174,7 +190,8 @@ TEST(TokenizerTest, CStringTest) {
 TEST(TokenizerTest, CStringTest2) {
 	const char* data = "\"ABCDE FGH\r\nIJK\"\"XYZ\"";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_CSTRING);
@@ -185,7 +202,8 @@ TEST(TokenizerTest, CStringTest2) {
 TEST(TokenizerTest, AssignmentLexicalItemTest) {
 	const char* data = "::=";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_ASSIGNMENT);
@@ -195,7 +213,8 @@ TEST(TokenizerTest, AssignmentLexicalItemTest) {
 TEST(TokenizerTest, RangeSeparatorTest) {
 	const char* data = "..";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_RANGE_SEPARATOR);
@@ -206,7 +225,8 @@ TEST(TokenizerTest, RangeSeparatorTest) {
 TEST(TokenizerTest, EllipsisTest) {
 	const char* data = "...";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_ELLIPSIS);
@@ -217,7 +237,8 @@ TEST(TokenizerTest, EllipsisTest) {
 TEST(TokenizerTest, LeftVersionBraketsTest) {
 	const char* data = "[[";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_LEFT_VERSION_BRACKETS);
@@ -228,7 +249,8 @@ TEST(TokenizerTest, LeftVersionBraketsTest) {
 TEST(TokenizerTest, RightVersionBraketsTest) {
 	const char* data = "]]";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_RIGHT_VERSION_BRACKETS);
@@ -239,7 +261,8 @@ TEST(TokenizerTest, RightVersionBraketsTest) {
 TEST(TokenizerTest, XMLEndTagStartItemTest) {
 	const char* data = "</";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_XML_END_TAG_START);
@@ -249,7 +272,8 @@ TEST(TokenizerTest, XMLEndTagStartItemTest) {
 TEST(TokenizerTest, XMLSingleTagEndItemTest) {
 	const char* data = "/>";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_XML_SIGNAL_TAG_END);
@@ -260,12 +284,14 @@ TEST(TokenizerTest, SingleCharacterLexicalItemsTest) {
 	int err = 0;
 	char buf[2];
 	buf[1] = ' ';
-	const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	//const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	const char* data = "{}<>,.()[]-:=\"\';@|!^";
 	
 	for (int i = 0; i < strlen(data); i++) {	
 		buf[0] = data[i];
 		
-		MyTokenizer tokenizer(buf, 2);
+		MyTokenizer tokenizer;
+		tokenizer.Set(buf, 2);
 		err = tokenizer.Next();
 		ASSERT_EQ(err, 0);
 		ASSERT_EQ(tokenizer.TokenType(), TOKEN_SINGLE_CHAR_ITEM);
@@ -277,12 +303,14 @@ TEST(TokenizerTest, SingleCharacterLexicalItemsTest) {
 TEST(TokenizerTest, SingleCharacterLexicalItemsTest2) {
 	int err = 0;
 	char buf[1];
-	const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	//const char* data = "{}<>,.()[]-:=\"\' ;@|!^";
+	const char* data = "{}<>,.()[]-:=\"\';@|!^";
 	
 	for (int i = 0; i < strlen(data); i++) {	
 		buf[0] = data[i];
 		
-		MyTokenizer tokenizer(buf, 1);
+		MyTokenizer tokenizer;
+		tokenizer.Set(buf, 1);
 		err = tokenizer.Next();
 		ASSERT_EQ(err, 0);
 		ASSERT_EQ(tokenizer.TokenType(), TOKEN_SINGLE_CHAR_ITEM);
@@ -295,8 +323,8 @@ TEST(TokenizerTest, SingleCharacterLexicalItemsTest2) {
 TEST(TokenizerTest, PeekTest) {
 	const char* data = "Abc";
 	int err = 0;
-	MyTokenizer tokenizer(data, strlen(data));
-	
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Peek();
 	ASSERT_EQ(err, 0);
 	ASSERT_EQ(tokenizer.TokenType(), TOKEN_TYPE_REF);
