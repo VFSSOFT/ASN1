@@ -126,6 +126,13 @@ public:
 	MyParameterizedValue     ParameterizedValue;
 };
 
+/*
+ParameterizedReference ::= Reference | Reference "{" "}"
+*/
+class MyParameterizedReference : public NotationBase {
+public:
+	MyReference Reference;
+};
 
 
 #endif // _MY_REF_TYPE_VALUE_DEF_H_

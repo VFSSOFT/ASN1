@@ -18,8 +18,20 @@ private:
 	int ParseDefinitiveObjIdComponent(MyTokenizer* tokenizer, MyDefinitiveObjIdComponent* comp);
 	int ParseNameForm(MyTokenizer* tokenizer, MyNameForm* nameForm);
 	int ParseDefinitiveNumberForm(MyTokenizer* tokenizer, MyDefinitiveNumberForm* definitiveNumberForm);
+	int ParseTagDefaults(MyTokenizer* tokenizer, MyTagDefault* tagDefaults);
+	int ParseModuleBody(MyTokenizer* tokenizer, MyModuleBody* body);
+	int ParseExports(MyTokenizer* tokenizer, MyExports* exports);
+	int ParseSymbolsExported(MyTokenizer* tokenizer, MySymbolsExported* exported);
+	int ParseSymbolList(MyTokenizer* tokenizer, MySymbolList* symbolList);
+	int ParseSymbol(MyTokenizer* tokenizer, MySymbol* symbol);
+	int ParseReference(MyTokenizer* tokenizer, MyReference* reference);
+	int ParseAssignList(MyTokenizer* tokenizer, MyAssignmentList* assignList);
+	int ParseAssignment(MyTokenizer* tokenizer, MyAssignment* assignment);
 
-	int ExpectedTokenType(MyTokenizer* tokenizer, int tokType);
+	int Peek(MyTokenizer* tokenizer);
+	int Next(MyTokenizer* tokenizer);
+	int ExpectedTokenType(MyTokenizer* tokenizer, int tokType, const char* token=NULL);
+	int ExpectedReservedWord(MyTokenizer* tokenizer, const char* token);
 	int InvalidToken(int expToken, int realToken, const char* defName=NULL);
 	int InvalidToken(int expToken1, int expToken2, int realToken, const char* defName=NULL);
 

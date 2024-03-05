@@ -92,12 +92,24 @@ public:
 };
 
 /*
+Symbol ::=
+		Reference
+		| ParameterizedReference
+*/
+class MySymbol : public NotationBase {
+public:
+	MyReference              Reference;
+	MyParameterizedReference ParameterizedReference;
+};
+
+/*
 SymbolList ::=
 		Symbol
 		| SymbolList "," Symbol
 */
 class MySymbolList : public NotationBase {
-
+public:
+	MyArray<MySymbol> Symbols;
 };
 
 /*

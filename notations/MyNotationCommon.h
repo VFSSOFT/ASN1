@@ -17,5 +17,23 @@ protected:
 };
 
 
+/*
+Reference ::=
+		typereference
+		| valuereference
+		| objectclassreference
+		| objectreference
+		| objectsetreference
+*/
+class MyReference : public NotationBase {
+public:
+	MyStringA TypeReference;
+	MyStringA ValueReference;
+	MyStringA ObjectClassReference;
+	MyStringA ObjectReference;
+	MyStringA ObjectSetReference;
+};
+
+
 #endif // _MY_NOTATION_COMMON_H_
 

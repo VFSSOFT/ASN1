@@ -3,20 +3,53 @@
 
 #include "MyParser.h"
 
+#include "../../common/MyFile.h"
+
 int MyParser::Parse(const wchar_t* file) {
 	int err = 0;
+
+	MyBuffer data;
+	MyFile f;
+	if (err = f.ReadAllBytes(file, &data)) return LastError(err, f.LastErrorMessage());
+
+	m_Tokenizer.Set(data.DerefConst(), data.Length());
+	if (err = ParseModuleDef(&m_Tokenizer, &m_ModuleDef)) return err;
 
 	return 0;
 }
 
 
 int MyParser::ParseModuleDef(MyTokenizer* tokenizer, MyModuleDef* moduleDef) {
+	int err = 0;
+	if (err = ParseModuleIdentifier(tokenizer, &moduleDef->ModuleId)) return err;
+
+	if (err = ExpectedReservedWord(tokenizer, "DEFINITIONS")) return err;
+
+	if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
+	if (tokenizer->Token()->Equals("EXPLICIT") || tokenizer->Token()->Equals("IMPLICIT") || tokenizer->Token()->Equals("AUTOMATIC")) {
+		if (err = ParseTagDefaults(tokenizer, &moduleDef->TagDefault)) return err;
+		if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
+	} else {
+		moduleDef->TagDefault.SetValid(true); // Empty
+	}
+
+	if (tokenizer->Token()->Equals("EXTENSIBILITY")) {
+		moduleDef->ExtensionDefault.Value.Set("EXTENSIBILITY");
+		if (err = tokenizer->Next()) return LastError(err, tokenizer->LastErrorMessage());
+		//if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
+	}
+	moduleDef->ExtensionDefault.SetValid(true);
+
+	if (err = ExpectedTokenType(tokenizer, TOKEN_ASSIGNMENT)) return err;
+	if (err = ExpectedReservedWord(tokenizer, "BEGIN")) return err;
+	if (err = ParseModuleBody(tokenizer, &moduleDef->Body)) return err;
+	if (err = ExpectedReservedWord(tokenizer, "END")) return err;
+
+	moduleDef->SetValid(true);
 	return 0;
 }
 int MyParser::ParseModuleIdentifier(MyTokenizer* tokenizer, MyModuleID* moduleID) {
 	int err = 0;
-
-	if (err = tokenizer->Next()) return LastError(err, tokenizer->LastErrorMessage());
 	if (err = ExpectedTokenType(tokenizer, TOKEN_TYPE_REF)) return err;
 	moduleID->ModuleReference.Set(tokenizer->Token());
 
@@ -126,12 +159,109 @@ int MyParser::ParseDefinitiveNumberForm(MyTokenizer* tokenizer, MyDefinitiveNumb
 	return 0;
 }
 
+int MyParser::ParseTagDefaults(MyTokenizer* tokenizer, MyTagDefault* tagDefaults) {
+	int err = 0;
 
-int MyParser::ExpectedTokenType(MyTokenizer* tokenizer, int tokType) {
+	if (err = tokenizer->Next()) return LastError(err, tokenizer->LastErrorMessage());
+	if (tokenizer->Token()->Equals("EXPLICIT")) {
+		tagDefaults->Value.Set("EXPLICIT");
+	} else if (tokenizer->Token()->Equals("IMPLICIT")) {
+		tagDefaults->Value.Set("IMPLICIT");
+	} else if (tokenizer->Token()->Equals("AUTOMATIC")) {
+		tagDefaults->Value.Set("AUTOMATIC");
+	} else {
+		return InvalidToken(TOKEN_RESERVED_WORD, tokenizer->TokenType(), "TagDefaults");
+	}
+
+	if (err = ExpectedReservedWord(tokenizer, "TAGS")) return err;
+
+	tagDefaults->SetValid(true);
+	return 0;
+}
+
+int MyParser::ParseModuleBody(MyTokenizer* tokenizer, MyModuleBody* body) {
+	int err = 0;
+	
+	if (err = Peek(tokenizer)) return err;
+	if (tokenizer->Token()->Equals("EXPORTS")) {
+		if (err = ParseExports(tokenizer, &body->Exports)) return err;
+	} else {
+		body->Exports.Empty = true;
+		body->Exports.SetValid(true);
+	}
+
+	if (err = Peek(tokenizer)) return err;
+	if (tokenizer->Token()->Equals("IMPORTS")) {
+		assert(false); // TODO:
+	} else {
+		body->Imports.Empty = true;
+		body->Imports.SetValid(true);
+	}
+
+
+
+	return 0;
+}
+int MyParser::ParseExports(MyTokenizer* tokenizer, MyExports* exports) {
+	int err = 0;
+
+	if (err = ExpectedReservedWord(tokenizer, "EXPORTS")) return err;
+	if (err = Peek(tokenizer)) return err;
+	if (tokenizer->Token()->Equals("ALL")) {
+		if (err = ExpectedReservedWord(tokenizer, "ALL")) return err;
+		if (err = ExpectedTokenType(tokenizer, TOKEN_SINGLE_CHAR_ITEM, ";")) return err;
+
+		exports->ExportAll = true;
+	} else {
+		assert(false); // TODO:
+	}
+
+	exports->SetValid(true);
+	return 0;
+}
+int MyParser::ParseSymbolsExported(MyTokenizer* tokenizer, MySymbolsExported* exported) {
+	return 0;
+}
+int MyParser::ParseSymbolList(MyTokenizer* tokenizer, MySymbolList* symbolList) {
+	return 0;
+}
+int MyParser::ParseSymbol(MyTokenizer* tokenizer, MySymbol* symbol) {
+	return 0;
+}
+int MyParser::ParseReference(MyTokenizer* tokenizer, MyReference* reference) {
+	return 0;
+}
+
+int MyParser::ParseAssignList(MyTokenizer* tokenizer, MyAssignmentList* assignList) {
+
+}
+int MyParser::ParseAssignment(MyTokenizer* tokenizer, MyAssignment* assignment) {
+
+}
+
+int MyParser::Peek(MyTokenizer* tokenizer) {
+	int err = tokenizer->Peek();
+	if (err) return LastError(err, tokenizer->LastErrorMessage());
+	return 0;
+}
+int MyParser::Next(MyTokenizer* tokenizer) {
+	int err = tokenizer->Next();
+	if (err) return LastError(err, tokenizer->LastErrorMessage());
+	return 0;
+}
+int MyParser::ExpectedTokenType(MyTokenizer* tokenizer, int tokType, const char* token) {
+	int err = 0;
+	if (err = tokenizer->Next()) return LastError(err, tokenizer->LastErrorMessage());
 	if (tokenizer->TokenType() != tokType) {
 		return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid token"); // TODO: more detail information
 	}
+	if (token && !tokenizer->Token()->Equals(token)) {
+		return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid token"); // TODO: more detail information
+	}
 	return 0;
+}
+int MyParser::ExpectedReservedWord(MyTokenizer* tokenizer, const char* token) {
+	return ExpectedTokenType(tokenizer, TOKEN_RESERVED_WORD, token);
 }
 
 int MyParser::InvalidToken(int expToken, int realToken, const char* defName) {
