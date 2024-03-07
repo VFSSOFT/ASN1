@@ -47,12 +47,6 @@
     <ClCompile Include="..\notations\MyModule.cpp">
       <Filter>Notations</Filter>
     </ClCompile>
-    <ClCompile Include="..\notations\MyRefTypeValueDef.cpp">
-      <Filter>Notations</Filter>
-    </ClCompile>
-    <ClCompile Include="..\notations\MyNotationCommon.cpp">
-      <Filter>Notations</Filter>
-    </ClCompile>
     <ClCompile Include="..\parser\MyTokenizer.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -113,6 +107,60 @@
       <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="..\notations\MyRelativeObjectIDType.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyAssigningTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyBoolTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyIntegerTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyEnumeratedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyRealTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyBitstringTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyOctetstringTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyNullTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySequenceOfTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySequenceTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySetOfTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySetTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyChoiceTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySelectionTypesDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyTaggedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyExternalTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyInformationObjectDef.h">
       <Filter>Notations</Filter>
     </ClInclude>
   </ItemGroup>
