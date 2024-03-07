@@ -18,9 +18,9 @@ OctetStringValue ::=
 */
 class MyOctetStringValue : public NotationBase {
 public:
-	MyStringA BString;
-	MyStringA HString;
-	MyValue   ContainingValue;
+	MyStringA  BString;
+	MyStringA  HString;
+	MyValue*   ContainingValue;
 };
 
 /*

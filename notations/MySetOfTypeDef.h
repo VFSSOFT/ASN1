@@ -13,8 +13,8 @@ SetOfType ::=
 */
 class MySetOfType : public NotationBase {
 public:
-	MyType      Type;
-	MyNamedType NamedType;
+	MyType*      Type;
+	MyNamedType* NamedType;
 };
 
 
@@ -26,8 +26,8 @@ SetOfValue ::=
 */
 class MySetOfValue : public NotationBase {
 public:
-	MyValueList ValueList;
-	MyNamedValueList NamedValueList;
+	MyValueList* ValueList;
+	MyNamedValueList* NamedValueList;
 };
 
 /*

@@ -12,8 +12,8 @@ TypeAssignment ::=
 */
 class MyTypeAssignment: public NotationBase {
 public:
-	MyStringA TypeReference;
-	MyType    Type;
+	MyStringA  TypeReference;
+	MyType*    Type;
 };
 
 /*
@@ -25,9 +25,9 @@ ValueAssignment ::=
 */
 class MyValueAssignment : public NotationBase {
 public:
-	MyStringA ValueReference;
-	MyType    Type;
-	MyValue   Value;
+	MyStringA  ValueReference;
+	MyType*    Type;
+	MyValue*   Value;
 };
 
 
@@ -52,8 +52,8 @@ XMLValueAssignment ::=
 */
 class MyXMLValueAssignment : public NotationBase {
 public:
-	MyStringA       ValueReference;
-	MyXMLTypedValue XMLTypedValue;
+	MyStringA        ValueReference;
+	MyXMLTypedValue* XMLTypedValue;
 };
 
 /*
@@ -72,9 +72,9 @@ ValueSetTypeAssignment ::=
 */
 class MyValueSetTypeAssignment : public NotationBase {
 public:
-	MyStringA   TypeReference;
-	MyType      Type;
-	MyValueSet  ValueSet;
+	MyStringA    TypeReference;
+	MyType*      Type;
+	MyValueSet*  ValueSet;
 
 };
 

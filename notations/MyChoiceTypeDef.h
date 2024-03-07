@@ -13,7 +13,7 @@ AlternativeTypeList ::=
 */
 class MyAlternativeTypeList : public NotationBase{
 public:
-	MyArray<MyNamedType> NamedTypes;
+	MyValArray<MyNamedType*> NamedTypes;
 };
 
 typedef MyAlternativeTypeList MyRootAlternativeTypeList;
@@ -25,8 +25,8 @@ ExtensionAdditionAlternativesGroup ::=
 */
 class MyExtensionAdditionAlternativeGroup : public NotationBase {
 public:
-	MyVersionNumber       VersionNumber;
-	MyAlternativeTypeList AlternativeTypeList;
+	MyVersionNumber*       VersionNumber;
+	MyAlternativeTypeList* AlternativeTypeList;
 };
 
 /*
@@ -36,8 +36,8 @@ ExtensionAdditionAlternative ::=
 */
 class MyExtensionAdditionAlternative : public NotationBase {
 public:
-	MyExtensionAdditionAlternativeGroup ExtensionAdditionAlternativeGroup;
-	MyNamedType                         NamedType;
+	MyExtensionAdditionAlternativeGroup* ExtensionAdditionAlternativeGroup;
+	MyNamedType*                         NamedType;
 };
 
 /*
@@ -47,7 +47,7 @@ ExtensionAdditionAlternativesList ::=
 */
 class MyExtensionAdditionAlternativesList : public NotationBase {
 public:
-	MyArray<MyExtensionAdditionAlternative> ExtensionAdditionAlternatives;
+	MyValArray<MyExtensionAdditionAlternative*> ExtensionAdditionAlternatives;
 };
 
 
@@ -58,7 +58,7 @@ ExtensionAdditionAlternatives ::=
 */
 class MyExtensionAdditionAlternatives : public NotationBase {
 public:
-	MyExtensionAdditionAlternativesList ExtensionAdditionAlternativesList;
+	MyExtensionAdditionAlternativesList* ExtensionAdditionAlternativesList;
 };
 
 /*
@@ -68,8 +68,8 @@ AlternativeTypeLists ::=
 */
 class MyAlternativeTypeLists : public NotationBase {
 public:
-	MyRootAlternativeTypeList RootAlternativeTypeList;
-	MyExtensionAndException   ExtensionAndException;
+	MyRootAlternativeTypeList* RootAlternativeTypeList;
+	MyExtensionAndException*   ExtensionAndException;
 };
 
 /*
@@ -77,7 +77,7 @@ ChoiceType ::= CHOICE "{" AlternativeTypeLists "}"
 */
 class MyChoiceType : public NotationBase {
 public:
-	MyAlternativeTypeLists AlternativeTypeLists;
+	MyAlternativeTypeLists* AlternativeTypeLists;
 };
 
 /*
@@ -85,8 +85,8 @@ ChoiceValue ::= identifier ":" Value
 */
 class MyChoiceValue : public NotationBase {
 public:
-	MyStringA Identifier;
-	MyValue   Value;
+	MyStringA  Identifier;
+	MyValue*   Value;
 };
 
 /*
@@ -94,8 +94,8 @@ XMLChoiceValue ::= "<" & identifier ">" XMLValue "</" & identifier ">"
 */
 class MyXMLChoiceValue : public NotationBase {
 public:
-	MyStringA  Identifier;
-	MyXMLValue Value;
+	MyStringA   Identifier;
+	MyXMLValue* Value;
 };
 
 #endif // _MY_CHOCE_TYPE_DEF_H_

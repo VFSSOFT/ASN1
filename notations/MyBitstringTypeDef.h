@@ -11,10 +11,10 @@ NamedBit ::=
 		| identifier "(" DefinedValue ")"
 */
 class MyNamedBit : public NotationBase {
-public:
-	MyStringA      Identifier;
-	MyStringA      Number;
-	MyDefinedValue DefinedValue;
+public: 
+	MyStringA       Identifier;
+	MyStringA       Number;
+	MyDefinedValue* DefinedValue;
 };
 
 /*
@@ -24,7 +24,7 @@ NamedBitList ::=
 */
 class MyNamedBitList : public NotationBase {
 public:
-	MyArray<MyNamedBit> NamedBits;
+	MyValArray<MyNamedBit*> NamedBits;
 };
 
 /*
@@ -34,7 +34,7 @@ BitStringType ::=
 */
 class MyBitStringType : public NotationBase {
 public:
-	MyNamedBitList NamedBitList;
+	MyNamedBitList* NamedBitList;
 };
 
 class MyIdentifierList : public NotationBase {
@@ -52,10 +52,10 @@ BitStringValue ::=
 */
 class MyBitStringValue : public NotationBase {
 public:
-	MyStringA        BString;
-	MyStringA        HString;
-	MyIdentifierList IdentifierList;
-	MyValue          ContainingValue;
+	MyStringA         BString;
+	MyStringA         HString;
+	MyIdentifierList* IdentifierList;
+	MyValue*          ContainingValue;
 };
 
 
@@ -73,9 +73,9 @@ XMLBitStringValue ::=
 */
 class MyXMLBitStringValue : public NotationBase {
 public:
-	MyStringA           XmlBString;
-	MyXMLIdentifierList XMLIdentifierList;
-	bool                Empty;
+	MyStringA            XmlBString;
+	MyXMLIdentifierList* XMLIdentifierList;
+	bool                 Empty;
 };
 
 

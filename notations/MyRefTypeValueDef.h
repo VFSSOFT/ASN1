@@ -42,9 +42,9 @@ DefinedType ::=
 */
 class MyDefinedType : public NotationBase {
 public:
-	MyExternalTypeReference     ExternalTypeReference;
-	MyParameterizedType         ParameterizedType;
-	MyParameterizedValueSetType ParameterizedValueSetType;
+	MyExternalTypeReference*     ExternalTypeReference;
+	MyParameterizedType*         ParameterizedType;
+	MyParameterizedValueSetType* ParameterizedValueSetType;
 };
 
 
@@ -58,8 +58,8 @@ DefinedValue ::=
 */
 class MyDefinedValue : public NotationBase {
 public:
-	MyExternalValueReference ExternalValueReference;
-	MyParameterizedValue     ParameterizedValue;
+	MyExternalValueReference* ExternalValueReference;
+	MyParameterizedValue*     ParameterizedValue;
 };
 
 

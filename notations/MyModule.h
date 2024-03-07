@@ -2,8 +2,26 @@
 #define _MY_MODULE_H_
 
 #include "MyNotationCommon.h"
+#include "MyAssigningTypeValueDef.h"
 #include "MyRelativeObjectIDType.h"
+#include "MyParameterizaionDef.h"
 
+/*
+Reference ::=
+		typereference
+		| valuereference
+		| objectclassreference
+		| objectreference
+		| objectsetreference
+*/
+class MyReference : public NotationBase {
+public:
+	MyStringA TypeReference;
+	MyStringA ValueReference;
+	MyStringA ObjectClassReference;
+	MyStringA ObjectReference;
+	MyStringA ObjectSetReference;
+};
 
 /*
 DefinitiveNumberForm ::= number
@@ -18,8 +36,8 @@ DefinitiveNameAndNumberForm ::= identifier "(" DefinitiveNumberForm ")"
 */
 class MyDefinitiveNameAndNumberForm : public NotationBase {
 public:
-	MyStringA              Identifier;
-	MyDefinitiveNumberForm NumberForm;
+	MyStringA               Identifier;
+	MyDefinitiveNumberForm* NumberForm;
 };
 
 /*
@@ -30,9 +48,9 @@ DefinitiveObjIdComponent ::=
 */
 class MyDefinitiveObjIdComponent: public NotationBase {
 public:
-	MyNameForm                    NameForm;
-	MyDefinitiveNumberForm        DefinitiveNumberForm;
-	MyDefinitiveNameAndNumberForm DefinitiveNameAndNumberForm;
+	MyNameForm*                    NameForm;
+	MyDefinitiveNumberForm*        DefinitiveNumberForm;
+	MyDefinitiveNameAndNumberForm* DefinitiveNameAndNumberForm;
 };
 
 /*
@@ -42,7 +60,7 @@ DefinitiveObjIdComponentList ::=
 */
 class MyDefinitiveObjIdComponentList: public NotationBase {
 public:
-	MyArray<MyDefinitiveObjIdComponent> DefinitiveObjIdComponents;
+	MyValArray<MyDefinitiveObjIdComponent*> DefinitiveObjIdComponents;
 };
 
 
@@ -53,8 +71,8 @@ DefinitiveIdentifier ::=
 */
 class MyDefinitiveID: public NotationBase {
 public:
-	MyDefinitiveObjIdComponentList DefinitiveObjIdComponentList;
-	bool                           Empty;
+	MyDefinitiveObjIdComponentList* DefinitiveObjIdComponentList;
+	bool                            Empty;
 };
 
 /*
@@ -64,8 +82,8 @@ ModuleIdentifier ::=
 */
 class MyModuleID: public NotationBase {
 public:
-	MyStringA      ModuleReference;
-	MyDefinitiveID DefinitiveID;
+	MyStringA       ModuleReference;
+	MyDefinitiveID* DefinitiveID;
 };
 
 /*
@@ -98,8 +116,8 @@ Symbol ::=
 */
 class MySymbol : public NotationBase {
 public:
-	MyReference              Reference;
-	MyParameterizedReference ParameterizedReference;
+	MyReference*              Reference;
+	MyParameterizedReference* ParameterizedReference;
 };
 
 /*
@@ -109,7 +127,7 @@ SymbolList ::=
 */
 class MySymbolList : public NotationBase {
 public:
-	MyArray<MySymbol> Symbols;
+	MyValArray<MySymbol*> Symbols;
 };
 
 /*
@@ -119,8 +137,8 @@ SymbolsExported ::=
 */
 class MySymbolsExported : public NotationBase {
 public:
-	MySymbolList Symbols;
-	bool         Empty;
+	MySymbolList* Symbols;
+	bool          Empty;
 };
 
 /*
@@ -131,9 +149,9 @@ Exports ::=
 */
 class MyExports : public NotationBase {
 public:
-	MySymbolsExported SymbolsExported;
-	bool              ExportAll;
-	bool              Empty;
+	MySymbolsExported* SymbolsExported;
+	bool               ExportAll;
+	bool               Empty;
 };
 
 /*
@@ -144,8 +162,9 @@ AssignedIdentifier ::=
 */
 class MyAssignedID : public NotationBase {
 public:
-	
-	bool Empty;
+	MyObjectIDValue* ObjectIdentifierValue;
+	MyDefinedValue*  DefinedValue;
+	bool             Empty;
 };
 
 /*
@@ -154,7 +173,7 @@ GlobalModuleReference ::=
 */
 class MyGlobalModuleReference : public NotationBase {
 public:
-	MyAssignedID AssignedID;
+	MyAssignedID* AssignedID;
 };
 
 /*
@@ -163,8 +182,8 @@ SymbolsFromModule ::=
 */
 class MySymbolsFromModule : public NotationBase {
 public:
-	MySymbolList            Symbols;
-	MyGlobalModuleReference GlobalModuleReference;
+	MySymbolList*            Symbols;
+	MyGlobalModuleReference* GlobalModuleReference;
 };
 
 /*
@@ -174,7 +193,7 @@ SymbolsFromModuleList ::=
 */
 class MySymbolsFromModuleList : public NotationBase {
 public:
-	MyArray<MySymbolsFromModule> List;
+	MyValArray<MySymbolsFromModule*> List;
 };
 
 /*
@@ -184,8 +203,8 @@ SymbolsImported ::=
 */
 class MySymbolsImported : public NotationBase {
 public:
-	MySymbolsFromModuleList List;
-	bool                    Empty;
+	MySymbolsFromModuleList* List;
+	bool                     Empty;
 };
 
 /*
@@ -195,8 +214,8 @@ Imports ::=
 */
 class MyImports : public NotationBase {
 public:
-	MySymbolsImported SymbolsImported;
-	bool              Empty;
+	MySymbolsImported* SymbolsImported;
+	bool               Empty;
 };
 
 
@@ -213,7 +232,10 @@ Assignment ::=
 */
 class MyAssignment : public NotationBase {
 public:
-
+	MyTypeAssignment*         TypeAssignment;
+	MyValueAssignment*        ValueAssignment;
+	MyXMLValueAssignment*     XMlValueAssignment;
+	MyValueSetTypeAssignment* ValueSetTypeAssignment;
 };
 
 /*
@@ -223,7 +245,7 @@ AssignmentList ::=
 */
 class MyAssignmentList : public NotationBase {
 public:
-	MyArray<MyAssignment> List;
+	MyValArray<MyAssignment*> List;
 };
 
 /*
@@ -233,10 +255,10 @@ ModuleBody ::=
 */
 class MyModuleBody : public NotationBase {
 public:
-	MyExports        Exports;
-	MyImports        Imports;
-	MyAssignmentList AssignmentList;
-	bool             Empty;
+	MyExports*        Exports;
+	MyImports*        Imports;
+	MyAssignmentList* AssignmentList;
+	bool              Empty;
 };
 
 
@@ -253,10 +275,10 @@ ModuleDefinition ::=
 */
 class MyModuleDef: public NotationBase {
 public:
-	MyModuleID         ModuleId;
-	MyTagDefault       TagDefault;
-	MyExtensionDefault ExtensionDefault;
-	MyModuleBody       Body;
+	MyModuleID*         ModuleId;
+	MyTagDefault*       TagDefault;
+	MyExtensionDefault* ExtensionDefault;
+	MyModuleBody*       Body;
 };
 
 

@@ -44,10 +44,10 @@ ComponentType ::=
 */
 class MyComponentType : public NotationBase {
 public:
-	MyNamedType NamedType;
-	MyNamedType OptionalNamedType;
-	MyValue     DefaultValue;
-	MyType      ComponentsOfType;
+	MyNamedType* NamedType;
+	MyNamedType* OptionalNamedType;
+	MyValue*     DefaultValue;
+	MyType*      ComponentsOfType;
 };
 
 /*
@@ -57,7 +57,7 @@ ComponentTypeList ::=
 */
 class MyComponentTypeList : public NotationBase {
 public:
-	MyArray<MyComponentType> ComponentTypes;
+	MyValArray<MyComponentType*> ComponentTypes;
 };
 
 /*
@@ -70,8 +70,8 @@ ExtensionAdditionGroup ::= "[[" VersionNumber ComponentTypeList "]]"
 */
 class MyExtensionAdditionGroup : public NotationBase {
 public:
-	MyVersionNumber     VersionNumber;
-	MyComponentTypeList ComponentTypeList;
+	MyVersionNumber*     VersionNumber;
+	MyComponentTypeList* ComponentTypeList;
 };
 
 /*
@@ -81,8 +81,8 @@ ExtensionAddition ::=
 */
 class MyExtensionAddition : public NotationBase {
 public:
-	MyComponentType          ComponentType;
-	MyExtensionAdditionGroup ExtensionAdditionGroup;
+	MyComponentType*          ComponentType;
+	MyExtensionAdditionGroup* ExtensionAdditionGroup;
 };
 
 /*
@@ -92,7 +92,7 @@ ExtensionAdditionList ::=
 */
 class MyExtensionAdditionList : public NotationBase {
 public:
-	MyArray<MyExtensionAddition> ExtensionAdditions;
+	MyValArray<MyExtensionAddition*> ExtensionAdditions;
 };
 
 /*
@@ -102,8 +102,8 @@ ExtensionAdditions ::=
 */
 class MyExtensionAdditions : public NotationBase {
 public:
-	MyExtensionAdditionList ExtensionAdditionList;
-	bool                    Empty;
+	MyExtensionAdditionList* ExtensionAdditionList;
+	bool                     Empty;
 };
 
 
@@ -117,10 +117,10 @@ ComponentTypeLists ::=
 */
 class MyComponentTypeLists : public NotationBase {
 public:
-	MyRootComponentTypeList RootComponentTypeList;
-	MyExtensionAndException ExtensionAndException;
-	MyExtensionAdditions    ExtensionAdditions;
-	MyRootComponentTypeList RootComponentTypeList2;
+	MyRootComponentTypeList* RootComponentTypeList;
+	MyExtensionAndException* ExtensionAndException;
+	MyExtensionAdditions*    ExtensionAdditions;
+	MyRootComponentTypeList* RootComponentTypeList2;
 };
 
 /*
@@ -131,8 +131,8 @@ SequenceType ::=
 */
 class MySequenceType : public NotationBase {
 public:
-	MyExtensionAndException ExtensionAndException;
-	MyComponentTypeLists    ComponentTypeLists;
+	MyExtensionAndException* ExtensionAndException;
+	MyComponentTypeLists*    ComponentTypeLists;
 };
 
 
@@ -143,7 +143,7 @@ ComponentValueList ::=
 */
 class MyComponentValueList : public NotationBase {
 public:
-	MyArray<MyNamedValue> NamedValues;
+	MyValArray<MyNamedValue*> NamedValues;
 };
 
 /*
@@ -153,7 +153,7 @@ SequenceValue ::=
 */
 class MySequenceValue : public NotationBase {
 public:
-	MyComponentValueList ComponentValueList;
+	MyComponentValueList* ComponentValueList;
 };
 
 /*
@@ -163,7 +163,7 @@ XMLComponentValueList ::=
 */
 class MyXMLComponentValueList : public NotationBase {
 public:
-	MyArray<MyXMLNamedValue> NamedValues;
+	MyValArray<MyXMLNamedValue*> NamedValues;
 };
 
 /*
@@ -173,7 +173,7 @@ XMLSequenceValue ::=
 */
 class MyXMLSequenceValue : public NotationBase {
 public:
-	MyXMLComponentValueList XMLComponentValueList;
+	MyXMLComponentValueList* XMLComponentValueList;
 };
 
 

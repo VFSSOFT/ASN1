@@ -2,9 +2,18 @@
 #define _MY_PARAMETRIZATION_DEF_H_
 
 #include "MyNotationCommon.h"
-#include "MyTypeValueDef.h"
-#include "MyInformationObjectDef.h"
 
+class MyReference;
+class MyExternalTypeReference;
+class MyExternalValueReference;
+class MyDefinedObjectClass;
+class MyObject;
+class MyObjectSet;
+class MyDefinedObjectSet;
+class MyObjectClass;
+class MyType;
+class MyValue;
+class MyValueSet;
 
 /*
 DummyReference ::= Reference
@@ -21,8 +30,8 @@ Governor ::= Type | DefinedObjectClass
 */
 class MyGovernor : public NotationBase {
 public:
-	MyType               Type;
-	MyDefinedObjectClass DefinedObjectClass;
+	MyType*               Type;
+	MyDefinedObjectClass* DefinedObjectClass;
 };
 
 /*
@@ -30,8 +39,8 @@ ParamGovernor ::= Governor | DummyGovernor
 */
 class MyParamGovernor : public NotationBase {
 public:
-	MyGovernor      Governor;
-	MyDummyGovernor DummyGovernor;
+	MyGovernor*      Governor;
+	MyDummyGovernor* DummyGovernor;
 };
 
 /*
@@ -39,8 +48,8 @@ Parameter ::= ParamGovernor ":" DummyReference | DummyReference
 */
 class MyParameter : public NotationBase {
 public:
-	MyParamGovernor ParamGovernor;
-	MyDummyReference DummyReference;
+	MyParamGovernor* ParamGovernor;
+	MyDummyReference* DummyReference;
 };
 
 
@@ -49,7 +58,7 @@ ParameterList ::= "{" Parameter "," + "}"
 */
 class MyParameterList : public NotationBase {
 public:
-	MyArray<MyParameter> Parameters;
+	MyValArray<MyParameter*> Parameters;
 };
 
 /*
@@ -61,9 +70,9 @@ ParameterizedTypeAssignment ::=
 */
 class MyParameterizedTypeAssignment : public NotationBase {
 public:
-	MyStringA       TypeReference;
-	MyParameterList ParameterList;
-	MyType          Type;
+	MyStringA        TypeReference;
+	MyParameterList* ParameterList;
+	MyType*          Type;
 };
 
 /*
@@ -76,10 +85,10 @@ ParameterizedValueAssignment ::=
 */
 class MyParameterizedValueAssignment : public NotationBase {
 public:
-	MyStringA       ValueReference;
-	MyParameterList ParameterList;
-	MyType          Type;
-	MyValue         Value;
+	MyStringA        ValueReference;
+	MyParameterList* ParameterList;
+	MyType*          Type;
+	MyValue*         Value;
 };
 
 /*
@@ -92,10 +101,10 @@ ParameterizedValueSetTypeAssignment ::=
 */
 class MyParameterizedValueSetTypeAssignment : public NotationBase {
 public:
-	MyStringA       TypeReference;
-	MyParameterList ParameterList;
-	MyType          Type;
-	MyValueSet      ValueSet;
+	MyStringA        TypeReference;
+	MyParameterList* ParameterList;
+	MyType*          Type;
+	MyValueSet*      ValueSet;
 };
 
 /*
@@ -107,9 +116,9 @@ ParameterizedObjectClassAssignment ::=
 */
 class MyParameterizedObjectClassAssignment : public NotationBase {
 public:
-	MyStringA       ObjectClassReference;
-	MyParameterList ParameterList;
-	MyObjectClass   ObjectClass;
+	MyStringA        ObjectClassReference;
+	MyParameterList* ParameterList;
+	MyObjectClass*   ObjectClass;
 };
 
 /*
@@ -122,10 +131,10 @@ ParameterizedObjectAssignment ::=
 */
 class MyParameterizedObjectAssignment : public NotationBase {
 public:
-	MyStringA            ObjectReference;
-	MyParameterList      ParameterList;
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObject             Object;
+	MyStringA             ObjectReference;
+	MyParameterList*      ParameterList;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObject*             Object;
 };
 
 /*
@@ -138,10 +147,10 @@ ParameterizedObjectSetAssignment ::=
 */
 class MyParameterizedObjectSetAssignment : public NotationBase {
 public:
-	MyStringA            ObjectSetReference;
-	MyParameterList      ParameterList;
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObjectSet          ObjectSet;
+	MyStringA             ObjectSetReference;
+	MyParameterList*      ParameterList;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObjectSet*          ObjectSet;
 };
 
 
@@ -157,12 +166,12 @@ ParameterizedAssignment ::=
 */
 class MyParameterizedAssignment : public NotationBase {
 public:
-	MyParameterizedTypeAssignment         ParameterizedTypeAssignment;
-	MyParameterizedValueAssignment        ParameterizedValueAssignment;
-	MyParameterizedValueSetTypeAssignment ParameterizedValueSetTypeAssignment;
-	MyParameterizedObjectClassAssignment  ParameterizedObjectClassAssignment;
-	MyParameterizedObjectAssignment       ParameterizedObjectAssignment;
-	MyParameterizedObjectSetAssignment    ParameterizedObjectSetAssignment;
+	MyParameterizedTypeAssignment*         ParameterizedTypeAssignment;
+	MyParameterizedValueAssignment*        ParameterizedValueAssignment;
+	MyParameterizedValueSetTypeAssignment* ParameterizedValueSetTypeAssignment;
+	MyParameterizedObjectClassAssignment*  ParameterizedObjectClassAssignment;
+	MyParameterizedObjectAssignment*       ParameterizedObjectAssignment;
+	MyParameterizedObjectSetAssignment*    ParameterizedObjectSetAssignment;
 };
 
 
@@ -171,7 +180,7 @@ ParameterizedReference ::= Reference | Reference "{" "}"
 */
 class MyParameterizedReference : public NotationBase {
 public:
-	MyReference Reference;
+	MyReference* Reference;
 };
 
 
@@ -182,8 +191,8 @@ SimpleDefinedType ::=
 */
 class MySimpleDefinedType : public NotationBase {
 public:
-	MyExternalTypeReference ExternalTypeReference;
-	MyStringA               TypeReference;
+	MyExternalTypeReference* ExternalTypeReference;
+	MyStringA                TypeReference;
 };
 
 
@@ -198,12 +207,12 @@ ActualParameter ::=
 */
 class MyActualParameter : public NotationBase {
 public:
-	MyType               Type;
-	MyValue              Value;
-	MyValueSet           ValueSet;
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObject             Object;
-	MyObjectSet          ObjectSet;
+	MyType*               Type;
+	MyValue*              Value;
+	MyValueSet*           ValueSet;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObject*             Object;
+	MyObjectSet*          ObjectSet;
 };
 
 /*
@@ -212,7 +221,7 @@ ActualParameterList ::=
 */
 class MyActualParameterList : public NotationBase {
 public:
-	MyArray<MyActualParameter> ActualParameters;
+	MyValArray<MyActualParameter*> ActualParameters;
 };
 
 
@@ -223,8 +232,8 @@ ParameterizedType ::=
 */
 class MyParameterizedType : public NotationBase {
 public:
-	MySimpleDefinedType   SimpleDefinedType;
-	MyActualParameterList ActualParameterList;
+	MySimpleDefinedType*   SimpleDefinedType;
+	MyActualParameterList* ActualParameterList;
 };
 
 
@@ -235,8 +244,8 @@ ParameterizedValueSetType ::=
 */
 class MyParameterizedValueSetType : public NotationBase {
 public:
-	MySimpleDefinedType   SimpleDefinedType;
-	MyActualParameterList ActualParameterList;
+	MySimpleDefinedType*   SimpleDefinedType;
+	MyActualParameterList* ActualParameterList;
 };
 
 
@@ -247,7 +256,7 @@ SimpleDefinedValue ::=
 */
 class MySimpleDefinedValue : public NotationBase {
 public:
-	MyExternalValueReference ExternalValueReference;
+	MyExternalValueReference* ExternalValueReference;
 };
 
 
@@ -258,8 +267,8 @@ ParameterizedObjectClass ::=
 */
 class MyParameterizedObjectClass : public NotationBase {
 public:
-	MyDefinedObjectClass  DefinedObjectClass;
-	MyActualParameterList ActualParameterList;
+	MyDefinedObjectClass*  DefinedObjectClass;
+	MyActualParameterList* ActualParameterList;
 };
 
 /*
@@ -269,8 +278,8 @@ ParameterizedObjectSet ::=
 */
 class MyParameterizedObjectSet : public NotationBase {
 public:
-	MyDefinedObjectSet    DefinedObjectSet;
-	MyActualParameterList ActualParameterList;
+	MyDefinedObjectSet*    DefinedObjectSet;
+	MyActualParameterList* ActualParameterList;
 };
 
 /*
@@ -280,8 +289,8 @@ ParameterizedValue ::=
 */
 class MyParameterizedValue : public NotationBase {
 public:
-	MySimpleDefinedValue  SimpleDefinedValue;
-	MyActualParameterList ActualParameterList;
+	MySimpleDefinedValue*  SimpleDefinedValue;
+	MyActualParameterList* ActualParameterList;
 };
 
 

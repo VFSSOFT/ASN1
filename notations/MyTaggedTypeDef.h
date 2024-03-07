@@ -12,8 +12,8 @@ ClassNumber ::=
 */
 class MyClassNumber : public NotationBase {
 public: 
-	MyStringA      Number;
-	MyDefinedValue DefinedValue;
+	MyStringA       Number;
+	MyDefinedValue* DefinedValue;
 };
 
 /*
@@ -33,8 +33,8 @@ Tag ::= "[" Class ClassNumber "]"
 */
 class MyTag : public NotationBase {
 public:
-	MyClass       Class;
-	MyClassNumber ClassNumber;
+	MyClass*       Class;
+	MyClassNumber* ClassNumber;
 };
 
 /*
@@ -45,8 +45,8 @@ TaggedType ::=
 */
 class MyTaggedType : public NotationBase {
 public:
-	MyTag     Tag;
-	MyType    Type;
+	MyTag*     Tag;
+	MyType*    Type;
 	MyStringA ImplicitOrExplicit;
 };
 

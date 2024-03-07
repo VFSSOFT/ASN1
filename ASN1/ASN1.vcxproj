@@ -139,7 +139,6 @@
     <ClCompile Include="..\..\common\MyStringW.cpp" />
     <ClCompile Include="..\..\common\MyUtils.cpp" />
     <ClCompile Include="..\..\common\MyWin.cpp" />
-    <ClCompile Include="..\notations\MyModule.cpp" />
     <ClCompile Include="..\parser\MyParser.cpp" />
     <ClCompile Include="..\parser\MyTokenizer.cpp" />
   </ItemGroup>
@@ -168,6 +167,7 @@
     <ClInclude Include="..\notations\MyNotationCommon.h" />
     <ClInclude Include="..\notations\MyNullTypeDef.h" />
     <ClInclude Include="..\notations\MyOctetstringTypeDef.h" />
+    <ClInclude Include="..\notations\MyParameterizaionDef.h" />
     <ClInclude Include="..\notations\MyRealTypeDef.h" />
     <ClInclude Include="..\notations\MyRefTypeValueDef.h" />
     <ClInclude Include="..\notations\MyRelativeObjectIDType.h" />

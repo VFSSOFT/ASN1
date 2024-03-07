@@ -44,7 +44,7 @@ ReferencedType ::=
 */
 class MyReferencedType : public NotationBase {
 public:
-	MyDefinedType DefinedType;
+	MyDefinedType* DefinedType;
 };
 
 /*
@@ -52,7 +52,7 @@ public:
 */
 class MyType : public NotationBase {
 public:
-	MyBuiltinType BuiltinType;
+	MyBuiltinType* BuiltinType;
 };
 
 /*
@@ -60,8 +60,8 @@ NamedType ::= identifier Type
 */
 class MyNamedType : public NotationBase {
 public:
-	MyStringA Identifier;
-	MyType    Type;
+	MyStringA  Identifier;
+	MyType*    Type;
 };
 
 /*
@@ -123,7 +123,7 @@ ReferencedValue ::=
 */
 class MyReferencedValue : public NotationBase {
 public:
-	MyDefinedValue DefinedValue;
+	MyDefinedValue* DefinedValue;
 };
 
 /*
@@ -144,7 +144,7 @@ Value ::=
 */
 class MyValue : public NotationBase {
 public:
-	MyBuiltinValue BuiltinValue;
+	MyBuiltinValue* BuiltinValue;
 };
 
 /*
@@ -152,8 +152,8 @@ NamedValue ::= identifier Value
 */
 class MyNamedValue : public NotationBase {
 public:
-	MyStringA Identifier;
-	MyValue   Value;
+	MyStringA  Identifier;
+	MyValue*   Value;
 };
 
 /*

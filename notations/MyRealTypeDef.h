@@ -37,8 +37,8 @@ RealValue ::=
 */
 class MyRealValue : public NotationBase {
 public:
-	MyNumericRealValue NumericValue;
-	MySpecialRealValue SpecialValue;
+	MyNumericRealValue* NumericValue;
+	MySpecialRealValue* SpecialValue;
 };
 
 /*
@@ -67,8 +67,8 @@ XMLRealValue ::=
 */
 class MyXMLRealValue : public NotationBase {
 public:
-	MyXMLNumericRealValue NumericRealValue;
-	MyXMLSpecialRealValue SpecialRealValue;
+	MyXMLNumericRealValue* NumericRealValue;
+	MyXMLSpecialRealValue* SpecialRealValue;
 };
 
 

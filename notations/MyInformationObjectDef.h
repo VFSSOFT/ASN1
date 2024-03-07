@@ -2,8 +2,14 @@
 #define _MY_INFORMATION_OBJECT_DEF_H_
 
 #include "MyNotationCommon.h"
-#include "MyTypeValueDef.h"
-#include "MyAssigningTypeValueDef.h"
+
+class MyPrimitiveFieldName;
+class MyType;
+class MyValue;
+class MyValueSet;
+class MyObject;
+class MyBuiltinValue;
+class MyReferencedValue;
 
 /*
 ExternalObjectClassReference ::=
@@ -67,8 +73,8 @@ RequiredToken ::=
 */
 class MyRequiredToken : public NotationBase {
 public:
-	MyLiteral            Literal;
-	MyPrimitiveFieldName PrimitiveFieldName;
+	MyLiteral*            Literal;
+	MyPrimitiveFieldName* PrimitiveFieldName;
 };
 
 
@@ -92,7 +98,7 @@ SyntaxList ::= "{" TokenOrGroupSpec empty + "}
 */
 class MySyntaxList : public NotationBase {
 public:
-	MyTokenOrGroupSpec TokenOrGroupSpec;
+	MyTokenOrGroupSpec* TokenOrGroupSpec;
 };
 
 
@@ -104,7 +110,7 @@ DefinedObjectClass ::=
 */
 class MyDefinedObjectClass : public NotationBase {
 public:
-	MyExternalObjectClassReference ExternalObjectClassReference;
+	MyExternalObjectClassReference* ExternalObjectClassReference;
 	MyStringA                      ObjectClassReference;
 };
 
@@ -132,9 +138,9 @@ TypeOptionalitySpec ::= OPTIONAL | DEFAULT Type
 */
 class TypeOptionalitySpec : public NotationBase {
 public:
-	bool   Optional;
-	bool   Default;
-	MyType Type;
+	bool    Optional;
+	bool    Default;
+	MyType* Type;
 };
 
 /*
@@ -144,8 +150,8 @@ TypeFieldSpec ::=
 */
 class MyTypeFieldSpec : public NotationBase {
 public:
-	MyStringA           TypeFieldReference;
-	TypeOptionalitySpec TypeOptionalitySpec;
+	MyStringA            TypeFieldReference;
+	TypeOptionalitySpec* TypeOptionalitySpec;
 };
 
 /*
@@ -153,9 +159,9 @@ ValueOptionalitySpec ::= OPTIONAL | DEFAULT Value
 */
 class MyValueOptionalitySpec : public NotationBase {
 public:
-	bool    Optional;
-	bool    Default;
-	MyValue Value;
+	bool     Optional;
+	bool     Default;
+	MyValue* Value;
 };
 
 /*
@@ -167,10 +173,10 @@ FixedTypeValueFieldSpec ::=
 */
 class MyFixedTypeValueFieldSpec : public NotationBase {
 public:
-	MyStringA              ValueFieldReference;
-	MyType                 Type;
-	bool                   Unique;
-	MyValueOptionalitySpec ValueOptionalitySpec;
+	MyStringA               ValueFieldReference;
+	MyType*                 Type;
+	bool                    Unique;
+	MyValueOptionalitySpec* ValueOptionalitySpec;
 };
 
 /*
@@ -191,7 +197,7 @@ FieldName ::= PrimitiveFieldName "." +
 */
 class MyFieldName : public NotationBase {
 public:
-	MyPrimitiveFieldName PrimitiveFieldName;
+	MyPrimitiveFieldName* PrimitiveFieldName;
 };
 
 /*
@@ -202,9 +208,9 @@ VariableTypeValueFieldSpec ::=
 */
 class MyVariableTypeValueFieldSpec : public NotationBase {
 public:
-	MyStringA              ValueFieldReference;
-	MyFieldName            FieldName;
-	MyValueOptionalitySpec ValueOptionalitySpec;
+	MyStringA               ValueFieldReference;
+	MyFieldName*            FieldName;
+	MyValueOptionalitySpec* ValueOptionalitySpec;
 };
 
 
@@ -213,9 +219,9 @@ ValueSetOptionalitySpec ::= OPTIONAL | DEFAULT ValueSet
 */
 class MyValueSetOptionalitySpec : public NotationBase {
 public:
-	bool       Optional;
-	bool       Default;
-	MyValueSet ValueSet;
+	bool        Optional;
+	bool        Default;
+	MyValueSet* ValueSet;
 };
 
 /*
@@ -226,9 +232,9 @@ FixedTypeValueSetFieldSpec ::=
 */
 class MyFixedTypeValueSetFieldSpec : public NotationBase {
 public:
-	MyStringA                 ValueSetFieldReference;
-	MyType                    Type;
-	MyValueSetOptionalitySpec ValueSetOptionalitySpec;
+	MyStringA                  ValueSetFieldReference;
+	MyType*                    Type;
+	MyValueSetOptionalitySpec* ValueSetOptionalitySpec;
 };
 
 /*
@@ -239,9 +245,9 @@ VariableTypeValueSetFieldSpec ::=
 */
 class MyVariableTypeValueSetFieldSpec : public NotationBase {
 public:
-	MyStringA                 ValueSetFieldReference;
-	MyFieldName               FieldName;
-	MyValueSetOptionalitySpec ValueSetOptionalitySpec;
+	MyStringA                  ValueSetFieldReference;
+	MyFieldName*               FieldName;
+	MyValueSetOptionalitySpec* ValueSetOptionalitySpec;
 };
 
 /*
@@ -263,8 +269,8 @@ ObjectFieldSpec ::=
 */
 class MyObjectFieldSpec : public NotationBase {
 public:
-	MyStringA               ObjectFieldReference;
-	MyObjectOptionalitySpec ObjectOptionalitySpec;
+	MyStringA                ObjectFieldReference;
+	MyObjectOptionalitySpec* ObjectOptionalitySpec;
 };
 
 /*
@@ -298,13 +304,13 @@ FieldSpec ::=
 */
 class MyFieldSpec : public NotationBase {
 public:
-	MyTypeFieldSpec                 TypeFieldSpec;
-	MyFixedTypeValueFieldSpec       FixedTypeValueFieldSpec;
-	MyVariableTypeValueFieldSpec    VariableTypeValueFieldSpec;
-	MyFixedTypeValueSetFieldSpec    FixedTypeValueSetFieldSpec;
-	MyVariableTypeValueSetFieldSpec VariableTypeValueSetFieldSpec;
-	MyObjectFieldSpec               ObjectFieldSpec;
-	MyObjectSetFieldSpec            ObjectSetFieldSpec;
+	MyTypeFieldSpec*                 TypeFieldSpec;
+	MyFixedTypeValueFieldSpec*       FixedTypeValueFieldSpec;
+	MyVariableTypeValueFieldSpec*    VariableTypeValueFieldSpec;
+	MyFixedTypeValueSetFieldSpec*    FixedTypeValueSetFieldSpec;
+	MyVariableTypeValueSetFieldSpec* VariableTypeValueSetFieldSpec;
+	MyObjectFieldSpec*               ObjectFieldSpec;
+	MyObjectSetFieldSpec*            ObjectSetFieldSpec;
 };
 
 /*
@@ -322,8 +328,8 @@ ObjectClassDefn ::=
 */
 class MyObjectClassDefn : public NotationBase {
 public:
-	MyFieldSpec      FieldSpec;
-	MyWithSyntaxSpec WithSyntaxSpec;
+	MyFieldSpec*      FieldSpec;
+	MyWithSyntaxSpec* WithSyntaxSpec;
 };
 
 /*
@@ -334,8 +340,8 @@ ObjectClass ::=
 */
 class MyObjectClass : public NotationBase {
 public:
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObjectClassDefn    ObjectClassDefn;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObjectClassDefn*    ObjectClassDefn;
 	//MyParameterizedObject
 };
 
@@ -347,8 +353,8 @@ ObjectClassAssignment ::=
 */
 class MyObjectClassAssignment : public NotationBase {
 public:
-	MyStringA     ObjectClassReference;
-	MyObjectClass ObjectClass;
+	MyStringA      ObjectClassReference;
+	MyObjectClass* ObjectClass;
 };
 
 
@@ -362,10 +368,10 @@ Setting ::=
 */
 class MySetting : public NotationBase {
 public:
-	MyType     Type;
-	MyValue    Value;
-	MyValueSet ValueSet;
-	MyObject   Object;
+	MyType*     Type;
+	MyValue*    Value;
+	MyValueSet* ValueSet;
+	MyObject*   Object;
 	//MyObjectSet
 };
 
@@ -375,8 +381,8 @@ FieldSetting ::= PrimitiveFieldName Setting
 */
 class MyFieldSetting : public NotationBase {
 public:
-	MyPrimitiveFieldName PrimitiveFieldName;
-	MySetting            Setting;
+	MyPrimitiveFieldName* PrimitiveFieldName;
+	MySetting*            Setting;
 };
 
 /*
@@ -384,7 +390,7 @@ DefaultSyntax ::= "{" FieldSetting "," * "}"
 */
 class MyDefaultSyntax : public NotationBase {
 public:
-	MyFieldSetting FieldSetting;
+	MyFieldSetting* FieldSetting;
 };
 
 
@@ -395,8 +401,8 @@ DefinedSyntaxToken ::=
 */
 class MyDefinedSyntaxToken : public NotationBase {
 public:
-	MyLiteral Literal;
-	MySetting Setting;
+	MyLiteral* Literal;
+	MySetting* Setting;
 };
 
 /*
@@ -404,7 +410,7 @@ DefinedSyntax ::= "{" DefinedSyntaxToken empty * "}"
 */
 class MyDefinedSyntax : public NotationBase {
 public:
-	MyDefinedSyntaxToken DefinedSyntaxToken;
+	MyDefinedSyntaxToken* DefinedSyntaxToken;
 };
 
 /*
@@ -414,8 +420,8 @@ ObjectDefn ::=
 */
 class MyObjectDefn : public NotationBase {
 public:
-	MyDefaultSyntax DefaultSyntax;
-	MyDefinedSyntax DefinedSyntax;
+	MyDefaultSyntax* DefaultSyntax;
+	MyDefinedSyntax* DefinedSyntax;
 };
 
 /*
@@ -427,8 +433,8 @@ Object ::=
 */
 class MyObject : public NotationBase {
 public:
-	MyDefinedObject DefinedObject;
-	MyObjectDefn    ObjectDefn;
+	MyDefinedObject* DefinedObject;
+	MyObjectDefn*    ObjectDefn;
 };
 
 /*
@@ -440,9 +446,9 @@ ObjectAssignment ::=
 */
 class MyObjectAssignment : public NotationBase {
 public:
-	MyStringA            ObjectReference;
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObject             Object;
+	MyStringA             ObjectReference;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObject*             Object;
 };
 
 
@@ -455,8 +461,8 @@ ObjectSetElements ::=
 */
 class MyObjectSetElements : public NotationBase {
 public:
-	MyObject          Object;
-	MyDefinedObjectSet DefinedObjectSet;
+	MyObject*          Object;
+	MyDefinedObjectSet* DefinedObjectSet;
 	//
 };
 
@@ -478,7 +484,7 @@ ObjectSet ::= "{" ObjectSetSpec "}"
 */
 class MyObjectSet : public NotationBase {
 public:
-	MyObjectSetSpec ObjectSetSpec;
+	MyObjectSetSpec* ObjectSetSpec;
 };
 
 /*
@@ -490,9 +496,9 @@ ObjectSetAssignment ::=
 */
 class MyObjectSetAssignment : public NotationBase {
 public:
-	MyStringA            ObjectSetReference;
-	MyDefinedObjectClass DefinedObjectClass;
-	MyObjectSet          ObjectSet;
+	MyStringA             ObjectSetReference;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyObjectSet*          ObjectSet;
 };
 
 
@@ -504,8 +510,8 @@ ObjectClassFieldType ::=
 */
 class MyObjectClassFieldType : public NotationBase {
 public:
-	MyDefinedObjectClass DefinedObjectClass;
-	MyFieldName          FieldName;
+	MyDefinedObjectClass* DefinedObjectClass;
+	MyFieldName*          FieldName;
 };
 
 
@@ -514,8 +520,8 @@ OpenTypeFieldVal ::= Type ":" Value
 */
 class MyOpenTypeFieldVal : public NotationBase {
 public:
-	MyType   Type;
-	MyValue  Value;
+	MyType*   Type;
+	MyValue*  Value;
 };
 
 /*
@@ -523,8 +529,8 @@ FixedTypeFieldVal ::= BuiltinValue | ReferencedValue
 */
 class MyFixedTypeFieldVal : public NotationBase {
 public:
-	MyBuiltinValue    BuiltinValue;
-	MyReferencedValue ReferencedValue;
+	MyBuiltinValue*    BuiltinValue;
+	MyReferencedValue* ReferencedValue;
 };
 
 
@@ -535,8 +541,8 @@ ObjectClassFieldValue ::=
 */
 class MyObjectClassFieldValue : public NotationBase {
 public:
-	MyOpenTypeFieldVal  OpenTypeFieldVal;
-	MyFixedTypeFieldVal FixedTypeFieldVal;
+	MyOpenTypeFieldVal*  OpenTypeFieldVal;
+	MyFixedTypeFieldVal* FixedTypeFieldVal;
 };
 
 /*
@@ -548,9 +554,9 @@ ReferencedObjects ::=
 */
 class MyReferencedObjects : public NotationBase {
 public:
-	MyDefinedObject DefinedObject;
+	MyDefinedObject*    DefinedObject;
 	//
-	MyDefinedObjectSet DefinedObjectSet;
+	MyDefinedObjectSet* DefinedObjectSet;
 	//
 };
 
@@ -562,8 +568,8 @@ ObjectSetFromObjects ::=
 */
 class MyObjectSetFromObjects : public NotationBase {
 public:
-	MyReferencedObjects ReferencedObjects;
-	MyFieldName         FieldName;
+	MyReferencedObjects* ReferencedObjects;
+	MyFieldName*         FieldName;
 };
 
 /*
@@ -574,8 +580,8 @@ ObjectFromObject ::=
 */
 class MyObjectFromObject : public NotationBase {
 public:
-	MyReferencedObjects ReferencedObjects;
-	MyFieldName         FieldName;
+	MyReferencedObjects* ReferencedObjects;
+	MyFieldName*         FieldName;
 };
 
 
@@ -587,8 +593,8 @@ TypeFromObject ::=
 */
 class MyTypeFromObject : public NotationBase {
 public:
-	MyReferencedObjects ReferencedObjects;
-	MyFieldName         FieldName;
+	MyReferencedObjects* ReferencedObjects;
+	MyFieldName*         FieldName;
 };
 
 /*
@@ -599,8 +605,8 @@ ValueSetFromObjects ::=
 */
 class MyValueSetFromObjects : public NotationBase {
 public:
-	MyReferencedObjects ReferencedObjects;
-	MyFieldName         FieldName;
+	MyReferencedObjects* ReferencedObjects;
+	MyFieldName*         FieldName;
 };
 
 /*
@@ -611,8 +617,8 @@ ValueFromObject ::=
 */
 class MyValueFromObject : public NotationBase {
 public:
-	MyReferencedObjects ReferencedObjects;
-	MyFieldName         FieldName;
+	MyReferencedObjects* ReferencedObjects;
+	MyFieldName*         FieldName;
 };
 
 /*
@@ -625,11 +631,11 @@ InformationFromObjects ::=
 */
 class MyInformationFromObjects : public NotationBase {
 public:
-	MyValueFromObject      ValueFromObject;
-	MyValueSetFromObjects  ValueSetFromObjects;
-	MyTypeFromObject       TypeFromObject;
-	MyObjectFromObject     ObjectFromObject;
-	MyObjectSetFromObjects ObjectSetFromObjects;
+	MyValueFromObject*      ValueFromObject;
+	MyValueSetFromObjects*  ValueSetFromObjects;
+	MyTypeFromObject*       TypeFromObject;
+	MyObjectFromObject*     ObjectFromObject;
+	MyObjectSetFromObjects* ObjectSetFromObjects;
 };
 
 #endif // _MY_INFORMATION_OBJECT_DEF_H_

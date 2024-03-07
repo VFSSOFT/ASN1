@@ -3,6 +3,7 @@
 
 #include "../../common/MyStringA.h"
 #include "../../common/MyArray.h"
+#include "../../common/MyValArray.h"
 #include "../../common/MyBuffer.h"
 
 class NotationBase {
@@ -14,24 +15,6 @@ public:
 
 protected:
 	bool m_IsValid;
-};
-
-
-/*
-Reference ::=
-		typereference
-		| valuereference
-		| objectclassreference
-		| objectreference
-		| objectsetreference
-*/
-class MyReference : public NotationBase {
-public:
-	MyStringA TypeReference;
-	MyStringA ValueReference;
-	MyStringA ObjectClassReference;
-	MyStringA ObjectReference;
-	MyStringA ObjectSetReference;
 };
 
 

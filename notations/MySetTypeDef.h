@@ -12,8 +12,8 @@ SetType ::=
 */
 class MySetType : public NotationBase {
 public:
-	MyExtensionAndException ExtensionAndException;
-	MyComponentTypeLists    ComponentTypeLists;
+	MyExtensionAndException* ExtensionAndException;
+	MyComponentTypeLists*    ComponentTypeLists;
 };
 
 /*
@@ -23,7 +23,7 @@ SetValue ::=
 */
 class MySetValue : public NotationBase {
 public:
-	MyComponentValueList ComponentValueList;
+	MyComponentValueList* ComponentValueList;
 };
 
 
@@ -34,8 +34,8 @@ XMLSetValue ::=
 */
 class MyXMLSetValue :public NotationBase {
 public:
-	MyXMLComponentValueList XMLComponentValueList;
-	bool                    Empty;
+	MyXMLComponentValueList* XMLComponentValueList;
+	bool                     Empty;
 };
 
 

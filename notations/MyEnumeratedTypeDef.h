@@ -9,8 +9,8 @@ EnumerationItem ::= identifier | NamedNumber
 */
 class MyEnumerationItem : public NotationBase {
 public:
-	MyStringA     Identifier;
-	MyNamedNumber NamedNumber;
+	MyStringA      Identifier;
+	MyNamedNumber* NamedNumber;
 };
 
 /*
@@ -18,7 +18,7 @@ Enumeration ::= EnumerationItem | EnumerationItem "," Enumeration
 */
 class MyEnumeration : public NotationBase {
 public:
-	MyArray<MyEnumerationItem> EnumerationItems;
+	MyValArray<MyEnumerationItem*> EnumerationItems;
 };
 
 /*
@@ -39,8 +39,8 @@ Enumerations ::=
 */
 class MyEnumerations : public NotationBase {
 public:
-	MyRootEnumeration       RootEnumeration;
-	MyAdditionalEnumeration AdditionalEnumeration;
+	MyRootEnumeration*       RootEnumeration;
+	MyAdditionalEnumeration* AdditionalEnumeration;
 };
 
 /*
@@ -49,7 +49,7 @@ EnumeratedType ::=
 */
 class MyEnumeratedType : public NotationBase {
 public:
-	MyEnumerations Enumerations;
+	MyEnumerations* Enumerations;
 };
 
 /*

@@ -19,8 +19,8 @@ NumberForm ::= number | DefinedValue
 */
 class MyNumberForm : public NotationBase {
 public:
-	MyStringA      Number;
-	MyDefinedValue DefinedValue;
+	MyStringA       Number;
+	MyDefinedValue* DefinedValue;
 };
 
 /*
@@ -29,8 +29,8 @@ NameAndNumberForm ::=
 */
 class MyNameAndNumberForm : public NotationBase {
 public:
-	MyStringA    Identifier;
-	MyNumberForm NumberForm;
+	MyStringA     Identifier;
+	MyNumberForm* NumberForm;
 };
 
 /*
@@ -39,8 +39,8 @@ XMLNameAndNumberForm ::=
 */
 class MyXMLNameAndNumberForm : public NotationBase {
 public:
-	MyStringA       Identifier;
-	MyXMLNumberForm XMLNumberForm;
+	MyStringA        Identifier;
+	MyXMLNumberForm* XMLNumberForm;
 };
 
 /*
@@ -83,7 +83,7 @@ ObjIdComponents ::=
 */
 class MyObjIdComponents : public NotationBase {
 public:
-	MyNameForm NameForm;
+	MyNameForm* NameForm;
 
 };
 

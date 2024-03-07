@@ -10,8 +10,8 @@ SequenceOfType ::= SEQUENCE OF Type | SEQUENCE OF NamedType
 */
 class MySequenceOfType : public NotationBase {
 public:
-	MyType      Type;
-	MyNamedType NamedType;
+	MyType       Type;
+	MyNamedType* NamedType;
 };
 
 
@@ -22,7 +22,7 @@ ValueList ::=
 */
 class MyValueList : public NotationBase {
 public:
-	MyArray<MyValue> Values;
+	MyValArray<MyValue*> Values;
 };
 
 /*
@@ -32,7 +32,7 @@ NamedValueList ::=
 */
 class MyNamedValueList : public NotationBase {
 public:
-	MyArray<MyNamedValue> NamedValues;
+	MyValArray<MyNamedValue*> NamedValues;
 };
 
 
@@ -44,8 +44,8 @@ SequenceOfValue ::=
 */
 class MySequenceOfValue : public NotationBase {
 public:
-	MyValueList      ValueList;
-	MyNamedValueList NamedValueList;
+	MyValueList*      ValueList;
+	MyNamedValueList* NamedValueList;
 };
 
 

@@ -9,8 +9,8 @@ SelectionType ::= identifier "<" Type
 */
 class MySelectionType : public NotationBase {
 public:
-	MyStringA Identifier;
-	MyType    Type;
+	MyStringA  Identifier;
+	MyType*    Type;
 };
 
 #endif // _MY_SELECTION_TYPE_DEF_H_

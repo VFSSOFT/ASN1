@@ -22,9 +22,9 @@ NamedNumber ::=
 */
 class MyNamedNumber : public NotationBase {
 public:
-	MyStringA      Identifier;
-	MySignedNumber SignedNumber;
-	MyDefinedValue DefinedValue;
+	MyStringA       Identifier;
+	MySignedNumber* SignedNumber;
+	MyDefinedValue* DefinedValue;
 };
 
 /*
@@ -34,7 +34,7 @@ NamedNumberList ::=
 */
 class MyNamedNumberList : public NotationBase {
 public:
-	MyArray<MyNamedNumber> NamedNumbers;
+	MyValArray<MyNamedNumber*> NamedNumbers;
 };
 
 /*
@@ -44,7 +44,7 @@ IntegerType ::=
 */
 class MyIntegerType : public NotationBase {
 public:
-	MyNamedNumberList NamedNumberList;
+	MyNamedNumberList* NamedNumberList;
 };
 
 
@@ -55,8 +55,8 @@ IntegerValue ::=
 */
 class MyIntegerValue : public NotationBase {
 public:
-	MySignedNumber SignedNumber;
-	MyStringA      Identifier;
+	MySignedNumber* SignedNumber;
+	MyStringA       Identifier;
 };
 
 
@@ -67,8 +67,8 @@ XMLIntegerValue ::=
 */
 class MyXMLIntegerValue : public NotationBase {
 public:
-	MySignedNumber SignedNumber;
-	MyStringA      Identifier;
+	MySignedNumber* SignedNumber;
+	MyStringA       Identifier;
 };
 
 
