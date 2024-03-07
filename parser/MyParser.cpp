@@ -21,28 +21,32 @@ int MyParser::Parse(const wchar_t* file) {
 
 int MyParser::ParseModuleDef(MyTokenizer* tokenizer, MyModuleDef* moduleDef) {
 	int err = 0;
-	if (err = ParseModuleIdentifier(tokenizer, &moduleDef->ModuleId)) return err;
+	moduleDef->ModuleId = new MyModuleID();
+	if (err = ParseModuleIdentifier(tokenizer, moduleDef->ModuleId)) return err;
 
 	if (err = ExpectedReservedWord(tokenizer, "DEFINITIONS")) return err;
 
+	moduleDef->TagDefault = new MyTagDefault();
 	if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
 	if (tokenizer->Token()->Equals("EXPLICIT") || tokenizer->Token()->Equals("IMPLICIT") || tokenizer->Token()->Equals("AUTOMATIC")) {
-		if (err = ParseTagDefaults(tokenizer, &moduleDef->TagDefault)) return err;
+		if (err = ParseTagDefaults(tokenizer, moduleDef->TagDefault)) return err;
 		if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
 	} else {
-		moduleDef->TagDefault.SetValid(true); // Empty
+		moduleDef->TagDefault->SetValid(true); // Empty
 	}
 
+	moduleDef->ExtensionDefault = new MyExtensionDefault();
 	if (tokenizer->Token()->Equals("EXTENSIBILITY")) {
-		moduleDef->ExtensionDefault.Value.Set("EXTENSIBILITY");
+		moduleDef->ExtensionDefault->Value.Set("EXTENSIBILITY");
 		if (err = tokenizer->Next()) return LastError(err, tokenizer->LastErrorMessage());
 		//if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
 	}
-	moduleDef->ExtensionDefault.SetValid(true);
+	moduleDef->ExtensionDefault->SetValid(true);
 
+	moduleDef->Body = new MyModuleBody();
 	if (err = ExpectedTokenType(tokenizer, TOKEN_ASSIGNMENT)) return err;
 	if (err = ExpectedReservedWord(tokenizer, "BEGIN")) return err;
-	if (err = ParseModuleBody(tokenizer, &moduleDef->Body)) return err;
+	if (err = ParseModuleBody(tokenizer, moduleDef->Body)) return err;
 	if (err = ExpectedReservedWord(tokenizer, "END")) return err;
 
 	moduleDef->SetValid(true);
@@ -53,7 +57,8 @@ int MyParser::ParseModuleIdentifier(MyTokenizer* tokenizer, MyModuleID* moduleID
 	if (err = ExpectedTokenType(tokenizer, TOKEN_TYPE_REF)) return err;
 	moduleID->ModuleReference.Set(tokenizer->Token());
 
-	if (err = ParseDefinitiveIdentifier(tokenizer, &moduleID->DefinitiveID)) return err;
+	moduleID->DefinitiveID = new MyDefinitiveID();
+	if (err = ParseDefinitiveIdentifier(tokenizer, moduleID->DefinitiveID)) return err;
 
 	moduleID->SetValid(true);
 	return 0;
@@ -68,7 +73,8 @@ int MyParser::ParseDefinitiveIdentifier(MyTokenizer* tokenizer, MyDefinitiveID* 
 		definitiveID->Empty = false;
 
 		tokenizer->Next(); // consume '{'
-		if (err = ParseDefinitiveObjIdComponentList(tokenizer, &definitiveID->DefinitiveObjIdComponentList)) return err;
+		definitiveID->DefinitiveObjIdComponentList = new MyDefinitiveObjIdComponentList();
+		if (err = ParseDefinitiveObjIdComponentList(tokenizer, definitiveID->DefinitiveObjIdComponentList)) return err;
 		tokenizer->Next(); // consume '}'
 
 	} else {
@@ -86,8 +92,9 @@ int MyParser::ParseDefinitiveObjIdComponentList(MyTokenizer* tokenizer, MyDefini
 		if (err = tokenizer->Peek()) return LastError(err, tokenizer->LastErrorMessage());
 
 		if (tokenizer->TokenType() == TOKEN_NUMBER || tokenizer->TokenType() == TOKEN_IDENTIFIER) {
-			MyDefinitiveObjIdComponent* comp = list->DefinitiveObjIdComponents.AddNew();
+			MyDefinitiveObjIdComponent* comp = new MyDefinitiveObjIdComponent();
 			if (err = ParseDefinitiveObjIdComponent(tokenizer, comp)) return err;
+			list->DefinitiveObjIdComponents.Add(comp);
 		} else {
 			break;
 		}
@@ -112,20 +119,24 @@ int MyParser::ParseDefinitiveObjIdComponent(MyTokenizer* tokenizer, MyDefinitive
 		if (tokenizer->TokenType() == TOKEN_SINGLE_CHAR_ITEM && tokenizer->Token()->Equals("(")) {
 			//tokenizer->Next(); // consume "("
 			
-			comp->DefinitiveNameAndNumberForm.Identifier.Set(&identifier);
-			if (err = ParseDefinitiveNumberForm(tokenizer, &comp->DefinitiveNameAndNumberForm.NumberForm)) return err;
+			comp->DefinitiveNameAndNumberForm = new MyDefinitiveNameAndNumberForm();
+			comp->DefinitiveNameAndNumberForm->NumberForm = new MyDefinitiveNumberForm();
+			comp->DefinitiveNameAndNumberForm->Identifier.Set(&identifier);
+			if (err = ParseDefinitiveNumberForm(tokenizer, comp->DefinitiveNameAndNumberForm->NumberForm)) return err;
 			
 			tokenizer->Next(); // consume ")"
 
-			comp->DefinitiveNameAndNumberForm.SetValid(true);
+			comp->DefinitiveNameAndNumberForm->SetValid(true);
 
 		} else {
-			comp->NameForm.Set(&identifier);
-			comp->NameForm.SetValid(true);
+			comp->NameForm = new MyNameForm();
+			comp->NameForm->Set(&identifier);
+			comp->NameForm->SetValid(true);
 		}
 
 	} else if (tokenizer->TokenType() == TOKEN_NUMBER) {
-		if (err = ParseDefinitiveNumberForm(tokenizer, &comp->DefinitiveNumberForm)) return err;
+		comp->DefinitiveNameAndNumberForm = new MyDefinitiveNameAndNumberForm();
+		if (err = ParseDefinitiveNumberForm(tokenizer, comp->DefinitiveNumberForm)) return err;
 	} else {
 		return InvalidToken(TOKEN_IDENTIFIER, TOKEN_NUMBER, tokenizer->TokenType(), "DefinitiveObjIdComponent");
 	}
@@ -182,20 +193,22 @@ int MyParser::ParseTagDefaults(MyTokenizer* tokenizer, MyTagDefault* tagDefaults
 int MyParser::ParseModuleBody(MyTokenizer* tokenizer, MyModuleBody* body) {
 	int err = 0;
 	
+	body->Exports = new MyExports();
 	if (err = Peek(tokenizer)) return err;
 	if (tokenizer->Token()->Equals("EXPORTS")) {
-		if (err = ParseExports(tokenizer, &body->Exports)) return err;
+		if (err = ParseExports(tokenizer, body->Exports)) return err;
 	} else {
-		body->Exports.Empty = true;
-		body->Exports.SetValid(true);
+		body->Exports->Empty = true;
+		body->Exports->SetValid(true);
 	}
 
+	body->Imports = new MyImports();
 	if (err = Peek(tokenizer)) return err;
 	if (tokenizer->Token()->Equals("IMPORTS")) {
 		assert(false); // TODO:
 	} else {
-		body->Imports.Empty = true;
-		body->Imports.SetValid(true);
+		body->Imports->Empty = true;
+		body->Imports->SetValid(true);
 	}
 
 
@@ -233,10 +246,10 @@ int MyParser::ParseReference(MyTokenizer* tokenizer, MyReference* reference) {
 }
 
 int MyParser::ParseAssignList(MyTokenizer* tokenizer, MyAssignmentList* assignList) {
-
+	return 0;
 }
 int MyParser::ParseAssignment(MyTokenizer* tokenizer, MyAssignment* assignment) {
-
+	return 0;
 }
 
 int MyParser::Peek(MyTokenizer* tokenizer) {
