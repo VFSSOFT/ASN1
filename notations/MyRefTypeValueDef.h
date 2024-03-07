@@ -2,6 +2,7 @@
 #define _MY_REF_TYPE_VALUE_DEF_H_
 
 #include "MyNotationCommon.h"
+#include "MyParameterizaionDef.h"
 
 
 /*
@@ -12,7 +13,8 @@ ExternalTypeReference ::=
 */
 class MyExternalTypeReference : public NotationBase {
 public:
-
+	MyStringA ModuleReference;
+	MyStringA TypeReference;
 };
 
 /*
@@ -22,63 +24,14 @@ ExternalValueReference ::=
 		valuereference
 */
 class MyExternalValueReference : public NotationBase {
-
-};
-
-/*
-SimpleDefinedType ::=
-		ExternalTypeReference |
-		typereference
-*/
-class MySimpleDefinedType : public NotationBase {
 public:
-	MyExternalTypeReference ExternalTypeReference;
-
+	MyStringA ModuleReference;
+	MyStringA ValueReference;
 };
 
-/*
-ActualParameter ::=
-		Type
-		| Value
-		| ValueSet
-		| DefinedObjectClass
-		| Object
-		| ObjectSet
-*/
-class MyActualParameter : public NotationBase {
 
-};
 
-/*
-ActualParameterList ::=
-		"{" ActualParameter "," + "}"
-*/
-class MyActualParameterList : public NotationBase {
-public:
-	MyActualParameter ActualParameters;
-};
 
-/*
-ParameterizedType ::=
-		SimpleDefinedType
-		ActualParameterList
-*/
-class MyParameterizedType : public NotationBase {
-public:
-	MySimpleDefinedType   SimpleDefinedType;
-	MyActualParameterList ActualParameterList;
-};
-
-/*
-ParameterizedValueSetType ::=
-		SimpleDefinedType
-		ActualParameterList
-*/
-class MyParameterizedValueSetType : public NotationBase {
-public:
-	MySimpleDefinedType   SimpleDefinedType;
-	MyActualParameterList ActualParameterList;
-};
 
 /*
 DefinedType ::=
@@ -94,26 +47,9 @@ public:
 	MyParameterizedValueSetType ParameterizedValueSetType;
 };
 
-/*
-SimpleDefinedValue ::=
-		ExternalValueReference |
-		valuereference
-*/
-class MySimpleDefinedValue : public NotationBase {
-public:
-	MyExternalValueReference ExternalValueReference;
-};
 
-/*
-ParameterizedValue ::=
-		SimpleDefinedValue
-		ActualParameterList
-*/
-class MyParameterizedValue : public NotationBase {
-public:
-	MySimpleDefinedValue  SimpleDefinedValue;
-	MyActualParameterList ActualParameterList;
-};
+
+
 /*
 DefinedValue ::=
 		ExternalValueReference
@@ -124,14 +60,6 @@ class MyDefinedValue : public NotationBase {
 public:
 	MyExternalValueReference ExternalValueReference;
 	MyParameterizedValue     ParameterizedValue;
-};
-
-/*
-ParameterizedReference ::= Reference | Reference "{" "}"
-*/
-class MyParameterizedReference : public NotationBase {
-public:
-	MyReference Reference;
 };
 
 
