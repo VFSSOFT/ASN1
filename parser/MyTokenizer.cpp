@@ -22,7 +22,7 @@ int MyTokenizer::Next() {
 	}
 
 	char c = m_Content.CharAt(m_Offset++);
-	while (IsWhitespace(c)) { // SKip all whitesapces
+	while (m_IgnoreWhitespaces && IsWhitespace(c)) {
 		if (HasMoreChar()) {
 			c = m_Content.CharAt(m_Offset++);
 		} else {
@@ -39,7 +39,7 @@ int MyTokenizer::Next() {
 	} else if (IsLowerCaseLetter(c)) {
 		if (err = ParseIdentifier()) return err;
 	} else if (c == '-') {
-		if (!HasMoreChar() || IsNextWhitespace()) {
+		if (!HasMoreChar() || IsNextWhitespace() || !IsNextChar('-')) {
 			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
 			m_Token.Set("-");
 		} else {
@@ -99,11 +99,10 @@ int MyTokenizer::Next() {
 			}
 		}
 	} else if (c == '[') {
-		if (!HasMoreChar() || IsNextWhitespace()) {
+		if (!HasMoreChar() || IsNextWhitespace() || !IsNextChar('[')) {
 			m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
 			m_Token.Set("[");
 		} else {
-			if (err = ExpectNextChar('[', "Expect Left version brackets")) return err;
 			m_TokenType = TOKEN_LEFT_VERSION_BRACKETS;
 			m_Token.Set("[[");
 		}
@@ -129,6 +128,11 @@ int MyTokenizer::Next() {
 		m_TokenType = TOKEN_SINGLE_CHAR_ITEM;
 		m_Token.AppendChar(c);
 	}
+
+	if (m_IgnoreComments && (m_TokenType == TOKEN_ONE_LINE_COMMENT || m_TokenType == TOKEN_MUL_LINE_COMMENT)) {
+		return Next();
+	}
+
 	return err;
 }
 

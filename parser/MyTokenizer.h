@@ -38,6 +38,13 @@ public:
 	}
 
 	void Set(const char* data, int len) { m_Content.Set(data, len); }
+
+	bool IgnoreComments() { return m_IgnoreComments; }
+	void SetIgnoreComments(bool val) { m_IgnoreComments = val; }
+	
+	bool IgnoreWhitespace() { return m_IgnoreWhitespaces; }
+	void SetIgnoreWhitespace(bool val) { m_IgnoreWhitespaces = val; }
+
 	bool HasMore() { return m_Offset < m_Content.Length(); }
 	int Next();
 	int Peek();
@@ -52,11 +59,14 @@ public:
 		m_Token.Reset();
 		m_TokenType = 0;
 		m_Peek = false;
+		m_IgnoreWhitespaces = true;
+		m_IgnoreComments = true;
 	}
 
 private:
 	bool HasMoreChar() { return m_Offset < m_Content.Length(); }
 	bool IsNextWhitespace() { return IsWhitespace(m_Content.CharAt(m_Offset)); }
+	bool IsNextChar(char c) { return m_Content.CharAt(m_Offset) == c; }
 	int ExpectNextChar(char c, const char* errMsg);
 
 	int ParseTypeRef();
@@ -84,6 +94,9 @@ private:
 	MyStringA m_Token;
 	int       m_TokenType;
 	bool      m_Peek;
+
+	bool      m_IgnoreWhitespaces;
+	bool      m_IgnoreComments;
 
 	MY_LAST_ERROR_DECL;
 };

@@ -36,6 +36,7 @@ TEST(TokenizerTest, CommentSingleLineTest) {
 	const char* data = "--abcdefg\r\n";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -47,6 +48,7 @@ TEST(TokenizerTest, CommentSingleLineTest2) {
 	const char* data = "--abcdefg--";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -58,6 +60,7 @@ TEST(TokenizerTest, CommentSingleLineTest3) {
 	const char* data = "--/*aaa*/--";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -69,6 +72,7 @@ TEST(TokenizerTest, CommentMultipleLineTest) {
 	const char* data = "/*comment*/";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -80,6 +84,7 @@ TEST(TokenizerTest, CommentMultipleLineTest2) {
 	const char* data = "/*com\r\n\r\nment*/";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -91,6 +96,7 @@ TEST(TokenizerTest, CommentMultipleLineTest3) {
 	const char* data = "/*com--\r\n\r\n--ment*/";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
@@ -102,6 +108,7 @@ TEST(TokenizerTest, CommentMultipleLineTest4) {
 	const char* data = "/*com/*m*/ent*/";
 	int err = 0;
 	MyTokenizer tokenizer;
+	tokenizer.SetIgnoreComments(false);
 	tokenizer.Set(data, strlen(data));
 	err = tokenizer.Next();
 	ASSERT_EQ(err, 0);
