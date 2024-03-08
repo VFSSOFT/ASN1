@@ -211,7 +211,8 @@ int MyParser::ParseModuleBody(MyTokenizer* tokenizer, MyModuleBody* body) {
 		body->Imports->SetValid(true);
 	}
 
-
+	body->AssignmentList = new MyAssignmentList();
+	if (err = ParseAssignList(tokenizer, body->AssignmentList)) return err;
 
 	return 0;
 }
@@ -246,9 +247,70 @@ int MyParser::ParseReference(MyTokenizer* tokenizer, MyReference* reference) {
 }
 
 int MyParser::ParseAssignList(MyTokenizer* tokenizer, MyAssignmentList* assignList) {
+	int err = 0;
+	while (true) {
+		if (err = Peek(tokenizer)) return err;
+
+		if (tokenizer->TokenType() == TOKEN_TYPE_REF || tokenizer->TokenType() == TOKEN_IDENTIFIER) {
+			MyAssignment* assignment = new MyAssignment();
+			if (err = ParseAssignment(tokenizer, assignment)) return err;
+			assignList->List.Add(assignment);
+		} else {
+			break;
+		}
+	}
+	assignList->SetValid(true);
 	return 0;
 }
 int MyParser::ParseAssignment(MyTokenizer* tokenizer, MyAssignment* assignment) {
+	int err = 0;
+	if (err = Next(tokenizer)) return err;
+
+	if (tokenizer->TokenType() == TOKEN_TYPE_REF) {
+
+	} else { // TOKEN_IDENTIFIER
+		assignment->ValueAssignment = new MyValueAssignment();
+		assignment->ValueAssignment->ValueReference.Set(tokenizer->Token());
+		assignment->ValueAssignment->Type = new MyType();
+		if (err = ParseType(tokenizer, assignment->ValueAssignment->Type)) return err;
+		if (err = ExpectedTokenType(tokenizer, TOKEN_ASSIGNMENT, "::=")) return err;
+	}
+	return 0;
+}
+int MyParser::ParseType(MyTokenizer* tokenizer, MyType* typ) {
+	int err= 0;
+
+	typ->BuiltinType = new MyBuiltinType();
+	if (err = ParseBuiltinType(tokenizer, typ->BuiltinType)) return err;
+
+	return 0;
+}
+int MyParser::ParseBuiltinType(MyTokenizer* tokenizer, MyBuiltinType* builtinType) {
+	int err = 0;
+	if (err = Peek(tokenizer)) return err;
+
+	MyStringA* token = tokenizer->Token();
+	if (token->Equals("OBJECT")) {
+		// TODO: if necessary, support Peek2
+		if (err = Next(tokenizer)) return err;
+		if (err = ExpectedTokenType(tokenizer, TOKEN_RESERVED_WORD, "IDENTIFIER")) return err;
+		
+		builtinType->ObjectIDType = new MyObjectIDType();
+	}
+
+	builtinType->SetValid(true);
+	return 0;
+}
+int MyParser::ParseValue(MyTokenizer* tokenizer, MyValue* val) {
+	int err = 0;
+
+	val->BuiltinValue = new MyBuiltinValue();
+
+	return 0;
+}
+int MyParser::ParseBuiltinValue(MyTokenizer* tokenizer, MyBuiltinValue* val) {
+	int err = 0;
+
 	return 0;
 }
 
