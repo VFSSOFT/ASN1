@@ -4,12 +4,32 @@
 #include "MyNotationCommon.h"
 #include "MyTypeValueDef.h"
 
+/*
+ExceptionIdentification ::= SignedNumber
+		| DefinedValue
+		| Type ":" Value
+*/
+class MyExceptionIdentification : public NotationBase {
+public:
+	MySignedNumber* SignedNumber;
+	MyDefinedValue* DefinedValue;
+	MyType*         Type;
+	MyValue*        Value;
+};
+
+/*ExceptionSpec ::= "!" ExceptionIdentification | empty*/
+class MyExceptionSpec : public NotationBase {
+public:
+	MyExceptionIdentification* ExceptionIdentification;
+	bool                       Empty;
+};
 
 /*
 ExtensionAndException ::= "..." | "..." ExceptionSpec
 */
 class MyExtensionAndException : public NotationBase {
-
+public:
+	MyExceptionSpec* ExceptionSpec;
 };
 
 /*
@@ -17,7 +37,7 @@ OptionalExtensionMarker ::= "," "..." | empty
 */
 class MyOptionalExtensionMarker : public NotationBase {
 public:
-
+	bool Empty;
 };
 
 /*

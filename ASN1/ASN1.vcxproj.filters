@@ -163,5 +163,8 @@
     <ClInclude Include="..\notations\MyParameterizaionDef.h">
       <Filter>Notations</Filter>
     </ClInclude>
+    <ClInclude Include="..\notations\MyCharacterStringType.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

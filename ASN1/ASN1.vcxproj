@@ -158,6 +158,7 @@
     <ClInclude Include="..\notations\MyAssigningTypeValueDef.h" />
     <ClInclude Include="..\notations\MyBitstringTypeDef.h" />
     <ClInclude Include="..\notations\MyBoolTypeDef.h" />
+    <ClInclude Include="..\notations\MyCharacterStringType.h" />
     <ClInclude Include="..\notations\MyChoiceTypeDef.h" />
     <ClInclude Include="..\notations\MyEnumeratedTypeDef.h" />
     <ClInclude Include="..\notations\MyExternalTypeDef.h" />

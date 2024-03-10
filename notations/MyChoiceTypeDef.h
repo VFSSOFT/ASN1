@@ -68,8 +68,10 @@ AlternativeTypeLists ::=
 */
 class MyAlternativeTypeLists : public NotationBase {
 public:
-	MyRootAlternativeTypeList* RootAlternativeTypeList;
-	MyExtensionAndException*   ExtensionAndException;
+	MyRootAlternativeTypeList*      RootAlternativeTypeList;
+	MyExtensionAndException*        ExtensionAndException;
+	MyExtensionAdditionAlternative* ExtensionAdditionAlternatives;
+	MyOptionalExtensionMarker*      OptionalExtensionMarker;
 };
 
 /*

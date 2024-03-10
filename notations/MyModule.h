@@ -5,6 +5,7 @@
 #include "MyAssigningTypeValueDef.h"
 #include "MyRelativeObjectIDType.h"
 #include "MyParameterizaionDef.h"
+#include "MyInformationObjectDef.h"
 
 /*
 Reference ::=
@@ -173,6 +174,7 @@ GlobalModuleReference ::=
 */
 class MyGlobalModuleReference : public NotationBase {
 public:
+	MyStringA     ModuleReference;
 	MyAssignedID* AssignedID;
 };
 
@@ -232,10 +234,14 @@ Assignment ::=
 */
 class MyAssignment : public NotationBase {
 public:
-	MyTypeAssignment*         TypeAssignment;
-	MyValueAssignment*        ValueAssignment;
-	MyXMLValueAssignment*     XMlValueAssignment;
-	MyValueSetTypeAssignment* ValueSetTypeAssignment;
+	MyTypeAssignment*          TypeAssignment;
+	MyValueAssignment*         ValueAssignment;
+	MyXMLValueAssignment*      XMlValueAssignment;
+	MyValueSetTypeAssignment*  ValueSetTypeAssignment;
+	MyObjectClassAssignment*   ObjectClassAssignment;
+	MyObjectAssignment*        ObjectAssignment;
+	MyObjectSetAssignment*     ObjectSetAssignment;
+	MyParameterizedAssignment* ParameterizedAssignment;
 };
 
 /*

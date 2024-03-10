@@ -6,6 +6,9 @@
 #include "../notations/MyTypeValueDef.h"
 #include "../notations/MyRelativeObjectIDType.h"
 #include "../notations/MyEnumeratedTypeDef.h"
+#include "../notations/MyBitstringTypeDef.h"
+#include "../notations/MyBoolTypeDef.h"
+#include "../notations/MyChoiceTypeDef.h"
 
 class MyParser {
 public:
@@ -20,6 +23,7 @@ private:
 	MyModuleBody* ParseModuleBody(int& tokIdx);
 	MyExports* ParseExports(int& tokIdx);
 	MyImports* ParseImports(int& tokIdx);
+	MyAssignmentList* ParseAssignmentList(int& tokIdx);
 
 	MyDefinitiveID* ParseDefinitiveIdentifier(int& tokIdx);
 	MyDefinitiveObjIdComponentList* ParseDefinitiveObjIdComponentList(int& tokIdx);
@@ -37,6 +41,32 @@ private:
 	MySymbolsFromModule* ParseSymbolsFromModule(int& tokIdx);
 	MyGlobalModuleReference* ParseGlobalModuleReference(int& tokIdx);
 	MyAssignedID* ParseAssignedIdentifier(int& tokIdx);
+	MyObjectIDValue* ParseObjectIDValue(int& tokIdx);
+
+	MyAssignment* ParseAssignment(int& tokIdx);
+	MyTypeAssignment* ParseTypeAssignment(int& tokIdx);
+
+	MyType* ParseType(int& tokIdx);
+	MyBuiltinType* ParseBuiltinType(int& tokIdx);
+	MyBitStringType* ParseBitStringType(int& tokIdx);
+	MyNamedBitList* ParseNamedBitList(int& tokIdx);
+	MyNamedBit* ParseNamedBit(int& tokIdx);
+	MyBooleanType* ParseBoolType(int& tokIdx);
+	MyChoiceType* ParseChoiceType(int& tokIdx);
+	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
+	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
+	MyExtensionAndException* ParseExtensionAndException(int& tokIdx);
+	MyExtensionAdditionAlternative* ParseExtensionAdditionAlternative(int& tokIdx);
+	MyOptionalExtensionMarker* ParseOptionalExtensionMarker(int& tokIdx);
+	MyNamedType* ParseNamedType(int& tokIdx);
+	MyExceptionSpec* ParseExceptionSpec(int& tokIdx);
+	MyExceptionIdentification* ParseExceptionIdentification(int& tokIdx);
+	MyExtensionAdditionAlternativeGroup* ParseExtensionAdditionAlternativeGroup(int& tokIdx);
+	MyVersionNumber* ParseVersionNumber(int& tokIdx);
+
+	MySignedNumber* ParseSignedNumber(int& tokIdx);
+	MyDefinedValue* ParseDefinedValue(int& tokIdx);
+	MyValue* ParseValue(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
 	int ExpectedTokenType(int tokIdx, int tokType, const char* token=NULL);

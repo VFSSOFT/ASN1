@@ -4,6 +4,28 @@
 #include "MyNotationCommon.h"
 #include "MyRefTypeValueDef.h"
 
+class MyTaggedType;
+class MySetOfType;
+class MySetType;
+class MySequenceOfType;
+class MySequenceType;
+class MyRealType;
+class MyOctetStringType;
+class MyObjectClassFieldType;
+class MyNullType;
+class MyIntegerType;
+class MyExternalType;
+class MySelectionType;
+class MyTypeFromObject;
+class MyValueSetFromObjects;
+class MyBitStringType;
+class MyBooleanType;
+class MyChoiceType;
+class MyEnumeratedType;
+class MyObjectIDType;
+class MyObjectIDValue;
+class MyObjectClassFieldValue;
+class MyValueFromObject;
 
 /*
 BuiltinType ::=
@@ -31,7 +53,22 @@ BuiltinType ::=
 
 class MyBuiltinType : public NotationBase {
 public:
-
+	MyBitStringType*        BitStringType; 
+	MyBooleanType*          BooleanType;
+	MyChoiceType*           ChoiceType;
+	MyEnumeratedType*       EnumeratedType;
+	MyExternalType*         ExternalType;
+	MyIntegerType*          IntegerType;
+	MyNullType*             NullType;
+	MyObjectClassFieldType* ObjectClassFieldType;
+	MyObjectIDType*         ObjectIDType;
+	MyOctetStringType*      OctetStringType;
+	MyRealType*             RealType;
+	MySequenceType*         SequenceType;
+	MySequenceOfType*       SequenceOfType;
+	MySetType*              SetType;
+	MySetOfType*            SetOfType;
+	MyTaggedType*           TaggedType;
 };
 
 /*
@@ -44,7 +81,11 @@ ReferencedType ::=
 */
 class MyReferencedType : public NotationBase {
 public:
-	MyDefinedType* DefinedType;
+	MyDefinedType*         DefinedType;
+	//MyUsefulType*        UsefulType;
+	MySelectionType*       SelectionType;
+	MyTypeFromObject*      TypeFromObject;
+	MyValueSetFromObjects* ValueSetFromObjects;
 };
 
 /*
@@ -53,6 +94,8 @@ public:
 class MyType : public NotationBase {
 public:
 	MyBuiltinType* BuiltinType;
+	MyReferencedType* ReferencedType;
+	//
 };
 
 /*
@@ -87,7 +130,8 @@ BuiltinValue ::=
 		| TaggedValue
 */
 class MyBuiltinValue : public NotationBase {
-
+public:
+	MyObjectIDValue* ObjectIDValue;
 };
 
 /*
@@ -123,7 +167,8 @@ ReferencedValue ::=
 */
 class MyReferencedValue : public NotationBase {
 public:
-	MyDefinedValue* DefinedValue;
+	MyDefinedValue*    DefinedValue;
+	MyValueFromObject* ValueFromObject;
 };
 
 /*
@@ -144,7 +189,9 @@ Value ::=
 */
 class MyValue : public NotationBase {
 public:
-	MyBuiltinValue* BuiltinValue;
+	MyBuiltinValue*          BuiltinValue;
+	MyReferencedValue*       ReferencedValue;
+	MyObjectClassFieldValue* ObjectClassFieldValue;
 };
 
 /*

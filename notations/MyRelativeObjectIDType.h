@@ -4,6 +4,8 @@
 #include "MyNotationCommon.h"
 #include "MyRefTypeValueDef.h"
 
+class MyObjIdComponentsList;
+
 /*
 NameForm ::= identifier
 */
@@ -83,8 +85,10 @@ ObjIdComponents ::=
 */
 class MyObjIdComponents : public NotationBase {
 public:
-	MyNameForm* NameForm;
-
+	MyNameForm*          NameForm;
+	MyNumberForm*        NumberForm;
+	MyNameAndNumberForm* NameAndNumberForm;
+	MyDefinedValue*      DefinedValue;
 };
 
 /*
@@ -102,7 +106,8 @@ ObjectIdentifierValue ::=
 */
 class MyObjectIDValue : public NotationBase {
 public:
-	
+	MyDefinedValue*        DefinedValue;
+	MyObjIdComponentsList* ObjIdComponentsList;
 };
 
 /*
@@ -112,7 +117,8 @@ ObjIdComponentsList ::=
 */
 class MyObjIdComponentsList : public NotationBase {
 public:
-
+	MyObjIdComponents      ObjIdComponents;
+	MyObjIdComponentsList* ObjIdComponentsList;
 };
 
 
