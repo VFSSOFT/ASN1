@@ -41,7 +41,6 @@ MyModuleDef* MyParser::ParseModuleDef(int& tokIdx) {
 	if (moduleDef->ModuleId == NULL) goto done;
 
 	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "DEFINITIONS")) goto done;
-	idx++;
 
 	moduleDef->TagDefault = ParseDefaultTag(idx);
 	if (moduleDef->TagDefault == NULL) goto done;
@@ -50,15 +49,12 @@ MyModuleDef* MyParser::ParseModuleDef(int& tokIdx) {
 	if (moduleDef->ExtensionDefault == NULL) goto done;
 
 	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT)) goto done;
-	idx++;
 	
 	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "BEGIN")) goto done;
-	idx++;
 
 	moduleDef->Body = ParseModuleBody(idx);
 
 	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "END")) goto done;
-	idx++;
 
 	success = true;
 
@@ -76,8 +72,7 @@ MyModuleID* MyParser::ParseModuleIdentifier(int& tokIdx) {
 	MyModuleID* moduleID = new MyModuleID();
 
 	if (err = ExpectedTokenType(tokIdx, TOKEN_TYPE_REF)) return NULL;
-	moduleID->ModuleReference.Set(m_Tokens.Get(tokIdx));
-	tokIdx++;
+	moduleID->ModuleReference.Set(m_Tokens.Get(tokIdx-1));
 
 	moduleID->DefinitiveID = ParseDefinitiveIdentifier(tokIdx);
 	if (moduleID->DefinitiveID == NULL) return NULL;
@@ -274,10 +269,7 @@ MyDefinitiveID* MyParser::ParseDefinitiveIdentifier(int& tokIdx) {
 			goto done;
 		}
 
-		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
-			goto done;
-		}
-		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
 
 		success = true;
 	} else {
@@ -375,20 +367,14 @@ MyDefinitiveNameAndNumberForm* MyParser::ParseDefinitiveNameAndNumberForm(int& t
 		definitiveNameAndNumberForm->Identifier.Set(m_Tokens.Get(idx));
 		idx++;
 
-		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) {
-			goto done;
-		}
-		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
 
 		definitiveNameAndNumberForm->NumberForm = ParseDefinitiveNumberForm(idx);
 		if (definitiveNameAndNumberForm->NumberForm == NULL) {
 			goto done;
 		}
 
-		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) {
-			goto done;
-		}
-		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) goto done;
 
 		success = true;
 	}
@@ -487,7 +473,6 @@ MySymbolsFromModule* MyParser::ParseSymbolsFromModule(int& tokIdx) {
 	if (sfm->Symbols == NULL) goto done;
 
 	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "FROM")) goto done;
-	idx++;
 
 	sfm->GlobalModuleReference = ParseGlobalModuleReference(idx);
 	if (sfm->GlobalModuleReference == NULL) goto done;
@@ -510,8 +495,7 @@ MyGlobalModuleReference* MyParser::ParseGlobalModuleReference(int& tokIdx) {
 	MyGlobalModuleReference* ref = new MyGlobalModuleReference();
 
 	if (err = ExpectedTokenType(idx, TOKEN_TYPE_REF)) goto done;
-	ref->ModuleReference.Set(m_Tokens.Get(idx));
-	idx++;
+	ref->ModuleReference.Set(m_Tokens.Get(idx-1));
 
 	ref->AssignedID = ParseAssignedIdentifier(idx);
 	if (ref->AssignedID == NULL) goto done;
@@ -594,6 +578,18 @@ MyBuiltinType* MyParser::ParseBuiltinType(int& tokIdx) {
 
 	typ->ChoiceType = ParseChoiceType(idx);
 	if (typ->ChoiceType) { success = true; goto done; }
+
+	typ->EnumeratedType = ParseEnumeratedType(idx);
+	if (typ->EnumeratedType) { success = true; goto done; }
+
+	typ->ExternalType = ParseExternalType(idx);
+	if (typ->ExternalType) { success = true; goto done; }
+
+	typ->IntegerType = ParseIntegerType(idx);
+	if (typ->IntegerType) { success = true; goto done; }
+
+	typ->NullType = ParseNullType(idx);
+	if (typ->NullType) { success = true; goto done; }
 
 done:
 	if (!success) {
@@ -690,7 +686,6 @@ MyNamedBit* MyParser::ParseNamedBit(int& tokIdx) {
 			}
 
 			if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) goto done;
-			idx++;
 
 			success = true;
 		}
@@ -722,7 +717,6 @@ MyChoiceType* MyParser::ParseChoiceType(int& tokIdx) {
 		idx++;
 
 		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
-			idx++;
 
 			typ->AlternativeTypeLists = ParseAlternativeTypeLists(idx);
 			if (typ->AlternativeTypeLists == NULL) goto done;
@@ -739,6 +733,169 @@ done:
 	} else {
 		tokIdx = idx;
 		return typ;
+	}
+}
+MyEnumeratedType* MyParser::ParseEnumeratedType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyEnumeratedType* typ = new MyEnumeratedType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "ENUMERATED")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+		typ->Enumerations = ParseEnumerations(idx);
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyExternalType* MyParser::ParseExternalType(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "EXTERNAL")) {
+		tokIdx++;
+		return new MyExternalType();
+	}
+	return NULL;
+}
+MyIntegerType* MyParser::ParseIntegerType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyIntegerType* typ = new MyIntegerType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "INTEGER")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+			idx++;
+
+			typ->NamedNumberList = ParseNamedNumberList(idx);
+			if (typ->NamedNumberList == NULL) goto done;
+
+			if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+		}
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyNullType* MyParser::ParseNullType(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "NULL")) {
+		tokIdx++;
+		return new MyNullType();
+	}
+	return NULL;
+}
+MyEnumerations* MyParser::ParseEnumerations(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyEnumerations* enums = new MyEnumerations();
+
+	enums->RootEnumeration = ParseEnumeration(idx);
+	if (enums->RootEnumeration == NULL) goto done;
+
+	if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		success = true;
+		goto done; // only RootEnumeration field
+	}
+	idx++;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
+
+	enums->ExceptionSpec = ParseExceptionSpec(idx);
+	if (enums->ExceptionSpec == NULL) goto done;
+
+	if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		success = true;
+		goto done; // No AdditionalEnumeration
+	}
+	idx++;
+
+	enums->AdditionalEnumeration = ParseEnumeration(idx);
+	if (enums->AdditionalEnumeration == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete enums;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return enums;
+	}
+}
+MyEnumeration* MyParser::ParseEnumeration(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyEnumeration* enu = new MyEnumeration();
+
+	while (true) {
+		MyEnumerationItem* item = ParseEnumerationItem(idx);
+		if (item != NULL) {
+			enu->EnumerationItems.Add(item);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete enu;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return enu;
+	}
+}
+MyEnumerationItem* MyParser::ParseEnumerationItem(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyEnumerationItem* item = new MyEnumerationItem();
+
+	
+	item->NamedNumber = ParseNamedNumber(idx);
+	if (item->NamedNumber != NULL) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		item->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete item;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return item;
 	}
 }
 MyAlternativeTypeLists* MyParser::ParseAlternativeTypeLists(int& tokIdx) {
@@ -864,7 +1021,6 @@ MyOptionalExtensionMarker* MyParser::ParseOptionalExtensionMarker(int& tokIdx) {
 		marker->Empty = false;
 
 		if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
-		idx++;
 
 		success = true;
 
@@ -949,7 +1105,6 @@ MyExceptionIdentification* MyParser::ParseExceptionIdentification(int& tokIdx) {
 	if (id->Type) {
 
 		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
-		idx++;
 
 		id->Value = ParseValue(idx);
 		if (id->Value) {
@@ -1008,7 +1163,6 @@ MyVersionNumber* MyParser::ParseVersionNumber(int& tokIdx) {
 		idx++;
 
 		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
-		idx++;
 
 		success = true;
 	} else {
@@ -1055,7 +1209,65 @@ MyDefinedValue* MyParser::ParseDefinedValue(int& tokIdx) {
 }
 
 MyValue* MyParser::ParseValue(int& tokIdx) {
+	return 0;
+}
+MyNamedNumberList* MyParser::ParseNamedNumberList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyNamedNumberList* list = new MyNamedNumberList();
+
+	while (true) {
+		MyNamedNumber* num = ParseNamedNumber(idx);
+		if (num != NULL) {
+			list->NamedNumbers.Add(num);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyNamedNumber* MyParser::ParseNamedNumber(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyNamedNumber* namedNumber = new MyNamedNumber();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		namedNumber->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
+
+		namedNumber->SignedNumber = ParseSignedNumber(idx);
+		if (namedNumber->SignedNumber == NULL) {
+			namedNumber->DefinedValue = ParseDefinedValue(idx);
+			if (namedNumber->DefinedValue == NULL) goto done;
+		}
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
+
+		success = true;
+	}
 	
+done:
+	if (!success) {
+		delete namedNumber;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return namedNumber;
+	}
 }
 
 bool MyParser::IsToken(int tokIdx, int tokType, const char* token) {
@@ -1063,7 +1275,7 @@ bool MyParser::IsToken(int tokIdx, int tokType, const char* token) {
 	if (token && !m_Tokens.Get(tokIdx)->Equals(token)) return false;
 	return true;
 }
-int MyParser::ExpectedTokenType(int tokIdx, int tokType, const char* token) {
+int MyParser::ExpectedTokenType(int& tokIdx, int tokType, const char* token) {
 	int err = 0;
 	if (m_TokenTypes.Get(tokIdx) != tokType) {
 		return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid token"); // TODO: more detail information
@@ -1071,6 +1283,7 @@ int MyParser::ExpectedTokenType(int tokIdx, int tokType, const char* token) {
 	if (token && !m_Tokens.Get(tokIdx)->Equals(token)) {
 		return LastError(MY_ERR_INVALID_PARAMETERS, "Invalid token"); // TODO: more detail information
 	}
+	tokIdx++;
 	return 0;
 }
 

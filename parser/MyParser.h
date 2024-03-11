@@ -9,6 +9,8 @@
 #include "../notations/MyBitstringTypeDef.h"
 #include "../notations/MyBoolTypeDef.h"
 #include "../notations/MyChoiceTypeDef.h"
+#include "../notations/MyExternalTypeDef.h"
+#include "../notations/MyNullTypeDef.h"
 
 class MyParser {
 public:
@@ -53,6 +55,11 @@ private:
 	MyNamedBit* ParseNamedBit(int& tokIdx);
 	MyBooleanType* ParseBoolType(int& tokIdx);
 	MyChoiceType* ParseChoiceType(int& tokIdx);
+	MyEnumeratedType* ParseEnumeratedType(int& tokIdx);
+	MyExternalType* ParseExternalType(int& tokIdx);
+	MyIntegerType* ParseIntegerType(int& tokIdx);
+	MyNullType* ParseNullType(int& tokIdx);
+
 	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
 	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
 	MyExtensionAndException* ParseExtensionAndException(int& tokIdx);
@@ -63,13 +70,18 @@ private:
 	MyExceptionIdentification* ParseExceptionIdentification(int& tokIdx);
 	MyExtensionAdditionAlternativeGroup* ParseExtensionAdditionAlternativeGroup(int& tokIdx);
 	MyVersionNumber* ParseVersionNumber(int& tokIdx);
+	MyEnumerations* ParseEnumerations(int& tokIdx);
+	MyEnumeration* ParseEnumeration(int& tokIdx);
+	MyEnumerationItem* ParseEnumerationItem(int& tokIdx);
 
 	MySignedNumber* ParseSignedNumber(int& tokIdx);
 	MyDefinedValue* ParseDefinedValue(int& tokIdx);
 	MyValue* ParseValue(int& tokIdx);
+	MyNamedNumberList* ParseNamedNumberList(int& tokIdx);
+	MyNamedNumber* ParseNamedNumber(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
-	int ExpectedTokenType(int tokIdx, int tokType, const char* token=NULL);
+	int ExpectedTokenType(int& tokIdx, int tokType, const char* token=NULL);
 
 private:
 	MyModuleDef*       m_ModuleDef;

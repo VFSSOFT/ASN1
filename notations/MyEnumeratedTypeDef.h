@@ -4,6 +4,7 @@
 #include "MyNotationCommon.h"
 #include "MyIntegerTypeDef.h"
 
+class MyExceptionSpec;
 /*
 EnumerationItem ::= identifier | NamedNumber
 */
@@ -40,6 +41,7 @@ Enumerations ::=
 class MyEnumerations : public NotationBase {
 public:
 	MyRootEnumeration*       RootEnumeration;
+	MyExceptionSpec*         ExceptionSpec;
 	MyAdditionalEnumeration* AdditionalEnumeration;
 };
 
