@@ -29,6 +29,9 @@
 #define TOKEN_SINGLE_CHAR_ITEM        23
 #define TOKEN_RESERVED_WORD           24
 
+#define TOKEN_MODULE_REF              1
+#define TOKEN_VALUE_REF               2
+
 #define NO_MORE_CHAR     -1
 
 class MyTokenizer {

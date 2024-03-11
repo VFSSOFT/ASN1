@@ -10,7 +10,7 @@ SequenceOfType ::= SEQUENCE OF Type | SEQUENCE OF NamedType
 */
 class MySequenceOfType : public NotationBase {
 public:
-	MyType       Type;
+	MyType*      Type;
 	MyNamedType* NamedType;
 };
 

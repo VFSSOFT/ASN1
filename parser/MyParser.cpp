@@ -523,10 +523,23 @@ MyAssignment* MyParser::ParseAssignment(int& tokIdx) {
 	int idx = tokIdx;
 	MyAssignment* ass = new MyAssignment();
 
+	ass->TypeAssignment = ParseTypeAssignment(idx);
+	if (ass->TypeAssignment) { success = true; goto done; }
 
-	return 0;
+	ass->ValueAssignment = ParseValueAssignment(idx);
+	if (ass->ValueAssignment) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
 }
 MyTypeAssignment* MyParser::ParseTypeAssignment(int& tokIdx) {
+	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
 	MyTypeAssignment* ass = new MyTypeAssignment();
@@ -535,7 +548,12 @@ MyTypeAssignment* MyParser::ParseTypeAssignment(int& tokIdx) {
 		ass->TypeReference.Set(m_Tokens.Get(idx));
 		idx++;
 
-		
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->Type = ParseType(idx);
+		if (ass->Type == NULL) goto done;
+
+		success = true;
 	}
 
 done:
@@ -546,14 +564,45 @@ done:
 		tokIdx = idx;
 		return ass;
 	}
-
 }
+MyValueAssignment* MyParser::ParseValueAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueAssignment* ass = new MyValueAssignment();
 
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		ass->ValueReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		ass->Type = ParseType(idx);
+		if (ass->Type == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->Value = ParseValue(idx);
+		if (ass->Value == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
 
 MyType* MyParser::ParseType(int& tokIdx) {
 	bool success = false;
 	int idx = tokIdx;
 	MyType* typ = new MyType();
+
+	typ->BuiltinType = ParseBuiltinType(idx);
+	if (typ->BuiltinType != NULL) { success = true; goto done; }
 
 done:
 	if (!success) {
@@ -590,6 +639,33 @@ MyBuiltinType* MyParser::ParseBuiltinType(int& tokIdx) {
 
 	typ->NullType = ParseNullType(idx);
 	if (typ->NullType) { success = true; goto done; }
+
+	typ->ObjectClassFieldType = ParseObjectClassFieldType(idx);
+	if (typ->ObjectClassFieldType) { success = true; goto done; }
+
+	typ->ObjectIDType = ParseObjectIDType(idx);
+	if (typ->ObjectIDType) { success = true; goto done; }
+
+	typ->OctetStringType = ParseOctetStringType(idx);
+	if (typ->OctetStringType) { success = true; goto done; }
+
+	typ->RealType = ParseRealType(idx);
+	if (typ->RealType) { success = true; goto done; }
+
+	typ->SequenceType = ParseSequenceType(idx);
+	if (typ->SequenceType) { success = true; goto done; }
+
+	typ->SequenceOfType = ParseSequenceOfType(idx);
+	if (typ->SequenceOfType) { success = true; goto done; }
+
+	typ->SetType = ParseSetType(idx);
+	if (typ->SetType) { success = true; goto done; }
+
+	typ->SetOfType = ParseSetOfType(idx);
+	if (typ->SetOfType) { success = true; goto done; }
+
+	typ->TaggedType = ParseTaggedType(idx);
+	if (typ->TaggedType) { success = true; goto done; }
 
 done:
 	if (!success) {
@@ -806,6 +882,259 @@ MyNullType* MyParser::ParseNullType(int& tokIdx) {
 	}
 	return NULL;
 }
+MyObjectClassFieldType* MyParser::ParseObjectClassFieldType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectClassFieldType* fieldType = new MyObjectClassFieldType();
+
+	fieldType->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (fieldType->DefinedObjectClass == NULL) { goto done; }
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	fieldType->FieldName = ParseFieldName(idx);
+	if (fieldType->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete fieldType;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return fieldType;
+	}
+}
+MyObjectIDType* MyParser::ParseObjectIDType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectIDType* objIdType = new MyObjectIDType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OBJECT")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_RESERVED_WORD, "IDENTIFIER")) {
+			idx++;
+			success = true;
+		}
+	}
+
+done:
+	if (!success) {
+		delete objIdType;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objIdType;
+	}
+}
+MyOctetStringType* MyParser::ParseOctetStringType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyOctetStringType* typ = new MyOctetStringType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OCTET")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_RESERVED_WORD, "STRING")) {
+			idx++;
+			success = true;
+		}
+	}
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyRealType* MyParser::ParseRealType(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "REAL")) {
+		tokIdx++;
+		return new MyRealType();
+	}
+	return NULL;
+}
+MySequenceType* MyParser::ParseSequenceType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySequenceType* typ = new MySequenceType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SEQUENCE")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		typ->ComponentTypeLists = ParseComponentTypeLists(idx);
+		if (typ->ComponentTypeLists) {
+			if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+			success = true;
+			goto done;
+		}
+
+		typ->ExtensionAndException = ParseExtensionAndException(idx);
+		if (typ->ExtensionAndException == NULL) goto done;
+
+		typ->OptionalExtensionMarker = ParseOptionalExtensionMarker(idx);
+		if (typ->OptionalExtensionMarker == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MySequenceOfType* MyParser::ParseSequenceOfType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySequenceOfType* typ = new MySequenceOfType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SEQUENCE")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_RESERVED_WORD, "OF")) {
+			idx++;
+
+			typ->Type = ParseType(idx);
+			if (typ->Type) { success = true; goto done; }
+
+			typ->NamedType = ParseNamedType(idx);
+			if (typ->NamedType) { success = true; goto done; }
+		}
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MySetType* MyParser::ParseSetType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySetType* typ = new MySetType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SET")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		typ->ComponentTypeLists = ParseComponentTypeLists(idx);
+		if (typ->ComponentTypeLists) {
+			if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+			success = true;
+			goto done;
+		}
+
+		typ->ExtensionAndException = ParseExtensionAndException(idx);
+		if (typ->ExtensionAndException == NULL) goto done;
+
+		typ->OptionalExtensionMarker = ParseOptionalExtensionMarker(idx);
+		if (typ->OptionalExtensionMarker == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MySetOfType* MyParser::ParseSetOfType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySetOfType* typ = new MySetOfType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SET")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_RESERVED_WORD, "OF")) {
+			idx++;
+
+			typ->Type = ParseType(idx);
+			if (typ->Type) { success = true; goto done; }
+
+			typ->NamedType = ParseNamedType(idx);
+			if (typ->NamedType) { success = true; goto done; }
+		}
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyTaggedType* MyParser::ParseTaggedType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTaggedType* typ = new MyTaggedType();
+
+	typ->Tag = ParseTag(idx);
+	if (typ->Tag == NULL) goto done;
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "IMPLICIT") || IsToken(idx, TOKEN_RESERVED_WORD, "EXPLICIT")) {
+		typ->ImplicitOrExplicit.Set(m_Tokens.Get(idx));
+		idx++;
+	}
+
+	typ->Type = ParseType(idx);
+	if (typ->Type == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+
 MyEnumerations* MyParser::ParseEnumerations(int& tokIdx) {
 	int err = 0;
 	bool success = false;
@@ -1010,6 +1339,107 @@ done:
 		return extAddAlt;
 	}
 }
+MyExtensionAdditionGroup* MyParser::ParseExtensionAdditionGroup(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExtensionAdditionGroup* group = new MyExtensionAdditionGroup();
+
+	if (IsToken(idx, TOKEN_LEFT_VERSION_BRACKETS, "[[")) {
+		idx++;
+
+		group->VersionNumber = ParseVersionNumber(idx);
+		if (group->VersionNumber == NULL) goto done;
+
+		group->ComponentTypeList = ParseComponentTypeList(idx);
+		if (group->ComponentTypeList == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_RIGHT_VERSION_BRACKETS, "]]")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete group;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return group;
+	}
+}
+MyExtensionAdditionList* MyParser::ParseExtensionAdditionList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyExtensionAdditionList* list = new MyExtensionAdditionList();
+
+	while (true) {
+		MyExtensionAddition* add = ParseExtensionAddition(idx);
+		if (add != NULL) {
+			list->ExtensionAdditions.Add(add);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyExtensionAddition* MyParser::ParseExtensionAddition(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyExtensionAddition* add = new MyExtensionAddition();
+
+	add->ComponentType = ParseComponentType(idx);
+	if (add->ComponentType) { success = true; goto done; }
+
+	add->ExtensionAdditionGroup = ParseExtensionAdditionGroup(idx);
+	if (add->ExtensionAdditionGroup) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete add;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return add;
+	}
+}
+MyExtensionAdditions* MyParser::ParseExtensionAdditions(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyExtensionAdditions* adds = new MyExtensionAdditions();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		idx++;
+
+		adds->ExtensionAdditionList = ParseExtensionAdditionList(idx);
+		if (adds->ExtensionAdditionList == NULL) goto done;
+
+		success = true;
+	} else {
+		adds->Empty = true;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete adds;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return adds;
+	}
+}
 MyOptionalExtensionMarker* MyParser::ParseOptionalExtensionMarker(int& tokIdx) {
   int err = 0;
 	bool success = false;
@@ -1026,6 +1456,27 @@ MyOptionalExtensionMarker* MyParser::ParseOptionalExtensionMarker(int& tokIdx) {
 
 	} else {
 		marker->Empty = true;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete marker;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return marker;
+	}
+}
+MyExtensionEndMarker* MyParser::ParseExtensionEndMarker(int& tokIdx) {
+  int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExtensionEndMarker* marker = new MyExtensionEndMarker();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
 		success = true;
 	}
 
@@ -1267,6 +1718,335 @@ done:
 	} else {
 		tokIdx = idx;
 		return namedNumber;
+	}
+}
+
+MyDefinedObjectClass* MyParser::ParseDefinedObjectClass(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedObjectClass* objClass = new MyDefinedObjectClass();
+
+	objClass->ExternalObjectClassReference = ParseExternalObjectClassReference(idx);
+	if (objClass->ExternalObjectClassReference) { success = true; goto done; }
+
+	objClass->UsefulObjectClassReference = ParseUsefulObjectClassReference(idx);
+	if (objClass->UsefulObjectClassReference) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		objClass->ObjectClassReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete objClass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objClass;
+	}
+}
+MyExternalObjectClassReference* MyParser::ParseExternalObjectClassReference(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExternalObjectClassReference* extObjClassRef = new MyExternalObjectClassReference();
+
+	if (IsToken(idx, TOKEN_MODULE_REF)) {
+		extObjClassRef->ModuleReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+		if (IsToken(idx, TOKEN_TYPE_REF)) {
+			extObjClassRef->ObjectClassReference.Set(m_Tokens.Get(idx));
+			idx++;
+
+			success = true;
+		} else {
+			goto done; // failed
+		}
+	}
+
+done:
+	if (!success) {
+		delete extObjClassRef;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return extObjClassRef;
+	}
+}
+MyUsefulObjectClassReference* MyParser::ParseUsefulObjectClassReference(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUsefulObjectClassReference* usefulObjClassRef = new MyUsefulObjectClassReference();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "TYPE-IDENTIFIER")) {
+		usefulObjClassRef->Value.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	} else if (IsToken(idx, TOKEN_RESERVED_WORD, "ABSTRACT-SYNTAX")) {
+		usefulObjClassRef->Value.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete usefulObjClassRef;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return usefulObjClassRef;
+	}
+}
+MyFieldName* MyParser::ParseFieldName(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFieldName* name = new MyFieldName();
+
+	name->PrimitiveFieldName = ParsePrimitiveFieldName(idx);
+	if (name->PrimitiveFieldName == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete name;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return name;
+	}
+}
+MyPrimitiveFieldName* MyParser::ParsePrimitiveFieldName(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyPrimitiveFieldName* name = new MyPrimitiveFieldName();
+
+	assert(false); // TODO:
+	
+done:
+	if (!success) {
+		delete name;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return name;
+	}
+}
+
+MyComponentTypeLists* MyParser::ParseComponentTypeLists(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentTypeLists* lists = new MyComponentTypeLists();
+
+	lists->RootComponentTypeList = ParseComponentTypeList(idx);
+	if (lists->RootComponentTypeList) {
+
+		if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			success = true;
+			goto done;
+		}
+
+		lists->ExtensionAndException = ParseExtensionAndException(idx);
+		if (lists->ExtensionAndException == NULL) goto done;
+
+		lists->ExtensionAdditions = ParseExtensionAdditions(idx);
+		if (lists->ExtensionAdditions == NULL) goto done;
+
+		lists->OptionalExtensionMarker = ParseOptionalExtensionMarker(idx);
+		if (lists->OptionalExtensionMarker) { success = true; goto done; }
+
+		lists->ExtensionEndMarker = ParseExtensionEndMarker(idx);
+		if (lists->ExtensionEndMarker == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) goto done;
+
+		lists->RootComponentTypeList2 = ParseComponentTypeList(idx);
+		if (lists->RootComponentTypeList2 == NULL) goto done;
+
+		success = true;
+
+	} else {
+
+		lists->ExtensionAndException = ParseExtensionAndException(idx);
+		if (lists->ExtensionAndException == NULL) goto done;
+
+		lists->ExtensionAdditions = ParseExtensionAdditions(idx);
+		if (lists->ExtensionAdditions == NULL) goto done;
+
+		lists->OptionalExtensionMarker = ParseOptionalExtensionMarker(idx);
+		if (lists->OptionalExtensionMarker) { success = true; goto done; }
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) goto done;
+
+		lists->RootComponentTypeList2 = ParseComponentTypeList(idx);
+		if (lists->RootComponentTypeList2 == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete lists;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return lists;
+	}
+}
+MyComponentTypeList* MyParser::ParseComponentTypeList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentTypeList* list = new MyComponentTypeList();
+
+	while (true) {
+		MyComponentType* typ = ParseComponentType(idx);
+		if (typ != NULL) {
+			list->ComponentTypes.Add(typ);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyComponentType* MyParser::ParseComponentType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentType* typ = new MyComponentType();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "COMPONENTS")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "OF")) goto done;
+
+		typ->ComponentsOfType = ParseType(idx);
+		if (typ->ComponentsOfType == NULL) goto done;
+		success = true;
+	} else {
+		typ->NamedType = ParseNamedType(idx);
+		if (typ->NamedType == NULL) goto done;
+
+		if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+			idx++;
+			typ->Optional = true;
+			success = true;
+		} else if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+			idx++;
+			typ->DefaultValue = ParseValue(idx);
+			if (typ->DefaultValue == NULL) goto done;
+			success = true;
+		}
+	}
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+
+MyTag* MyParser::ParseTag(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTag* tag = new MyTag();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "[")) {
+		idx++;
+
+		tag->Class = ParseClass(idx);
+		if (tag->Class == NULL) goto done;
+
+		tag->ClassNumber = ParseClassNumber(idx);
+		if (tag->ClassNumber == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "]")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete tag;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return tag;
+	}
+}
+MyClassNumber*  MyParser::ParseClassNumber(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyClassNumber* classNumber = new MyClassNumber();
+
+	if (IsToken(idx, TOKEN_NUMBER)) {
+		classNumber->Number.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	classNumber->DefinedValue = ParseDefinedValue(idx);
+	if (classNumber->DefinedValue == NULL) goto done;
+	success = true;
+
+done:
+	if (!success) {
+		delete classNumber;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return classNumber;
+	}
+}
+MyClass* MyParser::ParseClass(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyClass* c = new MyClass();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "UNIVERSAL") || IsToken(idx, TOKEN_RESERVED_WORD, "APPLICATION") || IsToken(idx, TOKEN_RESERVED_WORD, "PRIVATE")) {
+		c->Value.Set(m_Tokens.Get(idx));
+		idx++;
+	} else {
+		// Empty
+	}
+	success = true;
+
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
 	}
 }
 

@@ -11,6 +11,13 @@
 #include "../notations/MyChoiceTypeDef.h"
 #include "../notations/MyExternalTypeDef.h"
 #include "../notations/MyNullTypeDef.h"
+#include "../notations/MyOctetstringTypeDef.h"
+#include "../notations/MyRealTypeDef.h"
+#include "../notations/MySequenceTypeDef.h"
+#include "../notations/MySequenceOfTypeDef.h"
+#include "../notations/MySetTypeDef.h"
+#include "../notations/MySetOfTypeDef.h"
+#include "../notations/MyTaggedTypeDef.h"
 
 class MyParser {
 public:
@@ -47,6 +54,7 @@ private:
 
 	MyAssignment* ParseAssignment(int& tokIdx);
 	MyTypeAssignment* ParseTypeAssignment(int& tokIdx);
+	MyValueAssignment* ParseValueAssignment(int& tokIdx);
 
 	MyType* ParseType(int& tokIdx);
 	MyBuiltinType* ParseBuiltinType(int& tokIdx);
@@ -59,12 +67,26 @@ private:
 	MyExternalType* ParseExternalType(int& tokIdx);
 	MyIntegerType* ParseIntegerType(int& tokIdx);
 	MyNullType* ParseNullType(int& tokIdx);
+	MyObjectClassFieldType* ParseObjectClassFieldType(int& tokIdx);
+	MyObjectIDType* ParseObjectIDType(int& tokIdx);
+	MyOctetStringType* ParseOctetStringType(int& tokIdx);
+	MyRealType* ParseRealType(int& tokIdx);
+	MySequenceType* ParseSequenceType(int& tokIdx);
+	MySequenceOfType* ParseSequenceOfType(int& tokIdx);
+	MySetType* ParseSetType(int& tokIdx);
+	MySetOfType* ParseSetOfType(int& tokIdx);
+	MyTaggedType* ParseTaggedType(int& tokIdx);
 
 	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
 	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
 	MyExtensionAndException* ParseExtensionAndException(int& tokIdx);
 	MyExtensionAdditionAlternative* ParseExtensionAdditionAlternative(int& tokIdx);
+	MyExtensionAdditionGroup* ParseExtensionAdditionGroup(int& tokIdx);
+	MyExtensionAdditionList* ParseExtensionAdditionList(int& tokIdx);
+	MyExtensionAddition* ParseExtensionAddition(int& tokIdx);
+	MyExtensionAdditions* ParseExtensionAdditions(int& tokIdx);
 	MyOptionalExtensionMarker* ParseOptionalExtensionMarker(int& tokIdx);
+	MyExtensionEndMarker* ParseExtensionEndMarker(int& tokIdx);
 	MyNamedType* ParseNamedType(int& tokIdx);
 	MyExceptionSpec* ParseExceptionSpec(int& tokIdx);
 	MyExceptionIdentification* ParseExceptionIdentification(int& tokIdx);
@@ -79,6 +101,20 @@ private:
 	MyValue* ParseValue(int& tokIdx);
 	MyNamedNumberList* ParseNamedNumberList(int& tokIdx);
 	MyNamedNumber* ParseNamedNumber(int& tokIdx);
+
+	MyDefinedObjectClass* ParseDefinedObjectClass(int& tokIdx);
+	MyExternalObjectClassReference* ParseExternalObjectClassReference(int& tokIdx);
+	MyUsefulObjectClassReference* ParseUsefulObjectClassReference(int& tokIdx);
+	MyFieldName* ParseFieldName(int& tokIdx);
+	MyPrimitiveFieldName* ParsePrimitiveFieldName(int& tokIdx);
+
+	MyComponentTypeLists* ParseComponentTypeLists(int& tokIdx);
+	MyComponentTypeList* ParseComponentTypeList(int& tokIdx);
+	MyComponentType* ParseComponentType(int& tokIdx);
+
+	MyTag* ParseTag(int& tokIdx);
+	MyClassNumber* ParseClassNumber(int& tokIdx);
+	MyClass* ParseClass(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
 	int ExpectedTokenType(int& tokIdx, int tokType, const char* token=NULL);

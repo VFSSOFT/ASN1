@@ -65,7 +65,7 @@ ComponentType ::=
 class MyComponentType : public NotationBase {
 public:
 	MyNamedType* NamedType;
-	MyNamedType* OptionalNamedType;
+	bool         Optional;
 	MyValue*     DefaultValue;
 	MyType*      ComponentsOfType;
 };
@@ -137,10 +137,12 @@ ComponentTypeLists ::=
 */
 class MyComponentTypeLists : public NotationBase {
 public:
-	MyRootComponentTypeList* RootComponentTypeList;
-	MyExtensionAndException* ExtensionAndException;
-	MyExtensionAdditions*    ExtensionAdditions;
-	MyRootComponentTypeList* RootComponentTypeList2;
+	MyRootComponentTypeList*   RootComponentTypeList;
+	MyExtensionAndException*   ExtensionAndException;
+	MyExtensionAdditions*      ExtensionAdditions;
+	MyOptionalExtensionMarker* OptionalExtensionMarker;
+	MyExtensionEndMarker*      ExtensionEndMarker;
+	MyRootComponentTypeList*   RootComponentTypeList2;
 };
 
 /*
@@ -152,6 +154,7 @@ SequenceType ::=
 class MySequenceType : public NotationBase {
 public:
 	MyExtensionAndException* ExtensionAndException;
+	MyOptionalExtensionMarker* OptionalExtensionMarker;
 	MyComponentTypeLists*    ComponentTypeLists;
 };
 

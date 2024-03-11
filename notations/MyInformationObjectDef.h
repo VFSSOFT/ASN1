@@ -112,6 +112,7 @@ class MyDefinedObjectClass : public NotationBase {
 public:
 	MyExternalObjectClassReference* ExternalObjectClassReference;
 	MyStringA                      ObjectClassReference;
+	MyUsefulObjectClassReference*   UsefulObjectClassReference;
 };
 
 /*
@@ -184,6 +185,16 @@ PrimitiveFieldName ::=
 		typefieldreference
 		| valuefieldreference
 		| valuesetfieldreference
+
+A "typefieldreference" shall consist of an ampersand ("&") immediately followed by a sequence of characters as specified
+for a "typereference" in Rec. ITU-T X.680 | ISO/IEC 8824-1, 12.2.
+
+A "valuefieldreference" shall consist of an ampersand ("&") immediately followed by a sequence of characters as specified
+for a "valuereference" in Rec. ITU-T X.680 | ISO/IEC 8824-1, 12.4.
+
+A "valuesetfieldreference" shall consist of an ampersand ("&") immediately followed by a sequence of characters as
+specified for a "typereference" in Rec. ITU-T X.680 | ISO/IEC 8824-1, 12.2.
+
 */
 class MyPrimitiveFieldName : public NotationBase {
 public:

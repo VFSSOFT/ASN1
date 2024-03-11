@@ -12,8 +12,9 @@ SetType ::=
 */
 class MySetType : public NotationBase {
 public:
-	MyExtensionAndException* ExtensionAndException;
-	MyComponentTypeLists*    ComponentTypeLists;
+	MyExtensionAndException*   ExtensionAndException;
+	MyOptionalExtensionMarker* OptionalExtensionMarker;
+	MyComponentTypeLists*      ComponentTypeLists;
 };
 
 /*
