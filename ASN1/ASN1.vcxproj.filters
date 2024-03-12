@@ -166,5 +166,17 @@
     <ClInclude Include="..\notations\MyCharacterStringType.h">
       <Filter>Notations</Filter>
     </ClInclude>
+    <ClInclude Include="..\notations\MyConstrainedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MySubtypeElementsDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyElementSetSpecificationDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\notations\MyConstrainSpecDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
