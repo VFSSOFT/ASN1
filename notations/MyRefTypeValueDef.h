@@ -43,6 +43,7 @@ DefinedType ::=
 class MyDefinedType : public NotationBase {
 public:
 	MyExternalTypeReference*     ExternalTypeReference;
+	MyStringA                    TypeReference;
 	MyParameterizedType*         ParameterizedType;
 	MyParameterizedValueSetType* ParameterizedValueSetType;
 };

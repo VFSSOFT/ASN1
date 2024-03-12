@@ -3,6 +3,7 @@
 
 #include "MyNotationCommon.h"
 
+class MyDefinedObject;
 class MyReference;
 class MyExternalTypeReference;
 class MyExternalValueReference;
@@ -279,6 +280,17 @@ ParameterizedObjectSet ::=
 class MyParameterizedObjectSet : public NotationBase {
 public:
 	MyDefinedObjectSet*    DefinedObjectSet;
+	MyActualParameterList* ActualParameterList;
+};
+
+/*
+ParameterizedObject ::=
+		DefinedObject
+		ActualParameterList
+*/
+class MyParameterizedObject : public NotationBase {
+public:
+	MyDefinedObject*       DefinedObject;
 	MyActualParameterList* ActualParameterList;
 };
 

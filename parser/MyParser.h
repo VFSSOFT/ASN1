@@ -18,6 +18,7 @@
 #include "../notations/MySetTypeDef.h"
 #include "../notations/MySetOfTypeDef.h"
 #include "../notations/MyTaggedTypeDef.h"
+#include "../notations/MySelectionTypesDef.h"
 
 class MyParser {
 public:
@@ -76,6 +77,18 @@ private:
 	MySetType* ParseSetType(int& tokIdx);
 	MySetOfType* ParseSetOfType(int& tokIdx);
 	MyTaggedType* ParseTaggedType(int& tokIdx);
+	MyReferencedType* ParseReferencedType(int& tokIdx);
+	MyDefinedType* ParseDefinedType(int& tokIdx);
+	MyExternalTypeReference* ParseExternalTypeReference(int& tokIdx);
+	MyParameterizedType* ParseParameterizedType(int& tokIdx);
+	MySimpleDefinedType* ParseSimpleDefinedType(int& tokIdx);
+	MyActualParameterList* ParseActualParameterList(int& tokIdx);
+	MyActualParameter* ParseActualParameter(int& tokIdx);
+	MyParameterizedValueSetType* ParseParameterizedValueSetType(int& tokIdx);
+	MySelectionType* ParseSelectionType(int& tokIdx);
+	MyTypeFromObject* ParseTypeFromObject(int& tokIdx);
+	MyReferencedObjects* ParseReferencedObjects(int& tokIdx);
+	MyValueSetFromObjects* ParseValueSetFromObjects(int& tokIdx);
 
 	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
 	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
@@ -99,14 +112,23 @@ private:
 	MySignedNumber* ParseSignedNumber(int& tokIdx);
 	MyDefinedValue* ParseDefinedValue(int& tokIdx);
 	MyValue* ParseValue(int& tokIdx);
+	MyValueSet* ParseValueSet(int& tokIdx);
+	MyObject* ParseObject(int& tokIdx);
+	MyObjectSet* ParseObjectSet(int& tokIdx);
 	MyNamedNumberList* ParseNamedNumberList(int& tokIdx);
 	MyNamedNumber* ParseNamedNumber(int& tokIdx);
 
+	MyDefinedObject* ParseDefinedObject(int& tokIdx);
+	MyDefinedObjectSet* ParseDefinedObjectSet(int& tokIdx);
 	MyDefinedObjectClass* ParseDefinedObjectClass(int& tokIdx);
 	MyExternalObjectClassReference* ParseExternalObjectClassReference(int& tokIdx);
 	MyUsefulObjectClassReference* ParseUsefulObjectClassReference(int& tokIdx);
 	MyFieldName* ParseFieldName(int& tokIdx);
 	MyPrimitiveFieldName* ParsePrimitiveFieldName(int& tokIdx);
+	MyExternalObjectReference* ParseExternalObjectReference(int& tokIdx);
+	MyExternalObjectSetReference* ParseExternalObjectSetReference(int& tokIdx);
+	MyParameterizedObject* ParseParameterizedObject(int& tokIdx);
+	MyParameterizedObjectSet* ParseParameterizedObjectSet(int& tokIdx);
 
 	MyComponentTypeLists* ParseComponentTypeLists(int& tokIdx);
 	MyComponentTypeList* ParseComponentTypeList(int& tokIdx);

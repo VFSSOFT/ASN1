@@ -604,6 +604,9 @@ MyType* MyParser::ParseType(int& tokIdx) {
 	typ->BuiltinType = ParseBuiltinType(idx);
 	if (typ->BuiltinType != NULL) { success = true; goto done; }
 
+	typ->ReferencedType = ParseReferencedType(idx);
+	if (typ->ReferencedType) { success = true; goto done; }
+
 done:
 	if (!success) {
 		delete typ;
@@ -1134,6 +1137,339 @@ done:
 		return typ;
 	}
 }
+MyReferencedType* MyParser::ParseReferencedType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyReferencedType* typ = new MyReferencedType();
+
+	typ->DefinedType = ParseDefinedType(idx);
+	if (typ->DefinedType) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		typ->UsefulType.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	typ->SelectionType = ParseSelectionType(idx);
+	if (typ->SelectionType) { success = true; goto done; }
+
+	typ->TypeFromObject = ParseTypeFromObject(idx);
+	if (typ->TypeFromObject) { success = true; goto done; }
+
+	typ->ValueSetFromObjects = ParseValueSetFromObjects(idx);
+	if (typ->ValueSetFromObjects) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyDefinedType* MyParser::ParseDefinedType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedType* typ = new MyDefinedType();
+
+	typ->ExternalTypeReference = ParseExternalTypeReference(idx);
+	if (typ->ExternalTypeReference) { success = true; goto done; }
+
+	typ->ParameterizedType = ParseParameterizedType(idx);
+	if (typ->ParameterizedType) { success = true; goto done; }
+
+	typ->ParameterizedValueSetType = ParseParameterizedValueSetType(idx);
+	if (typ->ParameterizedValueSetType) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		typ->TypeReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyExternalTypeReference* MyParser::ParseExternalTypeReference(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExternalTypeReference* ref = new MyExternalTypeReference();
+
+	if (IsToken(idx, TOKEN_MODULE_REF)) {
+		ref->ModuleReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+		if (IsToken(idx, TOKEN_TYPE_REF)) {
+			ref->TypeReference.Set(m_Tokens.Get(idx));
+			idx++;
+			success = true;
+		}
+	}
+
+done:
+	if (!success) {
+		delete ref;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ref;
+	}
+}
+MyParameterizedType* MyParser::ParseParameterizedType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedType* typ = new MyParameterizedType();
+
+	typ->SimpleDefinedType = ParseSimpleDefinedType(idx);
+	if (typ->SimpleDefinedType == NULL) goto done;
+
+	typ->ActualParameterList = ParseActualParameterList(idx);
+	if (typ->ActualParameterList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MySimpleDefinedType* MyParser::ParseSimpleDefinedType(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MySimpleDefinedType* typ = new MySimpleDefinedType();
+
+	typ->ExternalTypeReference = ParseExternalTypeReference(idx);
+	if (typ->ExternalTypeReference) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		typ->TypeReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyActualParameterList* MyParser::ParseActualParameterList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyActualParameterList* list = new MyActualParameterList();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		while (true) {
+			MyActualParameter* p = ParseActualParameter(idx);
+			if (p != NULL) {
+				list->ActualParameters.Add(p);
+
+				if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			} else {
+				break;
+			}
+		}
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyActualParameter* MyParser::ParseActualParameter(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyActualParameter* ap = new MyActualParameter();
+
+	ap->Type = ParseType(idx);
+	if (ap->Type) { success = true; goto done; }
+
+	ap->Value = ParseValue(idx);
+	if (ap->Value) { success = true; goto done; }
+
+	ap->ValueSet = ParseValueSet(idx);
+	if (ap->ValueSet) { success =true; goto done; }
+
+	ap->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (ap->DefinedObjectClass) { success = true; goto done; }
+
+	ap->Object = ParseObject(idx);
+	if (ap->Object) { success = true; goto done; }
+
+	ap->ObjectSet = ParseObjectSet(idx);
+	if (ap->ObjectSet) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete ap;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ap;
+	}
+}
+MyParameterizedValueSetType* MyParser::ParseParameterizedValueSetType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedValueSetType* typ = new MyParameterizedValueSetType();
+
+	typ->SimpleDefinedType = ParseSimpleDefinedType(idx);
+	if (typ->SimpleDefinedType == NULL) goto done;
+
+	typ->ActualParameterList = ParseActualParameterList(idx);
+	if (typ->ActualParameterList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MySelectionType* MyParser::ParseSelectionType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySelectionType* typ = new MySelectionType();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		typ->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "<")) goto done;
+
+		typ->Type = ParseType(idx);
+		if (typ->Type == NULL) goto done;
+
+		success = true;
+	}
+
+	success = true;
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyTypeFromObject* MyParser::ParseTypeFromObject(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTypeFromObject* typFromObj = new MyTypeFromObject();
+
+	typFromObj->ReferencedObjects = ParseReferencedObjects(idx);
+	if (typFromObj->ReferencedObjects == NULL) goto done;
+
+	if (err =ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	typFromObj->FieldName = ParseFieldName(idx);
+	if (typFromObj->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete typFromObj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typFromObj;
+	}
+}
+MyReferencedObjects* MyParser::ParseReferencedObjects(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyReferencedObjects* objs = new MyReferencedObjects();
+
+	objs->DefinedObject = ParseDefinedObject(idx);
+	if (objs->DefinedObject) { success = true; goto done; }
+
+	objs->ParameterizedObject = ParseParameterizedObject(idx);
+	if (objs->ParameterizedObject) { success = true; goto done; }
+
+	objs->DefinedObjectSet = ParseDefinedObjectSet(idx);
+	if (objs->DefinedObjectSet) { success = true; goto done; }
+
+	objs->ParameterizedObjectSet = ParseParameterizedObjectSet(idx);
+	if (objs->ParameterizedObjectSet) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete objs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objs;
+	}
+}
+MyValueSetFromObjects* MyParser::ParseValueSetFromObjects(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueSetFromObjects* objs = new MyValueSetFromObjects();
+
+	objs->ReferencedObjects = ParseReferencedObjects(idx);
+	if (objs->ReferencedObjects == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	objs->FieldName = ParseFieldName(idx);
+	if (objs->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete objs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objs;
+	}
+}
 
 MyEnumerations* MyParser::ParseEnumerations(int& tokIdx) {
 	int err = 0;
@@ -1660,6 +1996,19 @@ MyDefinedValue* MyParser::ParseDefinedValue(int& tokIdx) {
 }
 
 MyValue* MyParser::ParseValue(int& tokIdx) {
+	assert(false);
+	return 0;
+}
+MyValueSet* MyParser::ParseValueSet(int& tokIdx) {
+	assert(false);
+	return 0;
+}
+MyObject* MyParser::ParseObject(int& tokIdx) {
+	assert(false);
+	return 0;
+}
+MyObjectSet* MyParser::ParseObjectSet(int& tokIdx) {
+	assert(false);
 	return 0;
 }
 MyNamedNumberList* MyParser::ParseNamedNumberList(int& tokIdx) {
@@ -1721,6 +2070,54 @@ done:
 	}
 }
 
+MyDefinedObject* MyParser::ParseDefinedObject(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedObject* obj = new MyDefinedObject();
+
+	obj->ExternalObjectReference = ParseExternalObjectReference(idx);
+	if (obj->ExternalObjectReference) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		obj->ObjectReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete obj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return obj;
+	}
+}
+MyDefinedObjectSet* MyParser::ParseDefinedObjectSet(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedObjectSet* objSet = new MyDefinedObjectSet();
+
+	objSet->ExternalObjectSetReference = ParseExternalObjectSetReference(idx);
+	if (objSet->ExternalObjectSetReference) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		objSet->ObjectSetReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete objSet;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objSet;
+	}
+}
 MyDefinedObjectClass* MyParser::ParseDefinedObjectClass(int& tokIdx) {
 	int err = 0;
 	bool success = false;
@@ -1841,6 +2238,108 @@ done:
 	} else {
 		tokIdx = idx;
 		return name;
+	}
+}
+MyExternalObjectReference* MyParser::ParseExternalObjectReference(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExternalObjectReference* ref = new MyExternalObjectReference();
+
+	if (IsToken(idx, TOKEN_MODULE_REF)) {
+		ref->ModuleReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+		if (IsToken(idx, TOKEN_IDENTIFIER)) {
+			ref->ObjectReference.Set(m_Tokens.Get(idx));
+			idx++;
+			success = true;
+		}
+	}
+	
+done:
+	if (!success) {
+		delete ref;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ref;
+	}
+}
+MyExternalObjectSetReference* MyParser::ParseExternalObjectSetReference(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExternalObjectSetReference* ref = new MyExternalObjectSetReference();
+
+	if (IsToken(idx, TOKEN_MODULE_REF)) {
+		ref->ModuleReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+		if (IsToken(idx, TOKEN_TYPE_REF)) {
+			ref->ObjectSetReference.Set(m_Tokens.Get(idx));
+			idx++;
+			success = true;
+		}
+	}
+	
+done:
+	if (!success) {
+		delete ref;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ref;
+	}
+}
+MyParameterizedObject* MyParser::ParseParameterizedObject(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObject* obj = new MyParameterizedObject();
+
+	obj->DefinedObject = ParseDefinedObject(idx);
+	if (obj->DefinedObject == NULL) goto done;
+
+	obj->ActualParameterList = ParseActualParameterList(idx);
+	if (obj->ActualParameterList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete obj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return obj;
+	}
+}
+MyParameterizedObjectSet* MyParser::ParseParameterizedObjectSet(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObjectSet* objSet = new MyParameterizedObjectSet();
+
+	objSet->DefinedObjectSet = ParseDefinedObjectSet(idx);
+	if (objSet->DefinedObjectSet == NULL) goto done;
+
+	objSet->ActualParameterList = ParseActualParameterList(idx);
+	if (objSet->ActualParameterList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete objSet;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objSet;
 	}
 }
 

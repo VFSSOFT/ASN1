@@ -3,6 +3,7 @@
 
 #include "MyNotationCommon.h"
 
+class MyParameterizedObject;
 class MyPrimitiveFieldName;
 class MyType;
 class MyValue;
@@ -121,7 +122,9 @@ DefinedObject ::=
 		| objectreference
 */
 class MyDefinedObject : public NotationBase {
-
+public:
+	MyExternalObjectReference* ExternalObjectReference;
+	MyStringA                  ObjectReference;
 };
 
 /*
@@ -130,7 +133,9 @@ DefinedObjectSet ::=
 		| objectsetreference
 */
 class MyDefinedObjectSet : public NotationBase {
-
+public:
+	MyExternalObjectSetReference* ExternalObjectSetReference;
+	MyStringA                     ObjectSetReference;
 };
 
 
@@ -565,10 +570,10 @@ ReferencedObjects ::=
 */
 class MyReferencedObjects : public NotationBase {
 public:
-	MyDefinedObject*    DefinedObject;
-	//
-	MyDefinedObjectSet* DefinedObjectSet;
-	//
+	MyDefinedObject*          DefinedObject;
+	MyParameterizedObject*    ParameterizedObject;
+	MyDefinedObjectSet*       DefinedObjectSet;
+	MyParameterizedObjectSet* ParameterizedObjectSet;
 };
 
 /*

@@ -82,7 +82,7 @@ ReferencedType ::=
 class MyReferencedType : public NotationBase {
 public:
 	MyDefinedType*         DefinedType;
-	//MyUsefulType*        UsefulType;
+	MyStringA              UsefulType;
 	MySelectionType*       SelectionType;
 	MyTypeFromObject*      TypeFromObject;
 	MyValueSetFromObjects* ValueSetFromObjects;
@@ -93,9 +93,8 @@ public:
 */
 class MyType : public NotationBase {
 public:
-	MyBuiltinType* BuiltinType;
+	MyBuiltinType*    BuiltinType;
 	MyReferencedType* ReferencedType;
-	//
 };
 
 /*
