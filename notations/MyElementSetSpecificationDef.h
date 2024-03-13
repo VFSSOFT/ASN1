@@ -58,7 +58,7 @@ Intersections ::= IntersectionElements
 */
 class MyIntersections : public NotationBase {
 public:
-	MyIElems*               IElems;
+	MyIntersections*        IElems; //MyIElems* IElems;
 	MyIntersectionMark*     IntersectionMark;
 	MyIntersectionElements* IntersectionElements; // used twice here
 };
@@ -71,7 +71,7 @@ Unions ::= Intersections
 */
 class MyUnions : public NotationBase {
 public:
-	MyUElems*        UElems;
+	MyUnions*        UElems; //MyUElems* UElems;
 	MyUnionMark*     UnionMark;
 	MyIntersections* Intersections;// used twice here
 };
@@ -112,6 +112,7 @@ ElementSetSpecs ::=
 class MyElementSetSpecs : public NotationBase {
 public:
 	MyRootElementSetSpec*       RootElementSetSpec;
+	bool                        Ellipsis;
 	MyAdditionalElementSetSpec* AdditionalElementSetSpec;
 };
 

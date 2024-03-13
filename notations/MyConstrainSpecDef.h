@@ -36,7 +36,7 @@ UserDefinedConstraint ::=
 */
 class MyUserDefinedConstraint : public NotationBase {
 public:
-	MyUserDefinedConstraintParameter* UserDefinedConstraintParameter;
+	MyValArray<MyUserDefinedConstraintParameter*> UserDefinedConstraintParameters;
 };
 
 
@@ -73,8 +73,8 @@ ComponentRelationConstraint ::=
 */
 class MyComponentRelationConstraint : public NotationBase {
 public:
-	MyDefinedObjectSet* DefinedObjectSet;
-	MyAtNotation*       AtNotation;
+	MyDefinedObjectSet*       DefinedObjectSet;
+	MyValArray<MyAtNotation*> AtNotations;
 };
 
 /*
@@ -97,7 +97,7 @@ ContentsConstraint ::=
 */
 class MyContentsConstraint : public NotationBase {
 public:
-	MyType*  ContaningType;
+	MyType*  ContainingType;
 	MyValue* EncodedByValue;
 };
 
@@ -111,7 +111,7 @@ class MyGeneralConstraint : public NotationBase {
 public:
 	MyUserDefinedConstraint* UserDefinedConstraint;
 	MyTableConstraint*       TableConstraint;
-	MyContentsConstraint*    ContentConstraint;
+	MyContentsConstraint*    ContentsConstraint;
 };
 
 

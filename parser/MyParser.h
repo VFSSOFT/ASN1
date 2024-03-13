@@ -19,6 +19,10 @@
 #include "../notations/MySetOfTypeDef.h"
 #include "../notations/MyTaggedTypeDef.h"
 #include "../notations/MySelectionTypesDef.h"
+#include "../notations/MyConstrainedTypeDef.h"
+#include "../notations/MyConstrainSpecDef.h"
+#include "../notations/MyElementSetSpecificationDef.h"
+#include "../notations/MySubtypeElementsDef.h"
 
 class MyParser {
 public:
@@ -93,7 +97,51 @@ private:
 	MyTypeFromObject* ParseTypeFromObject(int& tokIdx);
 	MyReferencedObjects* ParseReferencedObjects(int& tokIdx);
 	MyValueSetFromObjects* ParseValueSetFromObjects(int& tokIdx);
+
 	MyConstrainedType* ParseConstrainedType(int& tokIdx);
+	MyConstraint* ParseConstraint(int& tokIdx);
+	MyTypeWithConstraint* ParseTypeWithConstraint(int& tokIdx);
+	MyIntersectionMark* ParseIntersectionMark(int& tokIdx);
+	MyUnionMark* ParseUnionMark(int& tokIdx);
+	MyIncludes* ParseIncludes(int& tokIdx);
+	MyContainedSubtype* ParseContainedSubtype(int& tokIdx);
+	MyLowerEndValue* ParseLowerEndValue(int& tokIdx);
+	MyUpperEndValue* ParseUpperEndValue(int& tokIdx);
+	MyLowerEndpoint* ParseLowerEndpoint(int& tokIdx);
+	MyUpperEndpoint* ParseUpperEndpoint(int& tokIdx);
+	MyValueRange* ParseValueRange(int& tokIdx);
+	MySizeConstraint* ParseSizeConstraint(int& tokIdx);
+	MyPermittedAlphabet* ParsePermittedAlphabet(int& tokIdx);
+	MyValueConstraint* ParseValueConstraint(int& tokIdx);
+	MyPresenceConstraint* ParsePresenceConstraint(int& tokIdx);
+	MyPatternConstraint* ParsePatternConstraint(int& tokIdx);
+	MyComponentConstraint* ParseComponentConstraint(int& tokIdx);
+	MyNamedConstraint* ParseNamedConstraint(int& tokIdx);
+	MyTypeConstraints* ParseTypeConstraints(int& tokIdx);
+	MyFullSpecification* ParseFullSpecification(int& tokIdx);
+	MyPartialSpecification* ParsePartialSpecification(int& tokIdx);
+	MyMultipleTypeConstraints* ParseMultipleTypeConstraints(int& tokIdx);
+	MyInnerTypeConstraints* ParseInnerTypeConstraints(int& tokIdx);
+	MySubtypeElements* ParseSubtypeElements(int& tokIdx);
+	MyUnions* ParseUnions(int& tokIdx);
+	MyIntersections* ParseIntersections(int& tokIdx);
+	MyIntersectionElements* ParseIntersectionElements(int& tokIdx);
+	MyConstraintSpec* ParseConstraintSpec(int& tokIdx);
+
+	MyGeneralConstraint* ParseGeneralConstraint(int& tokIdx);
+	MyUserDefinedConstraint* ParseUserDefinedConstraint(int& tokIdx);
+	MyUserDefinedConstraintParameter* ParseUserDefinedConstraintParameter(int& tokIdx);
+	MyTableConstraint* ParseTableConstraint(int& tokIdx);
+	MyComponentRelationConstraint* ParseComponentRelationConstraint(int& tokIdx);
+	MyAtNotation* ParseAtNotation(int& tokIdx);
+	MyComponentIdList* ParseComponentIdList(int& tokIdx);
+	MyContentsConstraint* ParseContentsConstraint(int& tokIdx);
+
+	MyElementSetSpecs* ParseElementSetSpecs(int& tokIdx);
+	MyElementSetSpec* ParseElementSetSpec(int& tokIdx);
+	MyExclusions* ParseExclusions(int& tokIdx);
+	MyElements* ParseElements(int& tokIdx);
+	MyObjectSetElements* ParseObjectSetElements(int& tokIdx);
 
 	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
 	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
@@ -149,6 +197,7 @@ private:
 	MyObjectClassFieldValue* ParseObjectClassFieldValue(int& tokIdx);
 	MyOpenTypeFieldVal* ParseOpenTypeFieldVal(int& tokIdx);
 	MyFixedTypeFieldVal* ParseFixedTypeFieldVal(int& tokIdx);
+	MyObjectSetFromObjects* ParseObjectSetFromObjects(int& tokIdx);
 
 	MyDefinedObject* ParseDefinedObject(int& tokIdx);
 	MyDefinedObjectSet* ParseDefinedObjectSet(int& tokIdx);
@@ -169,6 +218,8 @@ private:
 	MyTag* ParseTag(int& tokIdx);
 	MyClassNumber* ParseClassNumber(int& tokIdx);
 	MyClass* ParseClass(int& tokIdx);
+
+	MyGovernor* ParseGovernor(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
 	int ExpectedTokenType(int& tokIdx, int tokType, const char* token=NULL);

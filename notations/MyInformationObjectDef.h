@@ -3,6 +3,7 @@
 
 #include "MyNotationCommon.h"
 
+class MyObjectSetFromObjects;
 class MyParameterizedObject;
 class MyPrimitiveFieldName;
 class MyType;
@@ -477,9 +478,10 @@ ObjectSetElements ::=
 */
 class MyObjectSetElements : public NotationBase {
 public:
-	MyObject*          Object;
-	MyDefinedObjectSet* DefinedObjectSet;
-	//
+	MyObject*                 Object;
+	MyDefinedObjectSet*       DefinedObjectSet;
+	MyObjectSetFromObjects*   ObjectSetFromObjects;
+	MyParameterizedObjectSet* ParameterizedObjectSet;
 };
 
 /*

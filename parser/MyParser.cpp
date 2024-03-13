@@ -1607,9 +1607,1128 @@ done:
 		return objs;
 	}
 }
+
+
 MyConstrainedType* MyParser::ParseConstrainedType(int& tokIdx) {
-	assert(false);
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyConstrainedType* typ = new MyConstrainedType();
+
+	typ->Type = ParseType(idx);
+	if (typ->Type) {
+		typ->Constraint = ParseConstraint(idx);
+		if (typ->Constraint) {
+			success = true;
+			goto done;
+		}
+	}
+
+	typ->TypeWithConstraint = ParseTypeWithConstraint(idx);
+	if (typ->TypeWithConstraint == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
+}
+MyConstraint* MyParser::ParseConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyConstraint* c = new MyConstraint();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
+
+	c->ConstraintSpec = ParseConstraintSpec(idx);
+	if (c->ConstraintSpec == NULL) goto done;
+
+	c->ExceptionSpec = ParseExceptionSpec(idx);
+	if (c->ExceptionSpec == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) goto done;
+	success = true;
+
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+MyTypeWithConstraint* MyParser::ParseTypeWithConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTypeWithConstraint* c = new MyTypeWithConstraint();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SET")) {
+		idx++;
+
+		c->Constraint = ParseConstraint(idx);
+		if (c->Constraint) {
+			if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "OF")) goto done;
+
+			c->Type = ParseType(idx);
+			if (c->Type) { success = true; goto done; }
+
+			c->NamedType = ParseNamedType(idx);
+			if (c->NamedType) { success = true; goto done;}
+		} else {
+			c->SizeConstraint = ParseSizeConstraint(idx);
+			if (c->SizeConstraint == NULL) goto done;
+
+			if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "OF")) goto done;
+
+			c->Type = ParseType(idx);
+			if (c->Type) { success = true; goto done; }
+
+			c->NamedType = ParseNamedType(idx);
+			if (c->NamedType) { success = true; goto done;}
+		}
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SEQUENCE")) {
+		idx++;
+
+		c->Constraint = ParseConstraint(idx);
+		if (c->Constraint) {
+			if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "OF")) goto done;
+
+			c->Type = ParseType(idx);
+			if (c->Type) { success = true; goto done; }
+
+			c->NamedType = ParseNamedType(idx);
+			if (c->NamedType) { success = true; goto done;}
+		} else {
+			c->SizeConstraint = ParseSizeConstraint(idx);
+			if (c->SizeConstraint == NULL) goto done;
+
+			if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "OF")) goto done;
+
+			c->Type = ParseType(idx);
+			if (c->Type) { success = true; goto done; }
+
+			c->NamedType = ParseNamedType(idx);
+			if (c->NamedType) { success = true; goto done;}
+		}
+	}
+
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+MyIntersectionMark* MyParser::ParseIntersectionMark(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_SINGLE_CHAR_ITEM, "^")) {
+		MyIntersectionMark* mark = new MyIntersectionMark();
+		mark->Value.Set("^");
+		tokIdx++;
+		return mark;
+	}
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "INTERSECTION")) {
+		MyIntersectionMark* mark = new MyIntersectionMark();
+		mark->Value.Set("INTERSECTION");
+		tokIdx++;
+		return mark;
+	}
+	return NULL;
+}
+MyUnionMark* MyParser::ParseUnionMark(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_SINGLE_CHAR_ITEM, "|")) {
+		MyUnionMark* mark = new MyUnionMark();
+		mark->Value.Set("|");
+		tokIdx++;
+		return mark;
+	}
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "UNION")) {
+		MyUnionMark* mark = new MyUnionMark();
+		mark->Value.Set("UNION");
+		tokIdx++;
+		return mark;
+	}
+	return NULL;
+}
+MyIncludes* MyParser::ParseIncludes(int& tokIdx) {
+	MyIncludes* includes = new MyIncludes();
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "INCLUDES")) {
+		includes->Value.Set("INCLUDES");
+		tokIdx++;
+	}
+	return includes;
+}
+MyContainedSubtype* MyParser::ParseContainedSubtype(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyContainedSubtype* subtype = new MyContainedSubtype();
+
+	subtype->Includes = ParseIncludes(idx);
+	if (subtype->Includes == NULL) goto done;
+
+	subtype->Type = ParseType(idx);
+	if (subtype->Type == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete subtype;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return subtype;
+	}
+}
+MyLowerEndValue* MyParser::ParseLowerEndValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyLowerEndValue* lev = new MyLowerEndValue();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "MIN")) {
+		idx++;
+		lev->MIN = true;
+		success = true;
+		goto done;
+	}
+
+	lev->Value = ParseValue(idx);
+	if (lev->Value == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete lev;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return lev;
+	}
+}
+MyUpperEndValue* MyParser::ParseUpperEndValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUpperEndValue* uev = new MyUpperEndValue();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "MAX")) {
+		idx++;
+		uev->MAX = true;
+		success = true;
+		goto done;
+	}
+
+	uev->Value = ParseValue(idx);
+	if (uev->Value == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete uev;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return uev;
+	}
+}
+MyLowerEndpoint* MyParser::ParseLowerEndpoint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyLowerEndpoint* lep = new MyLowerEndpoint();
+
+	lep->LowerEndValue = ParseLowerEndValue(idx);
+	if (lep->LowerEndValue == NULL) goto done;
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "<")) {
+		idx++;
+		lep->LessThan = true;
+	}
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete lep;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return lep;
+	}
+}
+MyUpperEndpoint* MyParser::ParseUpperEndpoint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUpperEndpoint* uep = new MyUpperEndpoint();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "<")) {
+		idx++;
+		uep->LessThan = true;
+	}
+
+	uep->UpperEndValue = ParseUpperEndValue(idx);
+	if (uep->UpperEndValue == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete uep;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return uep;
+	}
+}
+MyValueRange* MyParser::ParseValueRange(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueRange* range = new MyValueRange();
+
+	range->LowerEndpoint = ParseLowerEndpoint(idx);
+	if (range->LowerEndpoint == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_RANGE_SEPARATOR, "..")) goto done;
+
+	range->UpperEndpoint = ParseUpperEndpoint(idx);
+	if (range->UpperEndpoint == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete range;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return range;
+	}
+}
+MySizeConstraint* MyParser::ParseSizeConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySizeConstraint* sc = new MySizeConstraint();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "SIZE")) {
+		idx++;
+
+		sc->Constraint = ParseConstraint(idx);
+		if (sc->Constraint == NULL) goto done;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete sc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return sc;
+	}
+}
+MyPermittedAlphabet* MyParser::ParsePermittedAlphabet(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyPermittedAlphabet* pa = new MyPermittedAlphabet();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "FROM")) {
+		idx++;
+
+		pa->Constraint = ParseConstraint(idx);
+		if (pa->Constraint == NULL) goto done;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete pa;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return pa;
+	}
+}
+MyValueConstraint* MyParser::ParseValueConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueConstraint* vc = new MyValueConstraint();
+
+	vc->Constraint = ParseConstraint(idx);
+	if (vc->Constraint) { success = true; goto done; }
+
+	vc->Empty = true;
+	success = true;
+	
+done:
+	if (!success) {
+		delete vc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return vc;
+	}
+}
+MyPresenceConstraint* MyParser::ParsePresenceConstraint(int& tokIdx) {
+	MyPresenceConstraint* pc = new MyPresenceConstraint();
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "PRESENT") ||
+		IsToken(tokIdx, TOKEN_RESERVED_WORD, "ABSENT") ||
+		IsToken(tokIdx, TOKEN_RESERVED_WORD, "OPTIONAL")
+	) {
+		pc->Value.Set(m_Tokens.Get(tokIdx));
+		tokIdx++;
+	}
+	return pc;
+}
+MyPatternConstraint* MyParser::ParsePatternConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyPatternConstraint* pc = new MyPatternConstraint();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "PATTERN")) {
+		idx++;
+
+		pc->Value = ParseValue(idx);
+		if (pc->Value == NULL) goto done;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete pc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return pc;
+	}
+}
+MyComponentConstraint* MyParser::ParseComponentConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentConstraint* cc = new MyComponentConstraint();
+
+	cc->ValueConstraint = ParseValueConstraint(idx);
+	if (cc->ValueConstraint == NULL) goto done;
+
+	cc->PresenceConstraint = ParsePresenceConstraint(idx);
+	if (cc->PresenceConstraint == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete cc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return cc;
+	}
+}
+MyNamedConstraint* MyParser::ParseNamedConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyNamedConstraint* nc = new MyNamedConstraint();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		nc->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		nc->ComponentConstraint = ParseComponentConstraint(idx);
+		if (nc->ComponentConstraint == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete nc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return nc;
+	}
+}
+MyTypeConstraints* MyParser::ParseTypeConstraints(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTypeConstraints* tcs = new MyTypeConstraints();
+
+	tcs->NamedConstraint = ParseNamedConstraint(idx);
+	if (tcs->NamedConstraint == NULL) goto done;
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		idx++;
+
+		tcs->TypeConstraints = ParseTypeConstraints(idx);
+		if (tcs->TypeConstraints == NULL) goto done;
+	}
+	success = true;
+
+done:
+	if (!success) {
+		delete tcs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return tcs;
+	}
+}
+MyFullSpecification* MyParser::ParseFullSpecification(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFullSpecification* fs = new MyFullSpecification();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		fs->TypeConstraints = ParseTypeConstraints(idx);
+		if (fs->TypeConstraints == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete fs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return fs;
+	}
+}
+MyPartialSpecification* MyParser::ParsePartialSpecification(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyPartialSpecification* ps = new MyPartialSpecification();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) goto done;
+
+		ps->TypeConstraints = ParseTypeConstraints(idx);
+		if (ps->TypeConstraints == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ps;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ps;
+	}
+}
+MyMultipleTypeConstraints* MyParser::ParseMultipleTypeConstraints(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyMultipleTypeConstraints* mtc = new MyMultipleTypeConstraints();
+
+	mtc->FullSpecification = ParseFullSpecification(idx);
+	if (mtc->FullSpecification) { success =true; goto done; }
+
+	mtc->PartialSpecification = ParsePartialSpecification(idx);
+	if (mtc->PartialSpecification) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete mtc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return mtc;
+	}
+}
+MyInnerTypeConstraints* MyParser::ParseInnerTypeConstraints(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyInnerTypeConstraints* itc = new MyInnerTypeConstraints();
+
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "WITH")) goto done;
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "COMPONENT")) {
+		idx++;
+
+		itc->SingleTypeConstraint = ParseConstraint(idx);
+		success = itc->SingleTypeConstraint != NULL;
+	} else if (IsToken(idx, TOKEN_RESERVED_WORD, "COMPONENTS")) {
+		idx++;
+
+		itc->MultipleTypeConstraints = ParseMultipleTypeConstraints(idx);
+		success = itc->MultipleTypeConstraints != NULL;
+	}
+
+done:
+	if (!success) {
+		delete itc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return itc;
+	}
+}
+MySubtypeElements* MyParser::ParseSubtypeElements(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySubtypeElements* elems = new MySubtypeElements();
+
+	elems->SingleValue = ParseValue(idx);
+	if (elems->SingleValue) { success = true; goto done; }
+
+	elems->ContainedSubtype = ParseContainedSubtype(idx);
+	if (elems->ContainedSubtype) { success = true; goto done; }
+
+	elems->ValueRange = ParseValueRange(idx);
+	if (elems->ValueRange) { success = true; goto done; }
+
+	elems->PermittedAlphabet = ParsePermittedAlphabet(idx);
+	if (elems->PermittedAlphabet) { success = true; goto done; }
+
+	elems->SizeConstraint = ParseSizeConstraint(idx);
+	if (elems->SizeConstraint) { success = true; goto done; }
+
+	elems->TypeConstraint = ParseType(idx);
+	if (elems->TypeConstraint) { success = true; goto done; }
+
+	elems->InnerTypeConstraints = ParseInnerTypeConstraints(idx);
+	if (elems->InnerTypeConstraints) { success = true; goto done; }
+
+	elems->PatternConstraint = ParsePatternConstraint(idx);
+	if (elems->PatternConstraint) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete elems;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return elems;
+	}
+}
+MyUnions* MyParser::ParseUnions(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUnions* us = new MyUnions();
+
+	us->Intersections = ParseIntersections(idx);
+	if (us->Intersections) { success = true; goto done; }
+
+	us->UElems = ParseUnions(idx);
+	if (us->UElems == NULL) goto done;
+
+	us->UnionMark = ParseUnionMark(idx);
+	if (us->UnionMark == NULL) goto done;
+
+	us->Intersections = ParseIntersections(idx);
+	if (us->Intersections == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete us;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return us;
+	}
+}
+MyIntersections* MyParser::ParseIntersections(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyIntersections* inter = new MyIntersections();
+
+	inter->IntersectionElements = ParseIntersectionElements(idx);
+	if (inter->IntersectionElements) { success = true; goto done; }
+
+	inter->IElems = ParseIntersections(idx);
+	if (inter->IElems == NULL) goto done;
+
+	inter->IntersectionMark = ParseIntersectionMark(idx);
+	if (inter->IntersectionMark == NULL) goto done;
+
+	inter->IntersectionElements = ParseIntersectionElements(idx);
+	if (inter->IntersectionElements == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete inter;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return inter;
+	}
+}
+MyIntersectionElements* MyParser::ParseIntersectionElements(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyIntersectionElements* interElems = new MyIntersectionElements();
+
+	interElems->Elements = ParseElements(idx);
+	if (interElems->Elements == NULL) goto done;
+
+	interElems->Exclusions = ParseExclusions(idx);
+	if (interElems->Exclusions) {
+		interElems->Elems = interElems->Elements;
+		interElems->Elements = NULL;
+	}
+	success = true;
+
+done:
+	if (!success) {
+		delete interElems;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return interElems;
+	}
+}
+MyConstraintSpec* MyParser::ParseConstraintSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyConstraintSpec* spec = new MyConstraintSpec();
+
+	spec->SubtypeConstraint = ParseElementSetSpecs(idx);
+	if (spec->SubtypeConstraint) { success = true; goto done; }
+
+	spec->GeneralConstraint = ParseGeneralConstraint(idx);
+	if (spec->GeneralConstraint) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+
+MyGeneralConstraint* MyParser::ParseGeneralConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyGeneralConstraint* c = new MyGeneralConstraint();
+
+	c->UserDefinedConstraint = ParseUserDefinedConstraint(idx);
+	if (c->UserDefinedConstraint) { success = true; goto done; }
+
+	c->TableConstraint = ParseTableConstraint(idx);
+	if (c->TableConstraint) { success = true; goto done; }
+
+	c->ContentsConstraint = ParseContentsConstraint(idx);
+	if (c->ContentsConstraint) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+MyUserDefinedConstraint* MyParser::ParseUserDefinedConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUserDefinedConstraintParameter* parameter = NULL;
+	MyUserDefinedConstraint* c = new MyUserDefinedConstraint();
+
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "CONSTRAINED")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "BY")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	parameter = ParseUserDefinedConstraintParameter(idx);
+	if (parameter) {
+		do {
+			c->UserDefinedConstraintParameters.Add(parameter);
+
+			if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+				idx++;
+			}
+
+			parameter = ParseUserDefinedConstraintParameter(idx);
+		} while (true);
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+MyUserDefinedConstraintParameter* MyParser::ParseUserDefinedConstraintParameter(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyUserDefinedConstraintParameter* parameter = new MyUserDefinedConstraintParameter();
+
+	parameter->Governor = ParseGovernor(idx);
+	if (parameter->Governor) {
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
+
+		parameter->Value = ParseValue(idx);
+		if (parameter->Value) { success = true; goto done; }
+
+		parameter->Object = ParseObject(idx);
+		if (parameter->Object) { success = true; goto done; }
+
+		// failed
+		idx = tokIdx;
+	}
+
+	parameter->DefinedObjectSet = ParseDefinedObjectSet(idx);
+	if (parameter->DefinedObjectSet) { success = true; goto done; }
+
+	parameter->Type = ParseType(idx);
+	if (parameter->Type) { success = true; goto done; }
+
+	parameter->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (parameter->DefinedObjectClass) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete parameter;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return parameter;
+	}
+}
+MyTableConstraint* MyParser::ParseTableConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTableConstraint* tc = new MyTableConstraint();
+
+	tc->SimpleTableConstraint = ParseObjectSet(idx);
+	if (tc->SimpleTableConstraint) { success = true; goto done; }
+
+	tc->ComponentRelationConstraint = ParseComponentRelationConstraint(idx);
+	if (tc->ComponentRelationConstraint) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete tc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return tc;
+	}
+}
+MyComponentRelationConstraint* MyParser::ParseComponentRelationConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyAtNotation* atNotation = NULL;
+	MyComponentRelationConstraint* c = new MyComponentRelationConstraint();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+	c->DefinedObjectSet = ParseDefinedObjectSet(idx);
+	if (c->DefinedObjectSet == NULL) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+	while (true) {
+		atNotation = ParseAtNotation(idx);
+		if (atNotation == NULL) break;
+		c->AtNotations.Add(atNotation);
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			idx++;
+		} else {
+			success = true;
+			break;
+		}
+	}
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+MyAtNotation* MyParser::ParseAtNotation(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyAtNotation* notation = new MyAtNotation();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "@")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) {
+			assert(false); // TODO:
+		} else {
+			notation->ComponentIdList = ParseComponentIdList(idx);
+			if (notation->ComponentIdList) { success = true; goto done; }
+		}
+	}
+	
+done:
+	if (!success) {
+		delete notation;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return notation;
+	}
+}
+MyComponentIdList* MyParser::ParseComponentIdList(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentIdList* list = new MyComponentIdList();
+
+	while (true) {
+		if (IsToken(idx, TOKEN_IDENTIFIER)) {
+			list->Identifiers.AddNew()->Set(m_Tokens.Get(idx));
+			idx++;
+
+			if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) {
+				idx++;
+			} else {
+				success = true;
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyContentsConstraint* MyParser::ParseContentsConstraint(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyContentsConstraint* c = new MyContentsConstraint();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "CONTAINING")) {
+		idx++;
+
+		c->ContainingType = ParseType(idx);
+		if (c->ContainingType == NULL) goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "ENCODED")) {
+		idx++;
+
+		c->EncodedByValue = ParseValue(idx);
+		if (c->EncodedByValue == NULL) goto done;
+	}
+
+	success = c->ContainingType != NULL || c->EncodedByValue != NULL;
+	
+done:
+	if (!success) {
+		delete c;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return c;
+	}
+}
+
+MyElementSetSpecs* MyParser::ParseElementSetSpecs(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyElementSetSpecs* specs = new MyElementSetSpecs();
+
+	specs->RootElementSetSpec = ParseElementSetSpec(idx);
+	if (specs->RootElementSetSpec == NULL) goto done;
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
+		specs->Ellipsis = true;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			idx++;
+
+			specs->AdditionalElementSetSpec = ParseElementSetSpec(idx);
+			if (specs->AdditionalElementSetSpec == NULL) goto done;
+		}
+	}
+	success = true;
+	
+done:
+	if (!success) {
+		delete specs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return specs;
+	}
+
+}
+MyElementSetSpec* MyParser::ParseElementSetSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyElementSetSpec* ess = new MyElementSetSpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "ALL")) {
+		idx++;
+
+		ess->AllExclusions = ParseExclusions(idx);
+		if (ess->AllExclusions == NULL) goto done;
+
+		success = true;
+	} else {
+		ess->Unions = ParseUnions(idx);
+	}
+	
+done:
+	if (!success) {
+		delete ess;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ess;
+	}
+}
+MyExclusions* MyParser::ParseExclusions(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyExclusions* exs = new MyExclusions();
+
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "EXCEPT")) goto done;
+
+	exs->Elements = ParseElements(idx);
+	if (exs->Elements == NULL) goto done;
+
+	success = true;
+	
+done:
+	if (!success) {
+		delete exs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return exs;
+	}
+}
+MyElements* MyParser::ParseElements(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyElements* elems = new MyElements();
+
+	elems->SubtypeElements = ParseSubtypeElements(idx);
+	if (elems->SubtypeElements) { success = true; goto done; }
+
+	elems->ObjectSetElements = ParseObjectSetElements(idx);
+	if (elems->ObjectSetElements) { success = true; goto done; }
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
+	elems->ElementSetSpec = ParseElementSetSpec(idx);
+	if (elems->ElementSetSpec) { success = true; goto done; }
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete elems;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return elems;
+	}
+}
+MyObjectSetElements* MyParser::ParseObjectSetElements(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetElements* elems = new MyObjectSetElements();
+
+	elems->Object = ParseObject(idx);
+	if (elems->Object) { success = true; goto done; }
+
+	elems->DefinedObjectSet = ParseDefinedObjectSet(idx);
+	if (elems->DefinedObjectSet) { success = true; goto done; }
+
+	elems->ObjectSetFromObjects = ParseObjectSetFromObjects(idx);
+	if (elems->ObjectSetFromObjects) { success = true; goto done; }
+
+	elems->ParameterizedObjectSet = ParseParameterizedObjectSet(idx);
+	if (elems->ParameterizedObjectSet) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete elems;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return elems;
+	}
 }
 
 MyEnumerations* MyParser::ParseEnumerations(int& tokIdx) {
@@ -2181,8 +3300,9 @@ MyBuiltinValue* MyParser::ParseBuiltinValue(int& tokIdx) {
 	val->EnumeratedValue = ParseEnumeratedValue(idx);
 	if (val->EnumeratedValue) { success = true; goto done; }
 
-	val->ExternalValue = ParseExternalValue(idx);
-	if (val->ExternalValue) { success = true; goto done; }
+	// TODO:
+	//val->ExternalValue = ParseExternalValue(idx);
+	//if (val->ExternalValue) { success = true; goto done; }
 
 	val->IntegerValue = ParseIntegerValue(idx);
 	if (val->IntegerValue) { success = true; goto done; }
@@ -2935,6 +4055,31 @@ done:
 		return val;
 	}
 }
+MyObjectSetFromObjects* MyParser::ParseObjectSetFromObjects(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetFromObjects* objs = new MyObjectSetFromObjects();
+
+	objs->ReferencedObjects = ParseReferencedObjects(idx);
+	if (objs->ReferencedObjects == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	objs->FieldName = ParseFieldName(idx);
+	if (objs->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete objs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return objs;
+	}
+}
 
 MyDefinedObject* MyParser::ParseDefinedObject(int& tokIdx) {
 	int err = 0;
@@ -3414,6 +4559,27 @@ done:
 	} else {
 		tokIdx = idx;
 		return c;
+	}
+}
+
+MyGovernor* MyParser::ParseGovernor(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyGovernor* g = new MyGovernor();
+
+	g->Type = ParseType(idx);
+	if (g->Type) { success = true; goto done; }
+
+	g->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (g->DefinedObjectClass) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete g;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return g;
 	}
 }
 

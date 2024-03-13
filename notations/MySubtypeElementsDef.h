@@ -110,7 +110,7 @@ PresenceConstraint ::= PRESENT | ABSENT | OPTIONAL | empty
 */
 class MyPresenceConstraint : public NotationBase {
 public:
-	MyStringA value;
+	MyStringA Value;
 };
 
 /*
@@ -156,7 +156,7 @@ FullSpecification ::= "{" TypeConstraints "}"
 */
 class MyFullSpecification : public NotationBase {
 public:
-	MyTypeConstraints* TypeConstraint;
+	MyTypeConstraints* TypeConstraints;
 };
 
 /*
@@ -164,7 +164,7 @@ PartialSpecification ::= "{" "..." "," TypeConstraints "}"
 */
 class MyPartialSpecification : public NotationBase {
 public:
-	MyTypeConstraints* TypeConstraint;
+	MyTypeConstraints* TypeConstraints;
 };
 
 
