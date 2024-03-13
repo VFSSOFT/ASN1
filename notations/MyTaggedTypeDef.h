@@ -5,6 +5,8 @@
 #include "MyTypeValueDef.h"
 
 
+class MyXMLValue;
+
 /*
 ClassNumber ::=
 		number

@@ -117,8 +117,7 @@ ObjIdComponentsList ::=
 */
 class MyObjIdComponentsList : public NotationBase {
 public:
-	MyObjIdComponents      ObjIdComponents;
-	MyObjIdComponentsList* ObjIdComponentsList;
+	MyValArray<MyObjIdComponents*> ObjIdComponents;
 };
 
 

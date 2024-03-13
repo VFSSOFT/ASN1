@@ -512,10 +512,142 @@ done:
 	}
 }
 MyAssignedID* MyParser::ParseAssignedIdentifier(int& tokIdx) {
+	assert(false);
 	return 0;
 }
 MyObjectIDValue* MyParser::ParseObjectIDValue(int& tokIdx) {
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectIDValue* val = new MyObjectIDValue();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	val->DefinedValue = ParseDefinedValue(idx);
+	// No matter whether it's successful or not
+
+	val->ObjIdComponentsList = ParseObjIdComponentsList(idx);
+	if (val->ObjIdComponentsList == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyObjIdComponentsList* MyParser::ParseObjIdComponentsList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyObjIdComponentsList* list = new MyObjIdComponentsList();
+
+	while (true) {
+		MyObjIdComponents* comps = ParseObjIdComponents(idx);
+		if (comps != NULL) {
+			list->ObjIdComponents.Add(comps);
+			success = true;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyObjIdComponents* MyParser::ParseObjIdComponents(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjIdComponents* comps = new MyObjIdComponents();
+
+	comps->NameAndNumberForm = ParseNameAndNumberForm(idx);
+	if (comps->NameAndNumberForm) { success = true; goto done; }
+
+	comps->NumberForm = ParseNumberForm(idx);
+	if (comps->NumberForm) { success = true; goto done; }
+
+	comps->DefinedValue = ParseDefinedValue(idx);
+	if (comps->DefinedValue) { success = true; goto done; }
+
+	comps->NameForm = ParseNameForm(idx);
+	if (comps->NameForm) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete comps;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return comps;
+	}
+}
+MyNameAndNumberForm* MyParser::ParseNameAndNumberForm(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyNameAndNumberForm* form = new MyNameAndNumberForm();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		form->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "(")) goto done;
+
+		form->NumberForm = ParseNumberForm(idx);
+		if (form->NumberForm == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ")")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete form;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return form;
+	}
+}
+MyNumberForm* MyParser::ParseNumberForm(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyNumberForm* numberForm = new MyNumberForm();
+
+	if (IsToken(idx, TOKEN_NUMBER)) {
+		numberForm->Number.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	numberForm->DefinedValue = ParseDefinedValue(idx);
+	if (numberForm->DefinedValue == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete numberForm;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return numberForm;
+	}
 }
 
 MyAssignment* MyParser::ParseAssignment(int& tokIdx) {
@@ -606,6 +738,9 @@ MyType* MyParser::ParseType(int& tokIdx) {
 
 	typ->ReferencedType = ParseReferencedType(idx);
 	if (typ->ReferencedType) { success = true; goto done; }
+
+	typ->ConstrainedType = ParseConstrainedType(idx);
+	if (typ->ConstrainedType) { success = true; goto done; }
 
 done:
 	if (!success) {
@@ -726,6 +861,7 @@ MyNamedBitList* MyParser::ParseNamedBitList(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}
@@ -1289,6 +1425,7 @@ MyActualParameterList* MyParser::ParseActualParameterList(int& tokIdx) {
 				list->ActualParameters.Add(p);
 
 				if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+				idx++;
 			} else {
 				break;
 			}
@@ -1470,6 +1607,10 @@ done:
 		return objs;
 	}
 }
+MyConstrainedType* MyParser::ParseConstrainedType(int& tokIdx) {
+	assert(false);
+	return 0;
+}
 
 MyEnumerations* MyParser::ParseEnumerations(int& tokIdx) {
 	int err = 0;
@@ -1523,6 +1664,7 @@ MyEnumeration* MyParser::ParseEnumeration(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}
@@ -1610,6 +1752,7 @@ MyAlternativeTypeList* MyParser::ParseAlternativeTypeList(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}
@@ -1716,6 +1859,7 @@ MyExtensionAdditionList* MyParser::ParseExtensionAdditionList(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}
@@ -1996,8 +2140,426 @@ MyDefinedValue* MyParser::ParseDefinedValue(int& tokIdx) {
 }
 
 MyValue* MyParser::ParseValue(int& tokIdx) {
-	assert(false);
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValue* val = new MyValue();
+
+	val->BuiltinValue = ParseBuiltinValue(idx);
+	if (val->BuiltinValue) { success = true; goto done; }
+
+	val->ReferencedValue = ParseReferencedValue(idx);
+	if (val->ReferencedValue) { success = true; goto done; }
+
+	val->ObjectClassFieldValue = ParseObjectClassFieldValue(idx);
+	if (val->ObjectClassFieldValue) { success = true; goto done; }
+	
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyBuiltinValue* MyParser::ParseBuiltinValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyBuiltinValue* val = new MyBuiltinValue();
+
+	val->BitStringValue = ParseBitStringValue(idx);
+	if (val->BitStringValue) { success = true; goto done; }
+
+	val->BooleanValue = ParseBooleanValue(idx);
+	if (val->BooleanValue) { success = true; goto done; }
+
+	val->ChoiceValue = ParseChoiceValue(idx);
+	if (val->ChoiceValue) { success = true; goto done; }
+
+	val->EnumeratedValue = ParseEnumeratedValue(idx);
+	if (val->EnumeratedValue) { success = true; goto done; }
+
+	val->ExternalValue = ParseExternalValue(idx);
+	if (val->ExternalValue) { success = true; goto done; }
+
+	val->IntegerValue = ParseIntegerValue(idx);
+	if (val->IntegerValue) { success = true; goto done; }
+
+	val->NullValue = ParseNullValue(idx);
+	if (val->NullValue) { success = true; goto done; }
+
+	val->ObjectIDValue = ParseObjectIDValue(idx);
+	if (val->ObjectIDValue) { success = true; goto done; }
+
+	val->OctetStringValue = ParseOctetStringValue(idx);
+	if (val->OctetStringValue) { success = true; goto done; }
+
+	val->RealValue = ParseRealValue(idx);
+	if (val->RealValue) { success = true; goto done; }
+
+	val->SequenceValue = ParseSequenceValue(idx);
+	if (val->SequenceValue) { success = true; goto done; }
+
+	val->SequenceOfValue = ParseSequenceOfValue(idx);
+	if (val->SequenceOfValue) { success = true; goto done; }
+
+	val->SetValue = ParseSetValue(idx);
+	if (val->SetValue) { success = true; goto done; }
+
+	val->SetOfValue = ParseSetOfValue(idx);
+	if (val->SetOfValue) { success = true; goto done; }
+
+	val->TaggedValue = ParseTaggedValue(idx);
+	if (val->TaggedValue) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyBitStringValue* MyParser::ParseBitStringValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyBitStringValue* val = new MyBitStringValue();
+
+	if (IsToken(idx, TOKEN_BSTRING)) {
+		val->BString.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_HEXSTRING)) {
+		val->HString.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		val->IdentifierList = ParseIdentifierList(idx);
+		if (val->IdentifierList == NULL) goto done;
+
+		if (err =ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "CONTAINING")) {
+		idx++;
+
+		val->ContainingValue = ParseValue(idx);
+		if (val->ContainingValue == NULL) goto done;
+
+		success = true;
+		goto done;
+	}
+	
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyBooleanValue* MyParser::ParseBooleanValue(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "TRUE") || IsToken(tokIdx, TOKEN_RESERVED_WORD, "FALSE")) {
+		MyBooleanValue* val = new MyBooleanValue();
+		val->Value = m_Tokens.Get(tokIdx)->Equals("TRUE");
+		tokIdx++;
+		return val;
+	}
+	return NULL;
+}
+MyChoiceValue* MyParser::ParseChoiceValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyChoiceValue* val = new MyChoiceValue();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		val->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
+
+		val->Value = ParseValue(idx);
+		if (val->Value == NULL) goto done;
+
+		success = true;
+	}
+	
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyEnumeratedValue* MyParser::ParseEnumeratedValue(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_IDENTIFIER)) {
+		MyEnumeratedValue* val= new MyEnumeratedValue();
+		val->Identifier.Set(m_Tokens.Get(tokIdx));
+		tokIdx++;
+		return val;
+	}
+	return NULL;
+}
+MyExternalValue* MyParser::ParseExternalValue(int& tokIdx) {
+	return ParseSequenceValue(tokIdx);
+}
+MyIntegerValue* MyParser::ParseIntegerValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyIntegerValue* val = new MyIntegerValue();
+
+	val->SignedNumber = ParseSignedNumber(idx);
+	if (val->SignedNumber) { success = true; goto done; }
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		val->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyNullValue* MyParser::ParseNullValue(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "NULL")) {
+		tokIdx++;
+		return new MyNullValue();
+	}
+	return NULL;
+}
+MyOctetStringValue* MyParser::ParseOctetStringValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyOctetStringValue* val = new MyOctetStringValue();
+
+	if (IsToken(idx, TOKEN_BSTRING)) {
+		val->BString.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_HEXSTRING)) {
+		val->HString.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "CONTAINING")) {
+		idx++;
+
+		val->ContainingValue = ParseValue(idx);
+		if (val->ContainingValue == NULL) goto done;
+
+		success = true;
+		goto done;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyRealValue* MyParser::ParseRealValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyRealValue* val = new MyRealValue();
+
+	val->NumericValue = ParseNumericRealValue(idx);
+	if (val->NumericValue) { success = true; goto done; }
+
+	val->SpecialValue = ParseSpecialRealValue(idx);
+	if (val->SpecialValue) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MySequenceValue* MyParser::ParseSequenceValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySequenceValue* val = new MySequenceValue();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		val->ComponentValueList = ParseComponentValueList(idx);
+		if (val->ComponentValueList == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MySequenceOfValue* MyParser::ParseSequenceOfValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySequenceOfValue* val = new MySequenceOfValue();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		val->ValueList = ParseValueList(idx);
+		if (val->ValueList != NULL) {
+			// nothing
+		} else {
+			val->NamedValueList = ParseNamedValueList(idx);
+			if (val->NamedValueList == NULL) goto done;
+		}
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MySetValue* MyParser::ParseSetValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySetValue* val = new MySetValue();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		val->ComponentValueList = ParseComponentValueList(idx);
+		if (val->ComponentValueList == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MySetOfValue* MyParser::ParseSetOfValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySetOfValue* val = new MySetOfValue();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) {
+			idx++;
+			success = true;
+			goto done;
+		}
+
+		val->ValueList = ParseValueList(idx);
+		if (val->ValueList != NULL) {
+			// nothing
+		} else {
+			val->NamedValueList = ParseNamedValueList(idx);
+			if (val->NamedValueList == NULL) goto done;
+		}
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyTaggedValue* MyParser::ParseTaggedValue(int& tokIdx) {
+	return ParseValue(tokIdx);
 }
 MyValueSet* MyParser::ParseValueSet(int& tokIdx) {
 	assert(false);
@@ -2023,6 +2585,7 @@ MyNamedNumberList* MyParser::ParseNamedNumberList(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}
@@ -2067,6 +2630,309 @@ done:
 	} else {
 		tokIdx = idx;
 		return namedNumber;
+	}
+}
+MyIdentifierList* MyParser::ParseIdentifierList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyIdentifierList* list = new MyIdentifierList();
+
+	while (true) {
+		if (IsToken(idx, TOKEN_IDENTIFIER)) {
+			list->Identifiers.AddNew()->Set(m_Tokens.Get(idx));
+			idx++;
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyNumericRealValue* MyParser::ParseNumericRealValue(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyNumericRealValue* val = new MyNumericRealValue();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "-")) {
+		val->Negative = true;
+		idx++;
+	}
+
+	if (IsToken(idx, TOKEN_REAL_NUMBER)) {
+		val->RealNumber.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	val->SequenceValue = ParseSequenceValue(idx);
+	if (val->SequenceValue) { success = true; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MySpecialRealValue* MyParser::ParseSpecialRealValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySpecialRealValue* val = new MySpecialRealValue();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "PLUS")) {
+		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "-")) goto done;
+		if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "INFINITY")) goto done;
+		val->Value.Set("PLUS-INFINITY");
+		success = true;
+	} else if (IsToken(idx, TOKEN_RESERVED_WORD, "MINUS")) {
+		idx++;
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "-")) goto done;
+		if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "INFINITY")) goto done;
+		val->Value.Set("MINUS-INFINITY");
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyNamedValue* MyParser::ParseNamedValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyNamedValue* val = new MyNamedValue();
+
+	if (IsToken(idx, TOKEN_IDENTIFIER)) {
+		val->Identifier.Set(m_Tokens.Get(idx));
+		idx++;
+
+		val->Value = ParseValue(idx);
+		if (val->Value == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyComponentValueList* MyParser::ParseComponentValueList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyComponentValueList* list = new MyComponentValueList();
+
+	while (true) {
+		MyNamedValue* namedValue = ParseNamedValue(idx);
+		if (namedValue != NULL) {
+			list->NamedValues.Add(namedValue);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyValueList* MyParser::ParseValueList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyValueList* list = new MyValueList();
+
+	while (true) {
+		MyValue* val = ParseValue(idx);
+		if (val != NULL) {
+			list->Values.Add(val);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyNamedValueList* MyParser::ParseNamedValueList(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyNamedValueList* list = new MyNamedValueList();
+
+	while (true) {
+		MyNamedValue* val = ParseNamedValue(idx);
+		if (val != NULL) {
+			list->NamedValues.Add(val);
+			success = true;
+
+			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
+		} else {
+			break;
+		}
+	}
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyReferencedValue* MyParser::ParseReferencedValue(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyReferencedValue* val = new MyReferencedValue();
+
+	val->DefinedValue = ParseDefinedValue(idx);
+	if (val->DefinedValue) { success = true; goto done; }
+
+	val->ValueFromObject = ParseValueFromObject(idx);
+	if (val->ValueFromObject) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyValueFromObject* MyParser::ParseValueFromObject(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueFromObject* obj = new MyValueFromObject();
+
+	obj->ReferencedObjects = ParseReferencedObjects(idx);
+	if (obj->ReferencedObjects == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	obj->FieldName = ParseFieldName(idx);
+	if (obj->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete obj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return obj;
+	}
+}
+MyObjectClassFieldValue* MyParser::ParseObjectClassFieldValue(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectClassFieldValue* val = new MyObjectClassFieldValue();
+
+	val->OpenTypeFieldVal = ParseOpenTypeFieldVal(idx);
+	if (val->OpenTypeFieldVal) { success = true; goto done; }
+
+	val->FixedTypeFieldVal = ParseFixedTypeFieldVal(idx);
+	if (val->FixedTypeFieldVal) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyOpenTypeFieldVal* MyParser::ParseOpenTypeFieldVal(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyOpenTypeFieldVal* val = new MyOpenTypeFieldVal();
+
+	val->Type = ParseType(idx);
+	if (val->Type == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
+
+	val->Value = ParseValue(idx);
+	if (val->Value == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
+}
+MyFixedTypeFieldVal* MyParser::ParseFixedTypeFieldVal(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFixedTypeFieldVal* val = new MyFixedTypeFieldVal();
+
+	val->BuiltinValue = ParseBuiltinValue(idx);
+	if (val->BuiltinValue) { success = true; goto done; }
+
+	val->ReferencedValue = ParseReferencedValue(idx);
+	if (val->ReferencedValue) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
 	}
 }
 
@@ -2356,6 +3222,7 @@ MyComponentTypeLists* MyParser::ParseComponentTypeLists(int& tokIdx) {
 			success = true;
 			goto done;
 		}
+		idx++;
 
 		lists->ExtensionAndException = ParseExtensionAndException(idx);
 		if (lists->ExtensionAndException == NULL) goto done;
@@ -2416,6 +3283,7 @@ MyComponentTypeList* MyParser::ParseComponentTypeList(int& tokIdx) {
 			success = true;
 
 			if (!IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) break;
+			idx++;
 		} else {
 			break;
 		}

@@ -5,6 +5,7 @@
 #include "MyNotationCommon.h"
 
 
+class MyGeneralConstraint;
 class MyNamedType;
 class MySizeConstraint;
 class MyType;
@@ -24,7 +25,7 @@ ConstraintSpec ::=
 class MyConstraintSpec : public NotationBase {
 public:
 	MySubtypeConstraint* SubtypeConstraint;
-	
+	MyGeneralConstraint* GeneralConstraint;
 };
 
 /*
@@ -64,7 +65,9 @@ ConstrainedType ::=
 */
 class MyConstrainedType : public NotationBase {
 public:
-
+	MyType*               Type;
+	MyConstraint*         Constraint;
+	MyTypeWithConstraint* TypeWithConstraint;
 };
 
 

@@ -17,9 +17,9 @@ NumericRealValue ::=
 */
 class MyNumericRealValue : public NotationBase {
 public:
-	bool      Negative;
-	MyStringA RealNumber;
-
+	bool             Negative;
+	MyStringA        RealNumber;
+	MySequenceValue* SequenceValue;
 };
 
 /*
@@ -28,6 +28,8 @@ SpecialRealValue ::=
 		| MINUS-INFINITY
 */
 class MySpecialRealValue : public NotationBase {
+public:
+	MyStringA Value;
 };
 
 /*

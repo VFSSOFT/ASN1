@@ -1,9 +1,23 @@
 #ifndef _MY_TYPE_VALUE_DEF_H_
 #define _MY_TYPE_VALUE_DEF_H_
 
+#include "MyExternalTypeDef.h"
 #include "MyNotationCommon.h"
 #include "MyRefTypeValueDef.h"
+#include "MyTaggedTypeDef.h"
 
+class MySetOfValue;
+class MySetValue;
+class MySequenceOfValue;
+class MyRealValue;
+class MyOctetStringValue;
+class MyNullValue;
+class MyIntegerValue;
+class MyEnumeratedValue;
+class MyChoiceValue;
+class MyBooleanValue;
+class MyBitStringValue;
+class MyConstrainedType;
 class MyTaggedType;
 class MySetOfType;
 class MySetType;
@@ -93,8 +107,9 @@ public:
 */
 class MyType : public NotationBase {
 public:
-	MyBuiltinType*    BuiltinType;
-	MyReferencedType* ReferencedType;
+	MyBuiltinType*     BuiltinType;
+	MyReferencedType*  ReferencedType;
+	MyConstrainedType* ConstrainedType;
 };
 
 /*
@@ -130,7 +145,21 @@ BuiltinValue ::=
 */
 class MyBuiltinValue : public NotationBase {
 public:
-	MyObjectIDValue* ObjectIDValue;
+	MyBitStringValue*   BitStringValue;
+	MyBooleanValue*     BooleanValue;
+	MyChoiceValue*      ChoiceValue;
+	MyEnumeratedValue*  EnumeratedValue;
+	MyExternalValue*    ExternalValue;
+	MyIntegerValue*     IntegerValue;
+	MyNullValue*        NullValue;
+	MyObjectIDValue*    ObjectIDValue;
+	MyOctetStringValue* OctetStringValue;
+	MyRealValue*        RealValue;
+	MySequenceValue*    SequenceValue;
+	MySequenceOfValue*  SequenceOfValue;
+	MySetValue*         SetValue;
+	MySetOfValue*       SetOfValue;
+	MyTaggedValue*      TaggedValue;
 };
 
 /*

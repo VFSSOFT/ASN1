@@ -4,6 +4,15 @@
 #include "MyNotationCommon.h"
 #include "MyTypeValueDef.h"
 
+class MyXMLNamedValue;
+class MyNamedValue;
+class MySignedNumber;
+class MyDefinedValue;
+class MyNamedType;
+class MyValue;
+class MyType;
+
+
 /*
 ExceptionIdentification ::= SignedNumber
 		| DefinedValue

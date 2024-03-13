@@ -37,6 +37,11 @@ public:
 	MyNamedBitList* NamedBitList;
 };
 
+/*
+IdentifierList ::=
+		identifier
+		| IdentifierList "," identifier
+*/
 class MyIdentifierList : public NotationBase {
 public:
 	MyArray<MyStringA> Identifiers;

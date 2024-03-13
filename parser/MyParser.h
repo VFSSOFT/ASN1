@@ -52,6 +52,10 @@ private:
 	MyGlobalModuleReference* ParseGlobalModuleReference(int& tokIdx);
 	MyAssignedID* ParseAssignedIdentifier(int& tokIdx);
 	MyObjectIDValue* ParseObjectIDValue(int& tokIdx);
+	MyObjIdComponentsList* ParseObjIdComponentsList(int& tokIdx);
+	MyObjIdComponents* ParseObjIdComponents(int& tokIdx);
+	MyNameAndNumberForm* ParseNameAndNumberForm(int& tokIdx);
+	MyNumberForm* ParseNumberForm(int& tokIdx);
 
 	MyAssignment* ParseAssignment(int& tokIdx);
 	MyTypeAssignment* ParseTypeAssignment(int& tokIdx);
@@ -89,6 +93,7 @@ private:
 	MyTypeFromObject* ParseTypeFromObject(int& tokIdx);
 	MyReferencedObjects* ParseReferencedObjects(int& tokIdx);
 	MyValueSetFromObjects* ParseValueSetFromObjects(int& tokIdx);
+	MyConstrainedType* ParseConstrainedType(int& tokIdx);
 
 	MyAlternativeTypeLists* ParseAlternativeTypeLists(int& tokIdx);
 	MyAlternativeTypeList* ParseAlternativeTypeList(int& tokIdx);
@@ -112,11 +117,38 @@ private:
 	MySignedNumber* ParseSignedNumber(int& tokIdx);
 	MyDefinedValue* ParseDefinedValue(int& tokIdx);
 	MyValue* ParseValue(int& tokIdx);
+	MyBuiltinValue* ParseBuiltinValue(int& tokIdx);
+	MyBitStringValue* ParseBitStringValue(int& tokIdx);
+	MyBooleanValue* ParseBooleanValue(int& tokIdx);
+	MyChoiceValue* ParseChoiceValue(int& tokIdx);
+	MyEnumeratedValue* ParseEnumeratedValue(int& tokIdx);
+	MyExternalValue* ParseExternalValue(int& tokIdx);
+	MyIntegerValue* ParseIntegerValue(int& tokIdx);
+	MyNullValue* ParseNullValue(int& tokIdx);
+	MyOctetStringValue* ParseOctetStringValue(int& tokIdx);
+	MyRealValue* ParseRealValue(int& tokIdx);
+	MySequenceValue* ParseSequenceValue(int& tokIdx);
+	MySequenceOfValue* ParseSequenceOfValue(int& tokIdx);
+	MySetValue* ParseSetValue(int& tokIdx);
+	MySetOfValue* ParseSetOfValue(int& tokIdx);
+	MyTaggedValue* ParseTaggedValue(int& tokIdx);
 	MyValueSet* ParseValueSet(int& tokIdx);
 	MyObject* ParseObject(int& tokIdx);
 	MyObjectSet* ParseObjectSet(int& tokIdx);
 	MyNamedNumberList* ParseNamedNumberList(int& tokIdx);
 	MyNamedNumber* ParseNamedNumber(int& tokIdx);
+	MyIdentifierList* ParseIdentifierList(int& tokIdx);
+	MyNumericRealValue* ParseNumericRealValue(int& tokIdx);
+	MySpecialRealValue* ParseSpecialRealValue(int& tokIdx);
+	MyNamedValue* ParseNamedValue(int& tokIdx);
+	MyComponentValueList* ParseComponentValueList(int& tokIdx);
+	MyValueList* ParseValueList(int& tokIdx);
+	MyNamedValueList* ParseNamedValueList(int& tokIdx);
+	MyReferencedValue* ParseReferencedValue(int& tokIdx);
+	MyValueFromObject* ParseValueFromObject(int& tokIdx);
+	MyObjectClassFieldValue* ParseObjectClassFieldValue(int& tokIdx);
+	MyOpenTypeFieldVal* ParseOpenTypeFieldVal(int& tokIdx);
+	MyFixedTypeFieldVal* ParseFixedTypeFieldVal(int& tokIdx);
 
 	MyDefinedObject* ParseDefinedObject(int& tokIdx);
 	MyDefinedObjectSet* ParseDefinedObjectSet(int& tokIdx);
