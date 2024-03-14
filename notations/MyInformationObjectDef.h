@@ -4,6 +4,7 @@
 #include "MyNotationCommon.h"
 
 class MyTokenOrGroupSpec;
+class MyObjectFromObject;
 class MyObjectSetFromObjects;
 class MyParameterizedObject;
 class MyPrimitiveFieldName;
@@ -395,11 +396,11 @@ Setting ::=
 */
 class MySetting : public NotationBase {
 public:
-	MyType*     Type;
-	MyValue*    Value;
-	MyValueSet* ValueSet;
-	MyObject*   Object;
-	//MyObjectSet
+	MyType*      Type;
+	MyValue*     Value;
+	MyValueSet*  ValueSet;
+	MyObject*    Object;
+	MyObjectSet* ObjectSet;
 };
 
 
@@ -417,7 +418,7 @@ DefaultSyntax ::= "{" FieldSetting "," * "}"
 */
 class MyDefaultSyntax : public NotationBase {
 public:
-	MyFieldSetting* FieldSetting;
+	MyValArray<MyFieldSetting*> FieldSettings;
 };
 
 
@@ -437,7 +438,7 @@ DefinedSyntax ::= "{" DefinedSyntaxToken empty * "}"
 */
 class MyDefinedSyntax : public NotationBase {
 public:
-	MyDefinedSyntaxToken* DefinedSyntaxToken;
+	MyValArray<MyDefinedSyntaxToken*> DefinedSyntaxTokens;
 };
 
 /*
@@ -460,8 +461,10 @@ Object ::=
 */
 class MyObject : public NotationBase {
 public:
-	MyDefinedObject* DefinedObject;
-	MyObjectDefn*    ObjectDefn;
+	MyDefinedObject*       DefinedObject;
+	MyObjectDefn*          ObjectDefn;
+	MyObjectFromObject*    ObjectFromObject;
+	MyParameterizedObject* ParameterizedObject;
 };
 
 /*

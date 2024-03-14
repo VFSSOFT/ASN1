@@ -193,6 +193,7 @@ private:
 	MyTaggedValue* ParseTaggedValue(int& tokIdx);
 	MyValueSet* ParseValueSet(int& tokIdx);
 	MyObject* ParseObject(int& tokIdx);
+	MyObjectDefn* ParseObjectDefn(int& tokIdx);
 	MyObjectSet* ParseObjectSet(int& tokIdx);
 	MyObjectClass* ParseObjectClass(int& tokIdx);
 	MyObjectClassDefn* ParseObjectClassDefn(int& tokIdx);
@@ -210,6 +211,7 @@ private:
 	MyObjectClassFieldValue* ParseObjectClassFieldValue(int& tokIdx);
 	MyOpenTypeFieldVal* ParseOpenTypeFieldVal(int& tokIdx);
 	MyFixedTypeFieldVal* ParseFixedTypeFieldVal(int& tokIdx);
+	MyObjectFromObject* ParseObjectFromObject(int& tokIdx);
 	MyObjectSetFromObjects* ParseObjectSetFromObjects(int& tokIdx);
 	MyLiteral* ParseLiteral(int& tokIdx);
 	MyRequiredToken* ParseRequiredToken(int& tokIdx);
@@ -264,6 +266,12 @@ private:
 	MyParamGovernor* ParseParamGovernor(int& tokIdx);
 	MyParameter* ParseParameter(int& tokIdx);
 	MyParameterList* ParseParameterList(int& tokIdx);
+
+	MySetting* ParseSetting(int& tokIdx);
+	MyFieldSetting* ParseFieldSetting(int& tokIdx);
+	MyDefaultSyntax* ParseDefaultSyntax(int& tokIdx);
+	MyDefinedSyntaxToken* ParseDefinedSyntaxToken(int& tokIdx);
+	MyDefinedSyntax* ParseDefinedSyntax(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
 	int ExpectedTokenType(int& tokIdx, int tokType, const char* token=NULL);

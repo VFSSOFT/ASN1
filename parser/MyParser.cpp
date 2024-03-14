@@ -4052,8 +4052,52 @@ done:
 	}
 }
 MyObject* MyParser::ParseObject(int& tokIdx) {
-	assert(false);
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObject* obj = new MyObject();
+
+	obj->DefinedObject = ParseDefinedObject(idx);
+	if (obj->DefinedObject) { success = true; goto done; }
+
+	obj->ObjectDefn = ParseObjectDefn(idx);
+	if (obj->ObjectDefn) { success = true; goto done; }
+	
+	obj->ObjectFromObject = ParseObjectFromObject(idx);
+	if (obj->ObjectFromObject) { success = true; goto done; }
+
+	obj->ParameterizedObject = ParseParameterizedObject(idx);
+	if (obj->ParameterizedObject) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete obj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return obj;
+	}
+}
+MyObjectDefn* MyParser::ParseObjectDefn(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectDefn* obj = new MyObjectDefn();
+
+	obj->DefaultSyntax = ParseDefaultSyntax(idx);
+	if (obj->DefaultSyntax) { success = true; goto done; }
+	
+	obj->DefinedSyntax = ParseDefinedSyntax(idx);
+	if (obj->DefinedSyntax) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete obj;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return obj;
+	}
 }
 MyObjectSet* MyParser::ParseObjectSet(int& tokIdx) {
 	assert(false);
@@ -4484,6 +4528,31 @@ done:
 	} else {
 		tokIdx = idx;
 		return val;
+	}
+}
+MyObjectFromObject* MyParser::ParseObjectFromObject(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectFromObject* ofo = new MyObjectFromObject();
+
+	ofo->ReferencedObjects = ParseReferencedObjects(idx);
+	if (ofo->ReferencedObjects == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ".")) goto done;
+
+	ofo->FieldName = ParseFieldName(idx);
+	if (ofo->FieldName == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ofo;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ofo;
 	}
 }
 MyObjectSetFromObjects* MyParser::ParseObjectSetFromObjects(int& tokIdx) {
@@ -5728,6 +5797,145 @@ done:
 	} else {
 		tokIdx = idx;
 		return list;
+	}
+}
+
+MySetting* MyParser::ParseSetting(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MySetting* s = new MySetting();
+
+	s->Type = ParseType(idx);
+	if (s->Type) { success = true; goto done; }
+
+	s->Value = ParseValue(idx);
+	if (s->Value) { success = true; goto done; }
+
+	s->ValueSet = ParseValueSet(idx);
+	if (s->ValueSet) { success = true; goto done; }
+
+	s->Object = ParseObject(idx);
+	if (s->Object) { success = true; goto done; }
+
+	s->ObjectSet = ParseObjectSet(idx);
+	if (s->ObjectSet) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete s;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return s;
+	}
+}
+MyFieldSetting* MyParser::ParseFieldSetting(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFieldSetting* s = new MyFieldSetting();
+
+	s->PrimitiveFieldName = ParsePrimitiveFieldName(idx);
+	if (s->PrimitiveFieldName) { success = true; goto done; }
+
+	s->Setting = ParseSetting(idx);
+	if (s->Setting) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete s;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return s;
+	}
+}
+MyDefaultSyntax* MyParser::ParseDefaultSyntax(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFieldSetting* fs = NULL;
+	MyDefaultSyntax* s = new MyDefaultSyntax();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	while (true) {
+		fs = ParseFieldSetting(idx);
+		
+		if (fs == NULL) {
+			break;
+		}
+		
+		s->FieldSettings.Add(fs);
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			idx++;
+		}
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+	success = true;
+
+done:
+	if (!success) {
+		delete s;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return s;
+	}
+}
+MyDefinedSyntaxToken* MyParser::ParseDefinedSyntaxToken(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedSyntaxToken* dst = new MyDefinedSyntaxToken();
+
+	dst->Literal = ParseLiteral(idx);
+	if (dst->Literal) { success = true; goto done; }
+
+	dst->Setting = ParseSetting(idx);
+	if (dst->Setting) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete dst;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return dst;
+	}
+}
+MyDefinedSyntax* MyParser::ParseDefinedSyntax(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyDefinedSyntaxToken* dst = NULL;
+	MyDefinedSyntax* s = new MyDefinedSyntax();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	while (true) {
+		dst = ParseDefinedSyntaxToken(idx);
+		
+		if (dst == NULL) {
+			break;
+		}
+		
+		s->DefinedSyntaxTokens.Add(dst);
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+	success = true;
+
+done:
+	if (!success) {
+		delete s;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return s;
 	}
 }
 
