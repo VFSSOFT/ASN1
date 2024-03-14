@@ -3,6 +3,7 @@
 
 #include "MyNotationCommon.h"
 
+class MyTokenOrGroupSpec;
 class MyObjectSetFromObjects;
 class MyParameterizedObject;
 class MyPrimitiveFieldName;
@@ -84,7 +85,8 @@ public:
 OptionalGroup ::= "[" TokenOrGroupSpec empty + "]"
 */
 class MyOptionalGroup : public NotationBase {
-
+public:
+	MyValArray<MyTokenOrGroupSpec*> TokenOrGroupSpecs;
 };
 
 /*
@@ -92,7 +94,8 @@ TokenOrGroupSpec ::= RequiredToken | OptionalGroup
 */
 class MyTokenOrGroupSpec : public NotationBase {
 public:
-
+	MyRequiredToken* RequiredToken;
+	MyOptionalGroup* OptionalGroup;
 };
 
 /*
@@ -100,7 +103,7 @@ SyntaxList ::= "{" TokenOrGroupSpec empty + "}
 */
 class MySyntaxList : public NotationBase {
 public:
-	MyTokenOrGroupSpec* TokenOrGroupSpec;
+	MyValArray<MyTokenOrGroupSpec*> TokenOrGroupSpecs;
 };
 
 
@@ -143,7 +146,7 @@ public:
 /*
 TypeOptionalitySpec ::= OPTIONAL | DEFAULT Type
 */
-class TypeOptionalitySpec : public NotationBase {
+class MyTypeOptionalitySpec : public NotationBase {
 public:
 	bool    Optional;
 	bool    Default;
@@ -157,8 +160,8 @@ TypeFieldSpec ::=
 */
 class MyTypeFieldSpec : public NotationBase {
 public:
-	MyStringA            TypeFieldReference;
-	TypeOptionalitySpec* TypeOptionalitySpec;
+	MyStringA              TypeFieldReference;
+	MyTypeOptionalitySpec* TypeOptionalitySpec;
 };
 
 /*
@@ -272,9 +275,9 @@ ObjectOptionalitySpec ::= OPTIONAL | DEFAULT Object
 */
 class MyObjectOptionalitySpec : public NotationBase {
 public:
-	bool Optional;
-	bool Default;
-	
+	bool      Optional;
+	bool      Default;
+	MyObject* Object;
 };
 
 
@@ -287,6 +290,7 @@ ObjectFieldSpec ::=
 class MyObjectFieldSpec : public NotationBase {
 public:
 	MyStringA                ObjectFieldReference;
+	MyDefinedObjectClass*    DefinedObjectClass;
 	MyObjectOptionalitySpec* ObjectOptionalitySpec;
 };
 
@@ -295,7 +299,9 @@ ObjectSetOptionalitySpec ::= OPTIONAL | DEFAULT ObjectSet
 */
 class MyObjectSetOptionalitySpec : public NotationBase {
 public:
-
+	bool         Optional;
+	bool         Default;
+	MyObjectSet* ObjectSet;
 };
 
 /*
@@ -305,7 +311,10 @@ ObjectSetFieldSpec ::=
 		ObjectSetOptionalitySpec ?
 */
 class MyObjectSetFieldSpec : public NotationBase {
-
+public:
+	MyStringA                   ObjectSetFieldReference;
+	MyDefinedObjectClass*       DefinedObjectClass;
+	MyObjectSetOptionalitySpec* ObjectSetOptionalitySpec;
 };
 
 
@@ -334,7 +343,8 @@ public:
 WithSyntaxSpec ::= WITH SYNTAX SyntaxList
 */
 class MyWithSyntaxSpec : public NotationBase {
-
+public:
+	MySyntaxList* SyntaxList;
 };
 
 /*
@@ -345,8 +355,8 @@ ObjectClassDefn ::=
 */
 class MyObjectClassDefn : public NotationBase {
 public:
-	MyFieldSpec*      FieldSpec;
-	MyWithSyntaxSpec* WithSyntaxSpec;
+	MyValArray<MyFieldSpec*> FieldSpecs;
+	MyWithSyntaxSpec*        WithSyntaxSpec;
 };
 
 /*
@@ -357,9 +367,9 @@ ObjectClass ::=
 */
 class MyObjectClass : public NotationBase {
 public:
-	MyDefinedObjectClass* DefinedObjectClass;
-	MyObjectClassDefn*    ObjectClassDefn;
-	//MyParameterizedObject
+	MyDefinedObjectClass*       DefinedObjectClass;
+	MyObjectClassDefn*          ObjectClassDefn;
+	MyParameterizedObjectClass* ParameterizedObjectClass;
 };
 
 /*

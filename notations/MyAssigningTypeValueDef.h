@@ -4,6 +4,8 @@
 #include "MyNotationCommon.h"
 #include "MyTypeValueDef.h"
 
+class MyElementSetSpecs;
+
 /*
 TypeAssignment ::=
 		typereference
@@ -61,6 +63,7 @@ ValueSet ::= "{" ElementSetSpecs "}"
 */
 class MyValueSet : public NotationBase {
 public:
+	MyElementSetSpecs* ElementSetSpecs;
 };
 
 /*

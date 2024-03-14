@@ -661,6 +661,21 @@ MyAssignment* MyParser::ParseAssignment(int& tokIdx) {
 	ass->ValueAssignment = ParseValueAssignment(idx);
 	if (ass->ValueAssignment) { success = true; goto done; }
 
+	ass->ValueSetTypeAssignment = ParseValueSetTypeAssignment(idx);
+	if (ass->ValueSetTypeAssignment) { success = true; goto done; }
+
+	ass->ObjectClassAssignment = ParseObjectClassAssignment(idx);
+	if (ass->ObjectClassAssignment) { success = true; goto done; }
+
+	ass->ObjectAssignment = ParseObjectAssignment(idx);
+	if (ass->ObjectAssignment) { success = true; goto done; }
+
+	ass->ObjectSetAssignment = ParseObjectSetAssignment(idx);
+	if (ass->ObjectSetAssignment) { success = true; goto done; }
+
+	ass->ParameterizedAssignment = ParseParameterizedAssignment(idx);
+	if (ass->ParameterizedAssignment) { success = true; goto done; }
+
 done:
 	if (!success) {
 		delete ass;
@@ -717,6 +732,335 @@ MyValueAssignment* MyParser::ParseValueAssignment(int& tokIdx) {
 
 		success = true;
 	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyValueSetTypeAssignment* MyParser::ParseValueSetTypeAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueSetTypeAssignment* ass = new MyValueSetTypeAssignment();
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		ass->TypeReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		ass->Type = ParseType(idx);
+		if (ass->Type == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->ValueSet = ParseValueSet(idx);
+		if (ass->ValueSet == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyObjectClassAssignment* MyParser::ParseObjectClassAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectClassAssignment* ass = new MyObjectClassAssignment();
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		ass->ObjectClassReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->ObjectClass = ParseObjectClass(idx);
+		if (ass->ObjectClass == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyObjectAssignment* MyParser::ParseObjectAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectAssignment* ass = new MyObjectAssignment();
+
+	if (IsToken(idx, TOKEN_VALUE_REF)) {
+		ass->ObjectReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		ass->DefinedObjectClass = ParseDefinedObjectClass(idx);
+		if (ass->DefinedObjectClass == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->Object = ParseObject(idx);
+		if (ass->Object == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyObjectSetAssignment* MyParser::ParseObjectSetAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetAssignment* ass = new MyObjectSetAssignment();
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		ass->ObjectSetReference.Set(m_Tokens.Get(idx));
+		idx++;
+
+		ass->DefinedObjectClass = ParseDefinedObjectClass(idx);
+		if (ass->DefinedObjectClass == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+		ass->ObjectSet = ParseObjectSet(idx);
+		if (ass->ObjectSet == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedAssignment* MyParser::ParseParameterizedAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedAssignment* ass = new MyParameterizedAssignment();
+
+	ass->ParameterizedTypeAssignment = ParseParameterizedTypeAssignment(idx);
+	if (ass->ParameterizedTypeAssignment) { success = true; goto done; }
+
+	ass->ParameterizedValueAssignment = ParseParameterizedValueAssignment(idx);
+	if (ass->ParameterizedValueAssignment) { success = true; goto done; }
+
+	ass->ParameterizedValueSetTypeAssignment = ParseParameterizedValueSetTypeAssignment(idx);
+	if (ass->ParameterizedValueSetTypeAssignment) { success = true; goto done; }
+
+	ass->ParameterizedObjectClassAssignment = ParseParameterizedObjectClassAssignment(idx);
+	if (ass->ParameterizedObjectClassAssignment) { success = true; goto done; }
+
+	ass->ParameterizedObjectAssignment = ParseParameterizedObjectAssignment(idx);
+	if (ass->ParameterizedObjectAssignment) { success = true; goto done; }
+
+	ass->ParameterizedObjectSetAssignment = ParseParameterizedObjectSetAssignment(idx);
+	if (ass->ParameterizedObjectSetAssignment) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedTypeAssignment* MyParser::ParseParameterizedTypeAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedTypeAssignment* ass = new MyParameterizedTypeAssignment();
+
+	if (err = ExpectedTokenType(idx, TOKEN_TYPE_REF)) goto done;
+	ass->TypeReference.Set(m_Tokens.Get(idx-1));
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->Type = ParseType(idx);
+	if (ass->Type == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedValueAssignment* MyParser::ParseParameterizedValueAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedValueAssignment* ass = new MyParameterizedValueAssignment();
+
+	if (err = ExpectedTokenType(idx, TOKEN_VALUE_REF)) goto done;
+	ass->ValueReference.Set(m_Tokens.Get(idx-1));
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	ass->Type = ParseType(idx);
+	if (ass->Type == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->Value = ParseValue(idx);
+	if (ass->Value == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedValueSetTypeAssignment* MyParser::ParseParameterizedValueSetTypeAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedValueSetTypeAssignment* ass = new MyParameterizedValueSetTypeAssignment();
+
+	if (err = ExpectedTokenType(idx, TOKEN_TYPE_REF)) goto done;
+	ass->TypeReference.Set(m_Tokens.Get(idx-1));
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	ass->Type = ParseType(idx);
+	if (ass->Type == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->ValueSet = ParseValueSet(idx);
+	if (ass->ValueSet == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedObjectClassAssignment* MyParser::ParseParameterizedObjectClassAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObjectClassAssignment* ass = new MyParameterizedObjectClassAssignment();
+
+	if (!ParseObjectClassReference(idx, &ass->ObjectClassReference)) goto done;
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->ObjectClass = ParseObjectClass(idx);
+	if (ass->ObjectClass == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedObjectAssignment* MyParser::ParseParameterizedObjectAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObjectAssignment* ass = new MyParameterizedObjectAssignment();
+
+	if (err = ExpectedTokenType(idx, TOKEN_VALUE_REF)) goto done;
+	ass->ObjectReference.Set(m_Tokens.Get(idx-1));
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	ass->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (ass->DefinedObjectClass == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->Object = ParseObject(idx);
+	if (ass->Object == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ass;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ass;
+	}
+}
+MyParameterizedObjectSetAssignment* MyParser::ParseParameterizedObjectSetAssignment(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObjectSetAssignment* ass = new MyParameterizedObjectSetAssignment();
+
+	if (err = ExpectedTokenType(idx, TOKEN_TYPE_REF)) goto done;
+	ass->ObjectSetReference.Set(m_Tokens.Get(idx-1));
+
+	ass->ParameterList = ParseParameterList(idx);
+	if (ass->ParameterList == NULL) goto done;
+
+	ass->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (ass->DefinedObjectClass == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_ASSIGNMENT, "::=")) goto done;
+
+	ass->ObjectSet = ParseObjectSet(idx);
+	if (ass->ObjectSet == NULL) goto done;
+
+	success = true;
 
 done:
 	if (!success) {
@@ -3682,8 +4026,30 @@ MyTaggedValue* MyParser::ParseTaggedValue(int& tokIdx) {
 	return ParseValue(tokIdx);
 }
 MyValueSet* MyParser::ParseValueSet(int& tokIdx) {
-	assert(false);
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueSet* val = new MyValueSet();
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) {
+		idx++;
+
+		val->ElementSetSpecs = ParseElementSetSpecs(idx);
+		if (val->ElementSetSpecs == NULL) goto done;
+
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete val;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return val;
+	}
 }
 MyObject* MyParser::ParseObject(int& tokIdx) {
 	assert(false);
@@ -3692,6 +4058,71 @@ MyObject* MyParser::ParseObject(int& tokIdx) {
 MyObjectSet* MyParser::ParseObjectSet(int& tokIdx) {
 	assert(false);
 	return 0;
+}
+MyObjectClass* MyParser::ParseObjectClass(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectClass* oc = new MyObjectClass();
+
+	oc->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (oc->DefinedObjectClass) { success = true; goto done; }
+
+	oc->ObjectClassDefn = ParseObjectClassDefn(idx);
+	if (oc->ObjectClassDefn) { success = true; goto done; }
+
+	oc->ParameterizedObjectClass = ParseParameterizedObjectClass(idx);
+	if (oc->ParameterizedObjectClass) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete oc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return oc;
+	}
+}
+MyObjectClassDefn* MyParser::ParseObjectClassDefn(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFieldSpec* fs = NULL;
+	MyObjectClassDefn* ocd = new MyObjectClassDefn();
+
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "CLASS")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	while (true) {
+		fs = ParseFieldSpec(idx);
+		if (fs != NULL) {
+			ocd->FieldSpecs.Add(fs);
+
+			if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+				idx++;
+			} else {
+				break;
+			}
+		} else {
+			goto done;
+		}
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	ocd->WithSyntaxSpec = ParseWithSyntaxSpec(idx); // optional
+
+	success = true;
+
+done:
+	if (!success) {
+		delete ocd;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return ocd;
+	}
+
 }
 MyNamedNumberList* MyParser::ParseNamedNumberList(int& tokIdx) {
 	bool success = false;
@@ -4080,6 +4511,162 @@ done:
 		return objs;
 	}
 }
+MyLiteral* MyParser::ParseLiteral(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyLiteral* literal = new MyLiteral();
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		literal->Value.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+		idx++;
+		literal->Value.Set(",");
+		success = true;
+		goto done;
+	}
+
+done:
+	if (!success) {
+		delete literal;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return literal;
+	}
+}
+MyRequiredToken* MyParser::ParseRequiredToken(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyRequiredToken* rt = new MyRequiredToken();
+
+	rt->Literal = ParseLiteral(idx);
+	if (rt->Literal) { success = true; goto done; }
+	
+	rt->PrimitiveFieldName = ParsePrimitiveFieldName(idx);
+	if (rt->PrimitiveFieldName) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete rt;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return rt;
+	}
+}
+MyOptionalGroup* MyParser::ParseOptionalGroup(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTokenOrGroupSpec* tgs = NULL;
+	MyOptionalGroup* og = new MyOptionalGroup();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "[")) goto done;
+
+	while (true) {
+		tgs = ParseTokenOrGroupSpec(idx);
+		if (tgs) {
+			og->TokenOrGroupSpecs.Add(tgs);
+		} else {
+			break;
+		}
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "]")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete og;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return og;
+	}
+}
+MyTokenOrGroupSpec* MyParser::ParseTokenOrGroupSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTokenOrGroupSpec* tgs = new MyTokenOrGroupSpec();
+
+	tgs->RequiredToken = ParseRequiredToken(idx);
+	if (tgs->RequiredToken) { success = true; goto done; }
+	
+	tgs->OptionalGroup = ParseOptionalGroup(idx);
+	if (tgs->OptionalGroup) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete tgs;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return tgs;
+	}
+}
+MySyntaxList* MyParser::ParseSyntaxList(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTokenOrGroupSpec* tgs = NULL;
+	MySyntaxList* list = new MySyntaxList();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	while (true) {
+		tgs = ParseTokenOrGroupSpec(idx);
+		if (tgs) {
+			list->TokenOrGroupSpecs.Add(tgs);
+		} else {
+			break;
+		}
+	}
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
+	}
+}
+MyWithSyntaxSpec* MyParser::ParseWithSyntaxSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyWithSyntaxSpec* spec = new MyWithSyntaxSpec();
+
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "WITH")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_RESERVED_WORD, "SYNTAX")) goto done;
+
+	spec->SyntaxList = ParseSyntaxList(idx);
+	if (spec->SyntaxList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
 
 MyDefinedObject* MyParser::ParseDefinedObject(int& tokIdx) {
 	int err = 0;
@@ -4353,6 +4940,428 @@ done:
 		return objSet;
 	}
 }
+MyParameterizedObjectClass* MyParser::ParseParameterizedObjectClass(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameterizedObjectClass* poc = new MyParameterizedObjectClass();
+
+	poc->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (poc->DefinedObjectClass == NULL) goto done;
+
+	poc->ActualParameterList = ParseActualParameterList(idx);
+	if (poc->ActualParameterList == NULL) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete poc;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return poc;
+	}
+}
+
+MyFieldSpec* MyParser::ParseFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFieldSpec* spec = new MyFieldSpec();
+
+	spec->TypeFieldSpec = ParseTypeFieldSpec(idx);
+	if (spec->TypeFieldSpec) { success = true; goto done; }
+
+	spec->FixedTypeValueFieldSpec = ParseFixedTypeValueFieldSpec(idx);
+	if (spec->FixedTypeValueFieldSpec) { success = true; goto done; }
+
+	spec->VariableTypeValueFieldSpec = ParseVariableTypeValueFieldSpec(idx);
+	if (spec->VariableTypeValueFieldSpec) { success = true; goto done; }
+
+	spec->FixedTypeValueSetFieldSpec = ParseFixedTypeValueSetFieldSpec(idx);
+	if (spec->FixedTypeValueSetFieldSpec) { success = true; goto done; }
+
+	spec->VariableTypeValueSetFieldSpec = ParseVariableTypeValueSetFieldSpec(idx);
+	if (spec->VariableTypeValueSetFieldSpec) { success = true; goto done; }
+
+	spec->ObjectFieldSpec = ParseObjectFieldSpec(idx);
+	if (spec->ObjectFieldSpec) { success = true; goto done; }
+
+	spec->ObjectSetFieldSpec = ParseObjectSetFieldSpec(idx);
+	if (spec->ObjectSetFieldSpec) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyTypeFieldSpec* MyParser::ParseTypeFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTypeFieldSpec* spec = new MyTypeFieldSpec();
+
+	if (!ParseTypeFieldReference(idx, &spec->TypeFieldReference)) goto done;
+	spec->TypeOptionalitySpec = ParseTypeOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyTypeOptionalitySpec* MyParser::ParseTypeOptionalitySpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyTypeOptionalitySpec* spec = new MyTypeOptionalitySpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+		idx++;
+		spec->Optional = true;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+		idx++;
+		spec->Default = true;
+
+		spec->Type = ParseType(idx);
+		if (spec->Type == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyValueOptionalitySpec* MyParser::ParseValueOptionalitySpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueOptionalitySpec* spec = new MyValueOptionalitySpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+		idx++;
+		spec->Optional = true;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+		idx++;
+		spec->Default = true;
+
+		spec->Value = ParseValue(idx);
+		if (spec->Value == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyValueSetOptionalitySpec* MyParser::ParseValueSetOptionalitySpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyValueSetOptionalitySpec* spec = new MyValueSetOptionalitySpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+		idx++;
+		spec->Optional = true;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+		idx++;
+		spec->Default = true;
+
+		spec->ValueSet = ParseValueSet(idx);
+		if (spec->ValueSet == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyObjectOptionalitySpec* MyParser::ParseObjectOptionalitySpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectOptionalitySpec* spec = new MyObjectOptionalitySpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+		idx++;
+		spec->Optional = true;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+		idx++;
+		spec->Default = true;
+
+		spec->Object = ParseObject(idx);
+		if (spec->Object == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyObjectSetOptionalitySpec* MyParser::ParseObjectSetOptionalitySpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetOptionalitySpec* spec = new MyObjectSetOptionalitySpec();
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "OPTIONAL")) {
+		idx++;
+		spec->Optional = true;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "DEFAULT")) {
+		idx++;
+		spec->Default = true;
+
+		spec->ObjectSet = ParseObjectSet(idx);
+		if (spec->ObjectSet == NULL) goto done;
+
+		success = true;
+	}
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyFixedTypeValueFieldSpec* MyParser::ParseFixedTypeValueFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFixedTypeValueFieldSpec* spec = new MyFixedTypeValueFieldSpec();
+
+	if (!ParseValueFieldReference(idx, &spec->ValueFieldReference)) goto done;
+
+	spec->Type = ParseType(idx);
+	if (spec->Type == NULL) goto done;
+	
+	if (IsToken(idx, TOKEN_RESERVED_WORD, "UNIQUE")) {
+		idx++;
+		spec->Unique = true;
+	}
+
+	spec->ValueOptionalitySpec = ParseValueOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyVariableTypeValueFieldSpec* MyParser::ParseVariableTypeValueFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyVariableTypeValueFieldSpec* spec = new MyVariableTypeValueFieldSpec();
+
+	if (!ParseValueFieldReference(idx, &spec->ValueFieldReference)) goto done;
+
+	spec->FieldName = ParseFieldName(idx);
+	if (spec->FieldName == NULL) goto done;
+	
+	spec->ValueOptionalitySpec = ParseValueOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyFixedTypeValueSetFieldSpec* MyParser::ParseFixedTypeValueSetFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyFixedTypeValueSetFieldSpec* spec = new MyFixedTypeValueSetFieldSpec();
+
+	if (!ParseValueSetFieldReference(idx, &spec->ValueSetFieldReference)) goto done;
+
+	spec->Type = ParseType(idx);
+	if (spec->Type == NULL) goto done;
+	
+	spec->ValueSetOptionalitySpec = ParseValueSetOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyVariableTypeValueSetFieldSpec* MyParser::ParseVariableTypeValueSetFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyVariableTypeValueSetFieldSpec* spec = new MyVariableTypeValueSetFieldSpec();
+
+	if (!ParseValueSetFieldReference(idx, &spec->ValueSetFieldReference)) goto done;
+
+	spec->FieldName = ParseFieldName(idx);
+	if (spec->FieldName == NULL) goto done;
+	
+	spec->ValueSetOptionalitySpec = ParseValueSetOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+
+}
+MyObjectFieldSpec* MyParser::ParseObjectFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectFieldSpec* spec = new MyObjectFieldSpec();
+
+	if (!ParseObjectFieldReference(idx, &spec->ObjectFieldReference)) goto done;
+
+	spec->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (spec->DefinedObjectClass == NULL) goto done;
+	
+	spec->ObjectOptionalitySpec = ParseObjectOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+MyObjectSetFieldSpec* MyParser::ParseObjectSetFieldSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetFieldSpec* spec = new MyObjectSetFieldSpec();
+
+	if (!ParseObjectSetFieldReference(idx, &spec->ObjectSetFieldReference)) goto done;
+
+	spec->DefinedObjectClass = ParseDefinedObjectClass(idx);
+	if (spec->DefinedObjectClass == NULL) goto done;
+	
+	spec->ObjectSetOptionalitySpec = ParseObjectSetOptionalitySpec(idx); // Optional
+	success = true;
+
+done:
+	if (!success) {
+		delete spec;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return spec;
+	}
+}
+bool MyParser::ParseValueFieldReference(int& tokIdx, MyStringA* ret) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "&")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_VALUE_REF)) goto done;
+
+	ret->Set(m_Tokens.Get(idx-1));
+	success = true;
+
+done:
+	if (success) tokIdx = idx;
+	return success;
+}
+bool MyParser::ParseTypeFieldReference(int& tokIdx, MyStringA* ret) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "&")) goto done;
+	if (err = ExpectedTokenType(idx, TOKEN_TYPE_REF)) goto done;
+
+	ret->Set(m_Tokens.Get(idx-1));
+	success = true;
+
+done:
+	if (success) tokIdx = idx;
+	return success;
+}
+bool MyParser::ParseValueSetFieldReference(int& tokIdx, MyStringA* ret) {
+	return ParseTypeFieldReference(tokIdx, ret);
+}
+bool MyParser::ParseObjectFieldReference(int& tokIdx, MyStringA* ret) {
+	return ParseTypeFieldReference(tokIdx, ret);
+}
+bool MyParser::ParseObjectSetFieldReference(int& tokIdx, MyStringA* ret) {
+	return ParseTypeFieldReference(tokIdx, ret);
+}
 
 MyComponentTypeLists* MyParser::ParseComponentTypeLists(int& tokIdx) {
 	int err = 0;
@@ -4562,6 +5571,66 @@ done:
 	}
 }
 
+bool MyParser::ParseObjectClassReference(int& tokIdx, MyStringA* ret) {
+	if (IsToken(tokIdx, TOKEN_TYPE_REF)) {
+		MyStringA* val = m_Tokens.Get(tokIdx);
+		for (int i = 0; i < val->Length(); i++) {
+			if (MyStringA::IsLowercaseLetter(val->CharAt(i))) return false;
+		}
+		ret->Set(val);
+		return true;
+	}
+	return false;
+}
+MyReference* MyParser::ParseReference(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyReference* r = new MyReference();
+
+	if (ParseObjectClassReference(idx, &r->ObjectClassReference)) {
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		r->TypeReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	if (IsToken(idx, TOKEN_VALUE_REF)) {
+		r->ValueReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	// BUG
+	if (IsToken(idx, TOKEN_VALUE_REF)) {
+		r->ObjectReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+	// BUG
+	if (IsToken(idx, TOKEN_TYPE_REF)) {
+		r->ObjectSetReference.Set(m_Tokens.Get(idx));
+		idx++;
+		success = true;
+		goto done;
+	}
+
+done:
+	if (!success) {
+		delete r;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return r;
+	}
+}
 MyGovernor* MyParser::ParseGovernor(int& tokIdx) {
 	bool success = false;
 	int idx = tokIdx;
@@ -4580,6 +5649,85 @@ done:
 	} else {
 		tokIdx = idx;
 		return g;
+	}
+}
+MyParamGovernor* MyParser::ParseParamGovernor(int& tokIdx) {
+	bool success = false;
+	int idx = tokIdx;
+	MyParamGovernor* g = new MyParamGovernor();
+
+	g->Governor = ParseGovernor(idx);
+	if (g->Governor) { success = true; goto done; }
+
+	g->DummyGovernor = ParseReference(idx);
+	if (g->DummyGovernor) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete g;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return g;
+	}
+}
+MyParameter* MyParser::ParseParameter(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameter* p = new MyParameter();
+
+	p->ParamGovernor = ParseParamGovernor(idx);
+	if (p->ParamGovernor) {
+		if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, ":")) goto done;
+	}
+	p->DummyReference = ParseReference(idx);
+	if (p->DummyReference) { success = true; goto done; }
+
+done:
+	if (!success) {
+		delete p;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return p;
+	}
+}
+MyParameterList* MyParser::ParseParameterList(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyParameter* p = NULL;
+	MyParameterList* list = new MyParameterList();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+	
+	while (true) {
+		p = ParseParameter(idx);
+		if (p) {
+			list->Parameters.Add(p);
+
+			if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+				idx++;
+			} else {
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete list;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return list;
 	}
 }
 

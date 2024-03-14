@@ -64,6 +64,17 @@ private:
 	MyAssignment* ParseAssignment(int& tokIdx);
 	MyTypeAssignment* ParseTypeAssignment(int& tokIdx);
 	MyValueAssignment* ParseValueAssignment(int& tokIdx);
+	MyValueSetTypeAssignment* ParseValueSetTypeAssignment(int& tokIdx);
+	MyObjectClassAssignment* ParseObjectClassAssignment(int& tokIdx);
+	MyObjectAssignment* ParseObjectAssignment(int& tokIdx);
+	MyObjectSetAssignment* ParseObjectSetAssignment(int& tokIdx);
+	MyParameterizedAssignment* ParseParameterizedAssignment(int& tokIdx);
+	MyParameterizedTypeAssignment* ParseParameterizedTypeAssignment(int& tokIdx);
+	MyParameterizedValueAssignment* ParseParameterizedValueAssignment(int& tokIdx);
+	MyParameterizedValueSetTypeAssignment* ParseParameterizedValueSetTypeAssignment(int& tokIdx);
+	MyParameterizedObjectClassAssignment* ParseParameterizedObjectClassAssignment(int& tokIdx);
+	MyParameterizedObjectAssignment* ParseParameterizedObjectAssignment(int& tokIdx);
+	MyParameterizedObjectSetAssignment* ParseParameterizedObjectSetAssignment(int& tokIdx);
 
 	MyType* ParseType(int& tokIdx);
 	MyBuiltinType* ParseBuiltinType(int& tokIdx);
@@ -183,6 +194,8 @@ private:
 	MyValueSet* ParseValueSet(int& tokIdx);
 	MyObject* ParseObject(int& tokIdx);
 	MyObjectSet* ParseObjectSet(int& tokIdx);
+	MyObjectClass* ParseObjectClass(int& tokIdx);
+	MyObjectClassDefn* ParseObjectClassDefn(int& tokIdx);
 	MyNamedNumberList* ParseNamedNumberList(int& tokIdx);
 	MyNamedNumber* ParseNamedNumber(int& tokIdx);
 	MyIdentifierList* ParseIdentifierList(int& tokIdx);
@@ -198,6 +211,12 @@ private:
 	MyOpenTypeFieldVal* ParseOpenTypeFieldVal(int& tokIdx);
 	MyFixedTypeFieldVal* ParseFixedTypeFieldVal(int& tokIdx);
 	MyObjectSetFromObjects* ParseObjectSetFromObjects(int& tokIdx);
+	MyLiteral* ParseLiteral(int& tokIdx);
+	MyRequiredToken* ParseRequiredToken(int& tokIdx);
+	MyOptionalGroup* ParseOptionalGroup(int& tokIdx);
+	MyTokenOrGroupSpec* ParseTokenOrGroupSpec(int& tokIdx);
+	MySyntaxList* ParseSyntaxList(int& tokIdx);
+	MyWithSyntaxSpec* ParseWithSyntaxSpec(int& tokIdx);
 
 	MyDefinedObject* ParseDefinedObject(int& tokIdx);
 	MyDefinedObjectSet* ParseDefinedObjectSet(int& tokIdx);
@@ -210,6 +229,26 @@ private:
 	MyExternalObjectSetReference* ParseExternalObjectSetReference(int& tokIdx);
 	MyParameterizedObject* ParseParameterizedObject(int& tokIdx);
 	MyParameterizedObjectSet* ParseParameterizedObjectSet(int& tokIdx);
+	MyParameterizedObjectClass* ParseParameterizedObjectClass(int& tokIdx);
+
+	MyFieldSpec* ParseFieldSpec(int& tokIdx);
+	MyTypeFieldSpec* ParseTypeFieldSpec(int& tokIdx);
+	MyTypeOptionalitySpec* ParseTypeOptionalitySpec(int& tokIdx);
+	MyValueOptionalitySpec* ParseValueOptionalitySpec(int& tokIdx);
+	MyValueSetOptionalitySpec* ParseValueSetOptionalitySpec(int& tokIdx);
+	MyObjectOptionalitySpec* ParseObjectOptionalitySpec(int& tokIdx);
+	MyObjectSetOptionalitySpec* ParseObjectSetOptionalitySpec(int& tokIdx);
+	MyFixedTypeValueFieldSpec* ParseFixedTypeValueFieldSpec(int& tokIdx);
+	MyVariableTypeValueFieldSpec* ParseVariableTypeValueFieldSpec(int& tokIdx);
+	MyFixedTypeValueSetFieldSpec* ParseFixedTypeValueSetFieldSpec(int& tokIdx);
+	MyVariableTypeValueSetFieldSpec* ParseVariableTypeValueSetFieldSpec(int& tokIdx);
+	MyObjectFieldSpec* ParseObjectFieldSpec(int& tokIdx);
+	MyObjectSetFieldSpec* ParseObjectSetFieldSpec(int& tokIdx);
+	bool ParseValueFieldReference(int& tokIdx, MyStringA* ret);
+	bool ParseTypeFieldReference(int& tokIdx, MyStringA* ret);
+	bool ParseValueSetFieldReference(int& tokIdx, MyStringA* ret);
+	bool ParseObjectFieldReference(int& tokIdx, MyStringA* ret);
+	bool ParseObjectSetFieldReference(int& tokIdx, MyStringA* ret);
 
 	MyComponentTypeLists* ParseComponentTypeLists(int& tokIdx);
 	MyComponentTypeList* ParseComponentTypeList(int& tokIdx);
@@ -219,7 +258,12 @@ private:
 	MyClassNumber* ParseClassNumber(int& tokIdx);
 	MyClass* ParseClass(int& tokIdx);
 
+	bool ParseObjectClassReference(int& tokIdx, MyStringA* ret);
+	MyReference* ParseReference(int& tokIdx);
 	MyGovernor* ParseGovernor(int& tokIdx);
+	MyParamGovernor* ParseParamGovernor(int& tokIdx);
+	MyParameter* ParseParameter(int& tokIdx);
+	MyParameterList* ParseParameterList(int& tokIdx);
 
 	bool IsToken(int tokIdx, int tokType, const char* token=NULL);
 	int ExpectedTokenType(int& tokIdx, int tokType, const char* token=NULL);

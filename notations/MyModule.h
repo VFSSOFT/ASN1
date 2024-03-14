@@ -236,7 +236,7 @@ class MyAssignment : public NotationBase {
 public:
 	MyTypeAssignment*          TypeAssignment;
 	MyValueAssignment*         ValueAssignment;
-	MyXMLValueAssignment*      XMlValueAssignment;
+//MyXMLValueAssignment*      XMlValueAssignment;
 	MyValueSetTypeAssignment*  ValueSetTypeAssignment;
 	MyObjectClassAssignment*   ObjectClassAssignment;
 	MyObjectAssignment*        ObjectAssignment;
