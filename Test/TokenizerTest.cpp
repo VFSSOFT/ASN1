@@ -128,6 +128,28 @@ TEST(TokenizerTest, NumberTest) {
 	ASSERT_STREQ(tokenizer.Token()->Deref(), data);
 }
 
+TEST(TokenizerTest, NumberTest2) {
+	const char* data = "2147483648..2147483647";
+	int err = 0;
+	MyTokenizer tokenizer;
+	tokenizer.Set(data, strlen(data));
+	
+	err = tokenizer.Next();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_NUMBER);
+	ASSERT_STREQ(tokenizer.Token()->Deref(), "2147483648");
+
+	err = tokenizer.Next();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_RANGE_SEPARATOR);
+	ASSERT_STREQ(tokenizer.Token()->Deref(), "..");
+
+	err = tokenizer.Next();
+	ASSERT_EQ(err, 0);
+	ASSERT_EQ(tokenizer.TokenType(), TOKEN_NUMBER);
+	ASSERT_STREQ(tokenizer.Token()->Deref(), "2147483647");
+}
+
 TEST(TokenizerTest, RealNumberTest) {
 	const char* data = "12.3456";
 	int err = 0;

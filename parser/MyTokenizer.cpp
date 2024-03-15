@@ -237,6 +237,10 @@ int MyTokenizer::ParseNumber() {
 	while (m_Offset < m_Content.Length()) {
 		char c = m_Content.CharAt(m_Offset);
 
+		if (c == '.' && HasMore() && m_Content.CharAt(m_Offset+1) == '.') {
+			break;
+		}
+
 		if (IsDigit(c) || c == '.' || c == 'e' || c == 'E') {
 			if (c == '.' || c == 'e' || c == 'E') m_TokenType = TOKEN_REAL_NUMBER;
 			m_Offset++;
