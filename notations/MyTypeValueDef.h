@@ -83,6 +83,9 @@ public:
 	MySetType*              SetType;
 	MySetOfType*            SetOfType;
 	MyTaggedType*           TaggedType;
+
+	MyBuiltinType();
+	virtual ~MyBuiltinType();
 };
 
 /*
@@ -110,6 +113,9 @@ public:
 	MyBuiltinType*     BuiltinType;
 	MyReferencedType*  ReferencedType;
 	MyConstrainedType* ConstrainedType;
+
+	MyType();
+	virtual ~MyType();
 };
 
 /*

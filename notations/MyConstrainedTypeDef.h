@@ -68,6 +68,9 @@ public:
 	MyType*               Type;
 	MyConstraint*         Constraint;
 	MyTypeWithConstraint* TypeWithConstraint;
+
+	MyConstrainedType();
+	virtual ~MyConstrainedType();
 };
 
 

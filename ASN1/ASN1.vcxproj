@@ -139,6 +139,7 @@
     <ClCompile Include="..\..\common\MyStringW.cpp" />
     <ClCompile Include="..\..\common\MyUtils.cpp" />
     <ClCompile Include="..\..\common\MyWin.cpp" />
+    <ClCompile Include="..\notations\MyNotations.cpp" />
     <ClCompile Include="..\parser\MyParser.cpp" />
     <ClCompile Include="..\parser\MyTokenizer.cpp" />
   </ItemGroup>

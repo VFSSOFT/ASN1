@@ -50,6 +50,9 @@
     <ClCompile Include="..\parser\MyParser.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\notations\MyNotations.cpp">
+      <Filter>Notations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\MyArray.h">
