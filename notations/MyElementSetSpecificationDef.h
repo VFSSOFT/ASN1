@@ -58,9 +58,9 @@ Intersections ::= IntersectionElements
 */
 class MyIntersections : public NotationBase {
 public:
-	MyIntersections*        IElems; //MyIElems* IElems;
-	MyIntersectionMark*     IntersectionMark;
-	MyIntersectionElements* IntersectionElements; // used twice here
+	MyValArray<MyIntersections*> IElems;  //MyIElems* IElems;
+	MyIntersectionMark*          IntersectionMark;
+	MyIntersectionElements*      IntersectionElements; // used twice here
 };
 
 typedef MyIntersections MyIElems;
@@ -71,9 +71,9 @@ Unions ::= Intersections
 */
 class MyUnions : public NotationBase {
 public:
-	MyUnions*        UElems; //MyUElems* UElems;
-	MyUnionMark*     UnionMark;
-	MyIntersections* Intersections;// used twice here
+	MyValArray<MyUnions*> UElems; //MyUElems* UElems;
+	MyUnionMark*          UnionMark;
+	MyIntersections*      Intersections;// used twice here
 };
 
 /*UElems ::= Unions*/

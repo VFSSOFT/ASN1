@@ -1078,12 +1078,24 @@ MyType* MyParser::ParseType(int& tokIdx) {
 	MyType* typ = new MyType();
 
 	typ->BuiltinType = ParseBuiltinType(idx);
-	if (typ->BuiltinType != NULL) { success = true; goto done; }
+	if (typ->BuiltinType != NULL) { 
+		// it's ConstrainedType
+		typ->ConstrainedType = ParseConstrainedType(idx, typ);
+		if (typ->ConstrainedType) { typ->BuiltinType = NULL; }
+		success = true; 
+		goto done;
+	}
 
 	typ->ReferencedType = ParseReferencedType(idx);
-	if (typ->ReferencedType) { success = true; goto done; }
+	if (typ->ReferencedType) {
+		// it's ConstrainedType
+		typ->ConstrainedType = ParseConstrainedType(idx, typ);
+		if (typ->ReferencedType) { typ->BuiltinType = NULL; }
+		success = true; 
+		goto done;
+	}
 
-	typ->ConstrainedType = ParseConstrainedType(idx);
+	typ->ConstrainedType = ParseConstrainedType(idx, NULL);
 	if (typ->ConstrainedType) { success = true; goto done; }
 
 done:
@@ -1863,8 +1875,6 @@ MySelectionType* MyParser::ParseSelectionType(int& tokIdx) {
 		success = true;
 	}
 
-	success = true;
-
 done:
 	if (!success) {
 		delete typ;
@@ -1953,25 +1963,24 @@ done:
 }
 
 
-MyConstrainedType* MyParser::ParseConstrainedType(int& tokIdx) {
+MyConstrainedType* MyParser::ParseConstrainedType(int& tokIdx, MyType* parsedType) {
 	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
 	MyConstrainedType* typ = new MyConstrainedType();
 
-	typ->Type = ParseType(idx);
-	if (typ->Type) {
+	if (parsedType) {
 		typ->Constraint = ParseConstraint(idx);
 		if (typ->Constraint) {
+			typ->Type= parsedType;
 			success = true;
-			goto done;
 		}
+		goto done;
+	} else {
+		typ->TypeWithConstraint = ParseTypeWithConstraint(idx);
+		if (typ->TypeWithConstraint == NULL) goto done;
+		success = true;
 	}
-
-	typ->TypeWithConstraint = ParseTypeWithConstraint(idx);
-	if (typ->TypeWithConstraint == NULL) goto done;
-
-	success = true;
 
 done:
 	if (!success) {
@@ -2591,16 +2600,20 @@ MyUnions* MyParser::ParseUnions(int& tokIdx) {
 	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
+	MyUnions* uelem = NULL;
 	MyUnions* us = new MyUnions();
 
 	us->Intersections = ParseIntersections(idx);
 	if (us->Intersections) { success = true; goto done; }
 
-	us->UElems = ParseUnions(idx);
-	if (us->UElems == NULL) goto done;
+	while (true) {
+		uelem = ParseUnions(idx);
+		if (uelem == NULL) goto done;
+		us->UElems.Add(uelem);
 
-	us->UnionMark = ParseUnionMark(idx);
-	if (us->UnionMark == NULL) goto done;
+		us->UnionMark = ParseUnionMark(idx);
+		if (us->UnionMark) break;
+	}
 
 	us->Intersections = ParseIntersections(idx);
 	if (us->Intersections == NULL) goto done;
@@ -2620,16 +2633,20 @@ MyIntersections* MyParser::ParseIntersections(int& tokIdx) {
 	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
+	MyIntersections* ielem = NULL;
 	MyIntersections* inter = new MyIntersections();
 
 	inter->IntersectionElements = ParseIntersectionElements(idx);
 	if (inter->IntersectionElements) { success = true; goto done; }
 
-	inter->IElems = ParseIntersections(idx);
-	if (inter->IElems == NULL) goto done;
+	while (true) {
+		ielem = ParseIntersections(idx);
+		if (ielem == NULL) goto done;
+		inter->IElems.Add(ielem);
 
-	inter->IntersectionMark = ParseIntersectionMark(idx);
-	if (inter->IntersectionMark == NULL) goto done;
+		inter->IntersectionMark = ParseIntersectionMark(idx);
+		if (inter->IntersectionMark) break;
+	}
 
 	inter->IntersectionElements = ParseIntersectionElements(idx);
 	if (inter->IntersectionElements == NULL) goto done;
@@ -2983,11 +3000,13 @@ MyElementSetSpec* MyParser::ParseElementSetSpec(int& tokIdx) {
 		ess->AllExclusions = ParseExclusions(idx);
 		if (ess->AllExclusions == NULL) goto done;
 
-		success = true;
 	} else {
 		ess->Unions = ParseUnions(idx);
+		if (ess->Unions == NULL) goto done;
 	}
 	
+	success = true;
+
 done:
 	if (!success) {
 		delete ess;
@@ -3578,7 +3597,7 @@ MySignedNumber* MyParser::ParseSignedNumber(int& tokIdx) {
 	int idx = tokIdx;
 	MySignedNumber* num = new MySignedNumber();
 
-	if (IsToken(idx, TOKEN_RESERVED_WORD, "-")) {
+	if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, "-")) {
 		num->Negative = true;
 		idx++;
 	}
@@ -4099,9 +4118,76 @@ done:
 		return obj;
 	}
 }
+MyObjectSetSpec* MyParser::ParseObjectSetSpec(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSetSpec* oss = new MyObjectSetSpec();
+
+	oss->RootElementSetSpec = ParseElementSetSpec(idx);
+	if (oss->RootElementSetSpec) {
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			idx++;
+
+			if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
+			oss->Ellipse = true;
+
+			if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+				idx++;
+
+				oss->AdditionalElementSetSpec = ParseElementSetSpec(idx);
+				if (oss->AdditionalElementSetSpec == NULL) goto done;
+			}
+
+		} // else: a single RootElementSpec
+
+	} else {
+		if (err = ExpectedTokenType(idx, TOKEN_ELLIPSIS, "...")) goto done;
+		oss->Ellipse = true;
+
+		if (IsToken(idx, TOKEN_SINGLE_CHAR_ITEM, ",")) {
+			idx++;
+
+			oss->AdditionalElementSetSpec = ParseElementSetSpec(idx);
+			// ignore the result
+		}
+	}
+
+	success = true;
+
+done:
+	if (!success) {
+		delete oss;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return oss;
+	}
+}
 MyObjectSet* MyParser::ParseObjectSet(int& tokIdx) {
-	assert(false);
-	return 0;
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyObjectSet* os = new MyObjectSet();
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "{")) goto done;
+
+	os->ObjectSetSpec = ParseObjectSetSpec(idx);
+	if (os->ObjectSetSpec == NULL) goto done;
+
+	if (err = ExpectedTokenType(idx, TOKEN_SINGLE_CHAR_ITEM, "}")) goto done;
+
+	success = true;
+
+done:
+	if (!success) {
+		delete os;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return os;
+	}
 }
 MyObjectClass* MyParser::ParseObjectClass(int& tokIdx) {
 	int err = 0;

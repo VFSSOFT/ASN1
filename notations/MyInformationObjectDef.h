@@ -14,6 +14,7 @@ class MyValueSet;
 class MyObject;
 class MyBuiltinValue;
 class MyReferencedValue;
+class MyElementSetSpec;
 
 /*
 ExternalObjectClassReference ::=
@@ -507,7 +508,9 @@ ObjectSetSpec ::=
 */
 class MyObjectSetSpec : public NotationBase {
 public:
-	
+	MyElementSetSpec*           RootElementSetSpec;
+	bool                        Ellipse;
+	MyElementSetSpec*           AdditionalElementSetSpec;
 };
 
 /*

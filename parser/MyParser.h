@@ -109,7 +109,7 @@ private:
 	MyReferencedObjects* ParseReferencedObjects(int& tokIdx);
 	MyValueSetFromObjects* ParseValueSetFromObjects(int& tokIdx);
 
-	MyConstrainedType* ParseConstrainedType(int& tokIdx);
+	MyConstrainedType* ParseConstrainedType(int& tokIdx, MyType* parsedType);
 	MyConstraint* ParseConstraint(int& tokIdx);
 	MyTypeWithConstraint* ParseTypeWithConstraint(int& tokIdx);
 	MyIntersectionMark* ParseIntersectionMark(int& tokIdx);
@@ -194,6 +194,7 @@ private:
 	MyValueSet* ParseValueSet(int& tokIdx);
 	MyObject* ParseObject(int& tokIdx);
 	MyObjectDefn* ParseObjectDefn(int& tokIdx);
+	MyObjectSetSpec* ParseObjectSetSpec(int& tokIdx);
 	MyObjectSet* ParseObjectSet(int& tokIdx);
 	MyObjectClass* ParseObjectClass(int& tokIdx);
 	MyObjectClassDefn* ParseObjectClassDefn(int& tokIdx);
