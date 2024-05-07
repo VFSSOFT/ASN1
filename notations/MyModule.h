@@ -242,6 +242,9 @@ public:
 	MyObjectAssignment*        ObjectAssignment;
 	MyObjectSetAssignment*     ObjectSetAssignment;
 	MyParameterizedAssignment* ParameterizedAssignment;
+
+	MyAssignment();
+	~MyAssignment();
 };
 
 /*

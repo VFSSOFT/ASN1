@@ -1080,8 +1080,13 @@ MyType* MyParser::ParseType(int& tokIdx) {
 	typ->BuiltinType = ParseBuiltinType(idx);
 	if (typ->BuiltinType != NULL) { 
 		// it's ConstrainedType
-		typ->ConstrainedType = ParseConstrainedType(idx, typ);
-		if (typ->ConstrainedType) { typ->BuiltinType = NULL; }
+		MyType* typ2 = new MyType();
+		typ2->ConstrainedType = ParseConstrainedType(idx, typ);
+		if (typ2->ConstrainedType) {
+			typ = typ2;
+		} else {
+			delete typ2;
+		}
 		success = true; 
 		goto done;
 	}
@@ -1089,8 +1094,13 @@ MyType* MyParser::ParseType(int& tokIdx) {
 	typ->ReferencedType = ParseReferencedType(idx);
 	if (typ->ReferencedType) {
 		// it's ConstrainedType
-		typ->ConstrainedType = ParseConstrainedType(idx, typ);
-		if (typ->ReferencedType) { typ->BuiltinType = NULL; }
+		MyType* typ2 = new MyType();
+		typ2->ConstrainedType = ParseConstrainedType(idx, typ);
+		if (typ2->ReferencedType) {
+			typ = typ2;
+		} else {
+			delete typ2;
+		}
 		success = true; 
 		goto done;
 	}

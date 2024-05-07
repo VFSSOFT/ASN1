@@ -4,6 +4,7 @@
 
 #include "MyTypeValueDef.h"
 #include "MyConstrainedTypeDef.h"
+#include "MyModule.h"
 
 
 MyType::MyType(): BuiltinType(NULL), ReferencedType(NULL), ConstrainedType(NULL) {
@@ -65,6 +66,28 @@ MyConstrainedType::~MyConstrainedType() {
 	delete Type;
 	delete Constraint;
 	delete TypeWithConstraint;
+}
+
+
+MyAssignment::MyAssignment() : 
+	TypeAssignment(NULL),
+	ValueAssignment(NULL),
+	ValueSetTypeAssignment(NULL),
+	ObjectClassAssignment(NULL),
+	ObjectAssignment(NULL),
+	ObjectSetAssignment(NULL),
+	ParameterizedAssignment(NULL)
+{
+
+}
+MyAssignment::~MyAssignment() {
+	delete TypeAssignment;
+	delete ValueAssignment;
+	delete ValueSetTypeAssignment;
+	delete ObjectClassAssignment;
+	delete ObjectAssignment;
+	delete ObjectSetAssignment;
+	delete ParameterizedAssignment;
 }
 
 #endif // _MY_NOTATIONS_CPP_
