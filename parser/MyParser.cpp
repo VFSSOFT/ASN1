@@ -2563,14 +2563,16 @@ MySubtypeElements* MyParser::ParseSubtypeElements(int& tokIdx) {
 	int idx = tokIdx;
 	MySubtypeElements* elems = new MySubtypeElements();
 
+	// Both SubtypeElements and ValueRange starts with a Value
+	// So try to parse the ValueRange before SingleValue
+	elems->ValueRange = ParseValueRange(idx);
+	if (elems->ValueRange) { success = true; goto done; }
+
 	elems->SingleValue = ParseValue(idx);
 	if (elems->SingleValue) { success = true; goto done; }
 
 	elems->ContainedSubtype = ParseContainedSubtype(idx);
 	if (elems->ContainedSubtype) { success = true; goto done; }
-
-	elems->ValueRange = ParseValueRange(idx);
-	if (elems->ValueRange) { success = true; goto done; }
 
 	elems->PermittedAlphabet = ParsePermittedAlphabet(idx);
 	if (elems->PermittedAlphabet) { success = true; goto done; }
