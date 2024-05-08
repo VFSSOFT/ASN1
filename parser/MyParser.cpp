@@ -3775,8 +3775,9 @@ MyBuiltinValue* MyParser::ParseBuiltinValue(int& tokIdx) {
 	val->SetOfValue = ParseSetOfValue(idx);
 	if (val->SetOfValue) { success = true; goto done; }
 
-	val->TaggedValue = ParseTaggedValue(idx);
-	if (val->TaggedValue) { success = true; goto done; }
+	// It should never reach here
+	//val->TaggedValue = ParseTaggedValue(idx);
+	//if (val->TaggedValue) { success = true; goto done; }
 
 done:
 	if (!success) {
