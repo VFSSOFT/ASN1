@@ -34,6 +34,7 @@ class MyTypeFromObject;
 class MyValueSetFromObjects;
 class MyBitStringType;
 class MyBooleanType;
+class MyCharStringType;
 class MyChoiceType;
 class MyEnumeratedType;
 class MyObjectIDType;
@@ -69,6 +70,7 @@ class MyBuiltinType : public NotationBase {
 public:
 	MyBitStringType*        BitStringType; 
 	MyBooleanType*          BooleanType;
+	MyCharStringType*       CharStringType;
 	MyChoiceType*           ChoiceType;
 	MyEnumeratedType*       EnumeratedType;
 	MyExternalType*         ExternalType;

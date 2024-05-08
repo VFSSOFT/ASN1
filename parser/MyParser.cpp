@@ -1129,6 +1129,9 @@ MyBuiltinType* MyParser::ParseBuiltinType(int& tokIdx) {
 	typ->BooleanType = ParseBoolType(idx);
 	if (typ->BooleanType) { success = true; goto done; }
 
+	typ->CharStringType = ParseCharStringType(idx);
+	if (typ->CharStringType) { success = true; goto done; }
+
 	typ->ChoiceType = ParseChoiceType(idx);
 	if (typ->ChoiceType) { success = true; goto done; }
 
@@ -1287,6 +1290,27 @@ MyBooleanType* MyParser::ParseBoolType(int& tokIdx) {
 		return new MyBooleanType();
 	}
 	return NULL;
+}
+MyCharStringType* MyParser::ParseCharStringType(int& tokIdx) {
+	int err = 0;
+	bool success = false;
+	int idx = tokIdx;
+	MyCharStringType* typ = new MyCharStringType();
+
+	typ->RestrictedCharStringType = ParseRestrictedCharStringType(idx);
+	if (typ->RestrictedCharStringType) { success = true; goto done; }
+
+	typ->UnrestrictedCharStringType = ParseUnrestrictedCharStringType(idx);
+	if (typ->UnrestrictedCharStringType) { success = true; goto done; }
+	
+done:
+	if (!success) {
+		delete typ;
+		return NULL;
+	} else {
+		tokIdx = idx;
+		return typ;
+	}
 }
 MyChoiceType* MyParser::ParseChoiceType(int& tokIdx) {
   int err = 0;
@@ -1971,7 +1995,52 @@ done:
 		return objs;
 	}
 }
+MyRestrictedCharStringType* MyParser::ParseRestrictedCharStringType(int& tokIdx) {
+	MyRestrictedCharStringType* typ = new MyRestrictedCharStringType();
 
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "BMPString")) {
+		typ->Type.Set("BMPString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "GeneralString")) {
+		typ->Type.Set("GeneralString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "GraphicString")) {
+		typ->Type.Set("GraphicString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "IA5String")) {
+		typ->Type.Set("IA5String");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "ISO646String")) {
+		typ->Type.Set("ISO646String");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "NumericString")) {
+		typ->Type.Set("NumericString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "PrintableString")) {
+		typ->Type.Set("PrintableString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "TeletexString")) {
+		typ->Type.Set("TeletexString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "T61String")) {
+		typ->Type.Set("T61String");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "UniversalString")) {
+		typ->Type.Set("UniversalString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "UTF8String")) {
+		typ->Type.Set("UTF8String");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "VideotexString")) {
+		typ->Type.Set("VideotexString");
+	} else if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "VisibleString")) {
+		typ->Type.Set("VisibleString");
+	}
+
+	if (typ->Type.Length() > 0) {
+		tokIdx++;
+		return typ;
+	} else {
+		delete typ;
+		return NULL;
+	}
+}
+MyUnrestrictedCharStringType* MyParser::ParseUnrestrictedCharStringType(int& tokIdx) {
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "CHARACTER") && IsToken(tokIdx + 1, TOKEN_RESERVED_WORD, "STRING")) {
+		tokIdx += 2;
+		return new MyUnrestrictedCharStringType();
+	}
+	return NULL;
+}
 
 MyConstrainedType* MyParser::ParseConstrainedType(int& tokIdx, MyType* parsedType) {
 	int err = 0;

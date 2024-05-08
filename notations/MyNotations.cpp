@@ -5,6 +5,7 @@
 #include "MyTypeValueDef.h"
 #include "MyConstrainedTypeDef.h"
 #include "MyModule.h"
+#include "MyCharacterStringType.h"
 
 
 MyType::MyType(): BuiltinType(NULL), ReferencedType(NULL), ConstrainedType(NULL) {
@@ -88,6 +89,16 @@ MyAssignment::~MyAssignment() {
 	delete ObjectAssignment;
 	delete ObjectSetAssignment;
 	delete ParameterizedAssignment;
+}
+
+MyCharStringType::MyCharStringType() :
+	RestrictedCharStringType(NULL),
+	UnrestrictedCharStringType(NULL)
+{
+}
+MyCharStringType::~MyCharStringType() {
+	delete RestrictedCharStringType;
+	delete UnrestrictedCharStringType;
 }
 
 #endif // _MY_NOTATIONS_CPP_

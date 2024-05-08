@@ -107,10 +107,7 @@ public:
 };
 
 /*UnrestrictedCharacterStringType ::= CHARACTER STRING*/
-class MyUnrestrictedChaStringType: public NotationBase {
-public:
-	MyStringA Value;
-};
+class MyUnrestrictedCharStringType: public NotationBase { };
 
 /*UnrestrictedCharacterStringValue ::= SequenceValue*/
 class MyUnrestrictedCharacterStringValue : public NotationBase {
@@ -147,8 +144,11 @@ CharacterStringType ::=
 */
 class MyCharStringType : public NotationBase {
 public:
-	MyRestrictedCharStringType*  RestrictedCharStringType;
-	MyUnrestrictedChaStringType* UnrestrictedCharStringType;
+	MyRestrictedCharStringType*   RestrictedCharStringType;
+	MyUnrestrictedCharStringType* UnrestrictedCharStringType;
+	
+	MyCharStringType();
+	~MyCharStringType();
 };
 
 

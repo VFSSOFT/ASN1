@@ -8,6 +8,7 @@
 #include "../notations/MyEnumeratedTypeDef.h"
 #include "../notations/MyBitstringTypeDef.h"
 #include "../notations/MyBoolTypeDef.h"
+#include "../notations/MyCharacterStringType.h"
 #include "../notations/MyChoiceTypeDef.h"
 #include "../notations/MyExternalTypeDef.h"
 #include "../notations/MyNullTypeDef.h"
@@ -82,6 +83,7 @@ private:
 	MyNamedBitList* ParseNamedBitList(int& tokIdx);
 	MyNamedBit* ParseNamedBit(int& tokIdx);
 	MyBooleanType* ParseBoolType(int& tokIdx);
+	MyCharStringType* ParseCharStringType(int& tokIdx);
 	MyChoiceType* ParseChoiceType(int& tokIdx);
 	MyEnumeratedType* ParseEnumeratedType(int& tokIdx);
 	MyExternalType* ParseExternalType(int& tokIdx);
@@ -108,6 +110,8 @@ private:
 	MyTypeFromObject* ParseTypeFromObject(int& tokIdx);
 	MyReferencedObjects* ParseReferencedObjects(int& tokIdx);
 	MyValueSetFromObjects* ParseValueSetFromObjects(int& tokIdx);
+	MyRestrictedCharStringType* ParseRestrictedCharStringType(int& tokIdx);
+	MyUnrestrictedCharStringType* ParseUnrestrictedCharStringType(int& tokIdx);
 
 	MyConstrainedType* ParseConstrainedType(int& tokIdx, MyType* parsedType);
 	MyConstraint* ParseConstraint(int& tokIdx);
