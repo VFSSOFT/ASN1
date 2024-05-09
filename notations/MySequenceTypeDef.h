@@ -92,7 +92,7 @@ public:
 /*
 RootComponentTypeList ::= ComponentTypeList
 */
-typedef MyComponentTypeList MyRootComponentTypeList;
+//typedef MyComponentTypeList MyRootComponentTypeList;
 
 /*
 ExtensionAdditionGroup ::= "[[" VersionNumber ComponentTypeList "]]"
@@ -146,12 +146,12 @@ ComponentTypeLists ::=
 */
 class MyComponentTypeLists : public NotationBase {
 public:
-	MyRootComponentTypeList*   RootComponentTypeList;
+	MyComponentTypeList*       RootComponentTypeList;
 	MyExtensionAndException*   ExtensionAndException;
 	MyExtensionAdditions*      ExtensionAdditions;
 	MyOptionalExtensionMarker* OptionalExtensionMarker;
 	MyExtensionEndMarker*      ExtensionEndMarker;
-	MyRootComponentTypeList*   RootComponentTypeList2;
+	MyComponentTypeList*       RootComponentTypeList2;
 };
 
 /*

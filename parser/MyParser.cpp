@@ -5716,6 +5716,8 @@ MyComponentType* MyParser::ParseComponentType(int& tokIdx) {
 			typ->DefaultValue = ParseValue(idx);
 			if (typ->DefaultValue == NULL) goto done;
 			success = true;
+		} else {
+			success = true;
 		}
 	}
 	
