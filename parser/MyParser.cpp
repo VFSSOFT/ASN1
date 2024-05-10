@@ -26,7 +26,7 @@ int MyParser::Parse(const wchar_t* file) {
 
 	int tokIdx = 0;
 	m_ModuleDef = ParseModuleDef(tokIdx);
-	if (err != 0) return err;
+	if (m_ModuleDef == NULL) return LastErrorCode();
 
 	return 0;
 }
@@ -1672,12 +1672,8 @@ MyReferencedType* MyParser::ParseReferencedType(int& tokIdx) {
 	typ->DefinedType = ParseDefinedType(idx);
 	if (typ->DefinedType) { success = true; goto done; }
 
-	if (IsToken(idx, TOKEN_TYPE_REF)) {
-		typ->UsefulType.Set(m_Tokens.Get(idx));
-		idx++;
-		success = true;
-		goto done;
-	}
+	ParseUsefulType(idx, &typ->UsefulType);
+	if (typ->UsefulType.Length() > 0) { success = true; goto done; }
 
 	typ->SelectionType = ParseSelectionType(idx);
 	if (typ->SelectionType) { success = true; goto done; }
@@ -1695,6 +1691,18 @@ done:
 	} else {
 		tokIdx = idx;
 		return typ;
+	}
+}
+void MyParser::ParseUsefulType(int& tokIdx, MyStringA* typ) {
+	//X680, 41.1
+	if (IsToken(tokIdx, TOKEN_RESERVED_WORD, "GeneralizedTime") || 
+			IsToken(tokIdx, TOKEN_RESERVED_WORD, "UTCTime") || 
+			IsToken(tokIdx, TOKEN_RESERVED_WORD, "ObjectDescriptor")
+		) {
+		typ->Set(m_Tokens.Get(tokIdx));
+		tokIdx++;
+	} else {
+		typ->Reset();
 	}
 }
 MyDefinedType* MyParser::ParseDefinedType(int& tokIdx) {

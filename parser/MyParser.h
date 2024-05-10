@@ -99,6 +99,7 @@ private:
 	MySetOfType* ParseSetOfType(int& tokIdx);
 	MyTaggedType* ParseTaggedType(int& tokIdx);
 	MyReferencedType* ParseReferencedType(int& tokIdx);
+	void ParseUsefulType(int& tokIdx, MyStringA* typ);
 	MyDefinedType* ParseDefinedType(int& tokIdx);
 	MyExternalTypeReference* ParseExternalTypeReference(int& tokIdx);
 	MyParameterizedType* ParseParameterizedType(int& tokIdx);
