@@ -29,6 +29,7 @@ class MyParser {
 public:
 
 	int Parse(const wchar_t* file);
+	int Parse(const char* data, int len);
 
 private:
 	MyModuleDef* ParseModuleDef(int& tokIdx);

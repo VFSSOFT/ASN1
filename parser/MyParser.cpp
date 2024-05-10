@@ -7,13 +7,17 @@
 
 int MyParser::Parse(const wchar_t* file) {
 	int err = 0;
-
 	MyBuffer data;
 	MyFile f;
+
+	if (err = f.ReadAllBytes(file, &data)) return LastError(err, f.LastErrorMessage());
+	return Parse(data.DerefConst(), data.Length());
+}
+int MyParser::Parse(const char* data, int len) {
+	int err = 0;
 	MyTokenizer tokenizer;
 	
-	if (err = f.ReadAllBytes(file, &data)) return LastError(err, f.LastErrorMessage());
-	tokenizer.Set(data.DerefConst(), data.Length());
+	tokenizer.Set(data, len);
 	
 	do {
 		if (err = tokenizer.Next()) 
