@@ -2693,25 +2693,33 @@ MyUnions* MyParser::ParseUnions(int& tokIdx) {
 	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
-	MyUnions* uelem = NULL;
+	bool isPrevUnionMark = false;
 	MyUnions* us = new MyUnions();
 
-	us->Intersections = ParseIntersections(idx);
-	if (us->Intersections) { success = true; goto done; }
-
 	while (true) {
-		uelem = ParseUnions(idx);
-		if (uelem == NULL) goto done;
-		us->UElems.Add(uelem);
+		MyIntersections* intersections = ParseIntersections(idx);
+		if (intersections) {
+			us->Intersections.Add(intersections);
 
-		us->UnionMark = ParseUnionMark(idx);
-		if (us->UnionMark) break;
+			MyUnionMark* umark = ParseUnionMark(idx);
+			if (umark) {
+				delete umark;
+				isPrevUnionMark = true;
+			} else {
+				success = true;
+				//isPrevUnionMark = false;
+				break;
+			}
+		} else {
+			success = !isPrevUnionMark;
+			break;
+		}
 	}
 
-	us->Intersections = ParseIntersections(idx);
-	if (us->Intersections == NULL) goto done;
-
-	success = true;
+	if (us->Intersections.Size() == 0) {
+		success = false;
+		goto done;
+	}
 
 done:
 	if (!success) {
@@ -2726,25 +2734,33 @@ MyIntersections* MyParser::ParseIntersections(int& tokIdx) {
 	int err = 0;
 	bool success = false;
 	int idx = tokIdx;
-	MyIntersections* ielem = NULL;
+	bool isPrevInterMark = false;
 	MyIntersections* inter = new MyIntersections();
 
-	inter->IntersectionElements = ParseIntersectionElements(idx);
-	if (inter->IntersectionElements) { success = true; goto done; }
-
 	while (true) {
-		ielem = ParseIntersections(idx);
-		if (ielem == NULL) goto done;
-		inter->IElems.Add(ielem);
+		MyIntersectionElements* interElems = ParseIntersectionElements(idx);
+		if (interElems) {
+			inter->IntersectionElements.Add(interElems);
 
-		inter->IntersectionMark = ParseIntersectionMark(idx);
-		if (inter->IntersectionMark) break;
+			MyIntersectionMark* mark = ParseIntersectionMark(idx);
+			if (mark == NULL) {
+				success = true;
+				//isPrevInterMark = false;
+				break;
+			} else {
+				delete mark;
+				isPrevInterMark = true;
+			}
+		} else {
+			success = !isPrevInterMark;
+			break;
+		}
 	}
 
-	inter->IntersectionElements = ParseIntersectionElements(idx);
-	if (inter->IntersectionElements == NULL) goto done;
-
-	success = true;
+	if (inter->IntersectionElements.Size() == 0) {
+		success = false;
+		goto done;
+	}
 
 done:
 	if (!success) {
@@ -2761,14 +2777,21 @@ MyIntersectionElements* MyParser::ParseIntersectionElements(int& tokIdx) {
 	int idx = tokIdx;
 	MyIntersectionElements* interElems = new MyIntersectionElements();
 
-	interElems->Elements = ParseElements(idx);
-	if (interElems->Elements == NULL) goto done;
+	while (true) {
+		MyElements* elems = ParseElements(idx);
+		if (elems) {
+			interElems->Elements.Add(elems);
+		} else {
+			break;
+		}
+	}
+
+	// at least one Elements
+	if (interElems->Elements.Size() == 0) {
+		goto done; 
+	}
 
 	interElems->Exclusions = ParseExclusions(idx);
-	if (interElems->Exclusions) {
-		interElems->Elems = interElems->Elements;
-		interElems->Elements = NULL;
-	}
 	success = true;
 
 done:
