@@ -18,6 +18,9 @@
     <Filter Include="Parser">
       <UniqueIdentifier>{3266e3c9-6562-49ed-9aa9-92982816bad1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generator">
+      <UniqueIdentifier>{02e7ea4a-095a-4579-8a49-5b2b3a3b402b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\MyArrays.cpp">
@@ -52,6 +55,9 @@
     </ClCompile>
     <ClCompile Include="notations\MyNotations.cpp">
       <Filter>Notations</Filter>
+    </ClCompile>
+    <ClCompile Include="generator\MyGenerator.cpp">
+      <Filter>Generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="notations\MyConstrainSpecDef.h">
       <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\MyGenerator.h">
+      <Filter>Generator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -139,6 +139,7 @@
     <ClCompile Include="..\common\MyStringW.cpp" />
     <ClCompile Include="..\common\MyUtils.cpp" />
     <ClCompile Include="..\common\MyWin.cpp" />
+    <ClCompile Include="generator\MyGenerator.cpp" />
     <ClCompile Include="notations\MyNotations.cpp" />
     <ClCompile Include="parser\MyParser.cpp" />
     <ClCompile Include="parser\MyTokenizer.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="..\common\MyValArray.h" />
     <ClInclude Include="..\common\MyValLinkList.h" />
     <ClInclude Include="..\common\MyWin.h" />
+    <ClInclude Include="generator\MyGenerator.h" />
     <ClInclude Include="notations\MyAssigningTypeValueDef.h" />
     <ClInclude Include="notations\MyBitstringTypeDef.h" />
     <ClInclude Include="notations\MyBoolTypeDef.h" />
