@@ -1,5 +1,4 @@
-#include "pch.h"
-
+#include "gtest/gtest.h"
 #include "../parser/MyParser.h"
 
 #define TEST_ASN_MODULE_BEGIN "Spec { iso(1) } DEFINITIONS EXPLICIT TAGS ::= BEGIN\r\n"

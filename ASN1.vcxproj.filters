@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{f14d66ed-2cda-417e-8281-c0288e3acddb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Notations">
+      <UniqueIdentifier>{e174d865-6934-4cc8-83d8-af01ca89d6e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{3266e3c9-6562-49ed-9aa9-92982816bad1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\MyArrays.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyBuffer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyDataPacket.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyFile.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyStringA.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyStringW.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyUtils.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MyWin.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\MyTokenizer.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\MyParser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="notations\MyNotations.cpp">
+      <Filter>Notations</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\MyArray.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyArrays.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyBuffer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyCoreDef.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyDataPacket.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyFile.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyStringA.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyStringW.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyValArray.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyValLinkList.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MyWin.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyModule.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyRefTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyNotationCommon.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\MyTokenizer.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\MyParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyRelativeObjectIDType.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyAssigningTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyTypeValueDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyBoolTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyIntegerTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyEnumeratedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyRealTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyBitstringTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyOctetstringTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyNullTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySequenceOfTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySequenceTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySetOfTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySetTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyChoiceTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySelectionTypesDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyTaggedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyExternalTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyInformationObjectDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyParameterizaionDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyCharacterStringType.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyConstrainedTypeDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MySubtypeElementsDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyElementSetSpecificationDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+    <ClInclude Include="notations\MyConstrainSpecDef.h">
+      <Filter>Notations</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
