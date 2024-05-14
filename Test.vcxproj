@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClCompile Include="test/ParserTest.cpp" />
     <ClCompile Include="test/TokenizerTest.cpp" />
+    <ClCompile Include="Test\GeneratorTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="ASN1.vcxproj">

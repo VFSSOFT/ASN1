@@ -157,7 +157,10 @@
     <ClInclude Include="..\common\MyValArray.h" />
     <ClInclude Include="..\common\MyValLinkList.h" />
     <ClInclude Include="..\common\MyWin.h" />
+    <ClInclude Include="generator\MyAssignInfo.h" />
     <ClInclude Include="generator\MyGenerator.h" />
+    <ClInclude Include="generator\MyTypeInfo.h" />
+    <ClInclude Include="generator\MyValueInfo.h" />
     <ClInclude Include="notations\MyAssigningTypeValueDef.h" />
     <ClInclude Include="notations\MyBitstringTypeDef.h" />
     <ClInclude Include="notations\MyBoolTypeDef.h" />

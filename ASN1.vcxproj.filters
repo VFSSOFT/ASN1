@@ -190,5 +190,14 @@
     <ClInclude Include="generator\MyGenerator.h">
       <Filter>Generator</Filter>
     </ClInclude>
+    <ClInclude Include="generator\MyTypeInfo.h">
+      <Filter>Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\MyValueInfo.h">
+      <Filter>Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\MyAssignInfo.h">
+      <Filter>Generator</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

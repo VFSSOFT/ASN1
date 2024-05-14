@@ -31,6 +31,8 @@ public:
 	int Parse(const wchar_t* file);
 	int Parse(const char* data, int len);
 
+	MyModuleDef* Result() { return m_ModuleDef; }
+
 private:
 	MyModuleDef* ParseModuleDef(int& tokIdx);
 	MyModuleID* ParseModuleIdentifier(int& tokIdx);
