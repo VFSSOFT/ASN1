@@ -2,6 +2,8 @@
 #define _MY_GENERATOR_H_
 
 #include "../notations/MyModule.h"
+#include "../notations/MyConstrainedTypeDef.h"
+#include "../notations/MyCharacterStringType.h"
 
 #include "MyTypeInfo.h"
 #include "MyValueInfo.h"
@@ -25,6 +27,7 @@ private:
 
 	int ProcessType(MyType* typ, MyTypeInfo** retTypeInfo);
 	int ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** retTypeInfo);
 
 	int ProcessValue(MyValue* val, MyValueInfo** retValueInfo);
 	int ProcessBuiltinValue(MyBuiltinValue* val, MyValueInfo** retValueInfo);

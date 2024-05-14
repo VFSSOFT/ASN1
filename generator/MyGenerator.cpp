@@ -106,6 +106,8 @@ int MyGenerator::ProcessType(MyType* typ, MyTypeInfo** retTypeInfo) {
 
 	if (typ->BuiltinType) {
 		if (err = ProcessBuiltinType(typ->BuiltinType, retTypeInfo)) return err;
+	} else if (typ->ConstrainedType) {
+		if (err = ProcessConstrainedType(typ->ConstrainedType, retTypeInfo)) return err;
 	} else {
 		assert(false);
 	}
@@ -120,9 +122,15 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 	} else if (typ->BooleanType) {
 
 	} else if (typ->CharStringType) {
-
+		MyCharStringTypeInfo* typeInfo = new MyCharStringTypeInfo();
+		if (typ->CharStringType->UnrestrictedCharStringType) {
+			typeInfo->StrType.Set("");
+		} else {
+			typeInfo->StrType.Set(typ->CharStringType->RestrictedCharStringType->Type.DerefConst());
+		}
+		*retTypeInfo = typeInfo;
 	} else if (typ->IntegerType) {
-
+		*retTypeInfo = new MyIntegerTypeInfo();
 	} else if (typ->NullType) {
 
 	} else if (typ->ObjectClassFieldType) {
@@ -149,8 +157,22 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 
 	return 0;
 }
+int MyGenerator::ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** retTypeInfo) {
+	int err = 0;
 
+	if (typ->Type) {
+		assert(typ->Type->BuiltinType != NULL);
+		if (err = ProcessBuiltinType(typ->Type->BuiltinType, retTypeInfo)) return err;
 
+		// Ignore the constraint
+	} else if (typ->TypeWithConstraint) {
+		assert(false);
+	} else {
+		assert(false);
+	}
+
+	return 0;
+}
 
 int MyGenerator::ProcessValue(MyValue* val, MyValueInfo** retValueInfo) {
 	int err = 0;
