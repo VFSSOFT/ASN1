@@ -106,6 +106,8 @@ int MyGenerator::ProcessType(MyType* typ, MyTypeInfo** retTypeInfo) {
 
 	if (typ->BuiltinType) {
 		if (err = ProcessBuiltinType(typ->BuiltinType, retTypeInfo)) return err;
+	} else if (typ->ReferencedType) {
+		if (err = ProcessReferenceType(typ->ReferencedType, retTypeInfo)) return err;
 	} else if (typ->ConstrainedType) {
 		if (err = ProcessConstrainedType(typ->ConstrainedType, retTypeInfo)) return err;
 	} else {
@@ -142,7 +144,7 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 	} else if (typ->RealType) {
   
 	} else if (typ->SequenceType) {
-
+		if (err = ProcessSequenceType(typ->SequenceType, retTypeInfo)) return err;
 	} else if (typ->SequenceOfType) {
 
 	} else if (typ->SetType) {
@@ -151,6 +153,17 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 
 	} else if (typ->TaggedType) {
 
+	} else {
+		assert(false);
+	}
+
+	return 0;
+}
+int MyGenerator::ProcessReferenceType(MyReferencedType* typ, MyTypeInfo** retTypeInfo) {
+	int err = 0;
+
+	if (typ->DefinedType) {
+		if (err = ProcessDefinedType(typ->DefinedType, retTypeInfo)) return err;
 	} else {
 		assert(false);
 	}
@@ -171,6 +184,45 @@ int MyGenerator::ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** ret
 		assert(false);
 	}
 
+	return 0;
+}
+int MyGenerator::ProcessDefinedType(MyDefinedType* typ, MyTypeInfo** retTypeInfo) {
+	MyRefTypeTypeInfo* refTypeTypeInfo = new MyRefTypeTypeInfo();
+	if (typ->ExternalTypeReference) {
+		refTypeTypeInfo->Module.Set(typ->ExternalTypeReference->ModuleReference.Deref());
+		refTypeTypeInfo->Type.Set(typ->ExternalTypeReference->TypeReference.Deref());
+	} else if (typ->TypeReference.Length() > 0) {
+		refTypeTypeInfo->Type.Set(typ->TypeReference.Deref());
+	} else {
+		assert(false);
+	}
+	return 0;
+}
+int MyGenerator::ProcessSequenceType(MySequenceType* typ, MyTypeInfo** retTypeInfo) {
+	int err = 0;
+
+	MySequenceTypeInfo* seqTypeInfo = new MySequenceTypeInfo();
+
+	if (typ->ComponentTypeLists->RootComponentTypeList) {
+		MyValArray<MyComponentType*>* comps = &typ->ComponentTypeLists->RootComponentTypeList->ComponentTypes;
+		for (int i = 0; i < comps->Size(); i++) {
+			MyComponentType* compType = comps->Get(i);
+			MyComponentTypeInfo* compInfo = new MyComponentTypeInfo();
+			compInfo->Name.Set(compType->NamedType->Identifier.DerefConst());
+			if (err = ProcessType(compType->NamedType->Type, &compInfo->Type)) return err;
+			compInfo->Optional = compType->Optional;
+			
+			if (compType->DefaultValue) {
+				if (err = ProcessValue(compType->DefaultValue, &compInfo->DefaultValue)) return err;
+			} else {
+				compInfo->DefaultValue = NULL;
+			}
+
+			seqTypeInfo->Components.Add(compInfo);
+		}
+	}
+
+	*retTypeInfo = seqTypeInfo;
 	return 0;
 }
 

@@ -4,6 +4,7 @@
 #include "../notations/MyModule.h"
 #include "../notations/MyConstrainedTypeDef.h"
 #include "../notations/MyCharacterStringType.h"
+#include "../notations/MyTypeValueDef.h"
 
 #include "MyTypeInfo.h"
 #include "MyValueInfo.h"
@@ -27,7 +28,10 @@ private:
 
 	int ProcessType(MyType* typ, MyTypeInfo** retTypeInfo);
 	int ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessReferenceType(MyReferencedType* typ, MyTypeInfo** retTypeInfo);
 	int ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessDefinedType(MyDefinedType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessSequenceType(MySequenceType* typ, MyTypeInfo** retTypeInfo);
 
 	int ProcessValue(MyValue* val, MyValueInfo** retValueInfo);
 	int ProcessBuiltinValue(MyBuiltinValue* val, MyValueInfo** retValueInfo);
