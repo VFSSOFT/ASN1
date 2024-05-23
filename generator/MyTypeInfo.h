@@ -5,21 +5,51 @@
 
 #include "MyValueInfo.h"
 
-class MyTypeInfo { };
+class MyTypeInfo {
+public:
+	char TypeInfoName[64];
 
-class MyOIDTypeInfo : public MyTypeInfo { };
+	MyTypeInfo(const char* name) {
+		strcpy(TypeInfoName, name);
+	}
+};
 
-class MyIntegerTypeInfo : public MyTypeInfo {};
+class MyOIDTypeInfo : public MyTypeInfo {
+public:
+	MyOIDTypeInfo() : MyTypeInfo("OID") {}
+};
+
+class MyOctetStringTypeInfo : public MyTypeInfo {
+public:
+	MyOctetStringTypeInfo() : MyTypeInfo("OctetString") {}
+};
+
+class MyIntegerTypeInfo : public MyTypeInfo {
+public:
+	MyIntegerTypeInfo() : MyTypeInfo("Integer") {}
+};
 
 class MyCharStringTypeInfo : public MyTypeInfo {
 public:
 	MyStringA StrType;
+	MyCharStringTypeInfo() : MyTypeInfo("CharString") {}
 };
 
-class MyRefTypeTypeInfo : MyTypeInfo {
+class MyTaggedTypeInfo : public MyTypeInfo {
+public:
+	MyTag*      Tag;
+	MyTypeInfo* Type;
+	MyStringA   ImplicitOrExplicit;
+
+	MyTaggedTypeInfo() : MyTypeInfo("Tagged") {}
+};
+
+class MyRefTypeTypeInfo : public MyTypeInfo {
 public:
 	MyStringA Module; // ExternalTypeReference
 	MyStringA Type;
+
+	MyRefTypeTypeInfo() : MyTypeInfo("RefType") {}
 };
 
 class MyComponentTypeInfo : public MyTypeInfo {
@@ -28,11 +58,23 @@ public:
 	MyTypeInfo*  Type;
 	bool         Optional;
 	MyValueInfo* DefaultValue;
+
+	MyComponentTypeInfo() : MyTypeInfo("ComponentType") {}
 };
 
 class MySequenceTypeInfo : public MyTypeInfo {
 public:
 	MyValArray<MyComponentTypeInfo*> Components;
+
+	MySequenceTypeInfo() : MyTypeInfo("Sequence") {}
+};
+
+class MySequenceOfTypeInfo : public MyTypeInfo {
+public:
+	MyTypeInfo* Type;
+	//MyNamedType* NamedType;
+
+	MySequenceOfTypeInfo() : MyTypeInfo("SequenceOf") {}
 };
 
 #endif // _MY_TYPE_INFO_H_

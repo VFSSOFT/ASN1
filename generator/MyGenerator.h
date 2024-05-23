@@ -5,6 +5,7 @@
 #include "../notations/MyConstrainedTypeDef.h"
 #include "../notations/MyCharacterStringType.h"
 #include "../notations/MyTypeValueDef.h"
+#include "../notations/MySequenceOfTypeDef.h"
 
 #include "MyTypeInfo.h"
 #include "MyValueInfo.h"
@@ -32,6 +33,9 @@ private:
 	int ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** retTypeInfo);
 	int ProcessDefinedType(MyDefinedType* typ, MyTypeInfo** retTypeInfo);
 	int ProcessSequenceType(MySequenceType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessSequenceOfType(MySequenceOfType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessTaggedType(MyTaggedType* typ, MyTypeInfo** retTypeInfo);
+	int ProcessUsefulType(MyStringA* typ, MyTypeInfo** retTypeInfo);
 
 	int ProcessValue(MyValue* val, MyValueInfo** retValueInfo);
 	int ProcessBuiltinValue(MyBuiltinValue* val, MyValueInfo** retValueInfo);

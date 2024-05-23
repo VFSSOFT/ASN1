@@ -140,19 +140,19 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 	} else if (typ->ObjectIDType) {
 		*retTypeInfo = new MyOIDTypeInfo();
 	} else if (typ->OctetStringType) {
-
+		*retTypeInfo = new MyOctetStringTypeInfo();
 	} else if (typ->RealType) {
   
 	} else if (typ->SequenceType) {
 		if (err = ProcessSequenceType(typ->SequenceType, retTypeInfo)) return err;
 	} else if (typ->SequenceOfType) {
-
+		if (err = ProcessSequenceOfType(typ->SequenceOfType, retTypeInfo)) return err;
 	} else if (typ->SetType) {
 
 	} else if (typ->SetOfType) {
 
 	} else if (typ->TaggedType) {
-
+		if (err = ProcessTaggedType(typ->TaggedType, retTypeInfo)) return err;
 	} else {
 		assert(false);
 	}
@@ -164,6 +164,8 @@ int MyGenerator::ProcessReferenceType(MyReferencedType* typ, MyTypeInfo** retTyp
 
 	if (typ->DefinedType) {
 		if (err = ProcessDefinedType(typ->DefinedType, retTypeInfo)) return err;
+	} else if (typ->UsefulType.Length() > 0) {
+		if (err = ProcessUsefulType(&typ->UsefulType, retTypeInfo)) return err;
 	} else {
 		assert(false);
 	}
@@ -179,7 +181,15 @@ int MyGenerator::ProcessConstrainedType(MyConstrainedType* typ, MyTypeInfo** ret
 
 		// Ignore the constraint
 	} else if (typ->TypeWithConstraint) {
-		assert(false);
+		MyTypeWithConstraint* typeconstraint = typ->TypeWithConstraint;
+		if (typeconstraint->Set) {
+			assert(false);
+		} else {
+			assert(typeconstraint->NamedType == NULL);
+			MySequenceOfTypeInfo* typeInfo = new MySequenceOfTypeInfo();
+			if (err = ProcessType(typeconstraint->Type, &typeInfo->Type)) return err;
+			*retTypeInfo = typeInfo;
+		}
 	} else {
 		assert(false);
 	}
@@ -196,6 +206,7 @@ int MyGenerator::ProcessDefinedType(MyDefinedType* typ, MyTypeInfo** retTypeInfo
 	} else {
 		assert(false);
 	}
+	*retTypeInfo = refTypeTypeInfo;
 	return 0;
 }
 int MyGenerator::ProcessSequenceType(MySequenceType* typ, MyTypeInfo** retTypeInfo) {
@@ -223,6 +234,36 @@ int MyGenerator::ProcessSequenceType(MySequenceType* typ, MyTypeInfo** retTypeIn
 	}
 
 	*retTypeInfo = seqTypeInfo;
+	return 0;
+}
+int MyGenerator::ProcessSequenceOfType(MySequenceOfType* typ, MyTypeInfo** retTypeInfo) {
+	int err = 0;
+	MySequenceOfTypeInfo* typeInfo = new MySequenceOfTypeInfo();
+
+	if (typ->Type) {
+		if (err = ProcessType(typ->Type, &typeInfo->Type)) return err;
+	} else {
+		assert(false);
+	}
+	
+	*retTypeInfo = typeInfo;
+	return 0;
+}
+int MyGenerator::ProcessTaggedType(MyTaggedType* typ, MyTypeInfo** retTypeInfo) {
+	int err = 0;
+
+	MyTaggedTypeInfo* typeInfo = new MyTaggedTypeInfo();
+	typeInfo->Tag = typ->Tag;
+	if (err = ProcessType(typ->Type, &typeInfo->Type)) return err;
+	typeInfo->ImplicitOrExplicit.Set(typ->ImplicitOrExplicit.DerefConst());
+  
+	*retTypeInfo = typeInfo;
+	return 0;
+}
+int MyGenerator::ProcessUsefulType(MyStringA* typ, MyTypeInfo** retTypeInfo) {
+	MyRefTypeTypeInfo* typeInfo = new MyRefTypeTypeInfo();
+	typeInfo->Type.Set(typ->Deref());
+	*retTypeInfo = typeInfo;
 	return 0;
 }
 
