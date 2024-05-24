@@ -3,6 +3,8 @@
 
 #include "MyGenerator.h"
 
+#define INDENT "  "
+
 MyGenerator::MyGenerator(): m_LastErrorCode(0) {
 
 }
@@ -25,7 +27,21 @@ int MyGenerator::Process(MyModuleDef* modDef) {
 	}
 
 	return 0;
+
 }
+
+int MyGenerator::GenCode(MyStringA* ret) {
+	int err = 0;
+
+
+	for (int i = 0; i < m_TypeAssigns.Size(); i++) {
+		MyTypeAssignInfo* tai = m_TypeAssigns.Get(i);
+		if (err = GenType(tai)) return err;
+	}
+
+	return 0;
+}
+
 
 int MyGenerator::ProcessModuleId(MyModuleID* moduleId) {
 	int err = 0;
@@ -120,7 +136,7 @@ int MyGenerator::ProcessBuiltinType(MyBuiltinType* typ, MyTypeInfo** retTypeInfo
 	int err = 0;
 
 	if (typ->BitStringType) {
-
+		*retTypeInfo = new MyBitStringTypeInfo();
 	} else if (typ->BooleanType) {
 
 	} else if (typ->CharStringType) {
@@ -333,6 +349,80 @@ int MyGenerator::ProcessBuiltinValue(MyBuiltinValue* val, MyValueInfo** retValue
 
 
 	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+int MyGenerator::GenType(MyTypeAssignInfo* ass) {
+	int err = 0;
+	MyTypeInfo* typ = ass->Type;
+
+	if (typ->IsInteger()) {
+		m_OutputCode.AppendWithFormat("class %s : public INTEGER {\r\n", ass->Name.Deref());
+	} else if (typ->IsBitString()) {
+		m_OutputCode.AppendWithFormat("class %s : public BITSTRING {\r\n", ass->Name.Deref());
+	} else if (typ->IsCharString()) {
+		m_OutputCode.AppendWithFormat("class %s : public CHARSTRING {\r\n", ass->Name.Deref());
+	} else if (typ->IsRefType()) {
+		MyRefTypeTypeInfo* refTypeInfo = (MyRefTypeTypeInfo*)typ;
+		m_OutputCode.AppendWithFormat("class %s : public %s {\r\n", ass->Name.Deref(), refTypeInfo->Type.Deref());
+	} else {
+		m_OutputCode.AppendWithFormat("class %s {\r\n", ass->Name.Deref());
+	}
+	
+	if (typ->IsSequence()) {
+		MySequenceTypeInfo* seqTypeInfo = (MySequenceTypeInfo*) typ;
+		for (int i = 0; i < seqTypeInfo->Components.Size(); i++) {
+			MyComponentTypeInfo* compti = seqTypeInfo->Components.Get(i);
+
+			m_OutputCode.Append(INDENT);
+			m_OutputCode.Append(GenTypeStr(compti->Type));
+			m_OutputCode.Append(" ");
+			m_OutputCode.Append(compti->Name.Deref());
+			m_OutputCode.Append(";\r\n");
+
+			int a = 0;
+		}
+	}
+
+	m_OutputCode.Append("};\r\n\r\n");
+
+
+	return 0;
+}
+const char* MyGenerator::GenTypeStr(MyTypeInfo* ti) {
+
+	if (ti->IsTagged()) {
+		MyTaggedTypeInfo* tti = (MyTaggedTypeInfo*) ti;
+		return GenTypeStr(tti->Type);
+	}
+
+	if (ti->IsRefType()) {
+		MyRefTypeTypeInfo* rtti = (MyRefTypeTypeInfo*)ti;
+		m_GenTypeStrBuf.Set(rtti->Type.Deref());
+	}
+
+	if (ti->IsSequenceOf()) {
+		MySequenceOfTypeInfo* seqOfTypeInfo = (MySequenceOfTypeInfo*) ti;
+		const char* elemType = GenTypeStr(seqOfTypeInfo->Type);
+		m_GenTypeStrBuf.SetWithFormat("MyValArray<%s*>", elemType);
+	}
+
+	if (ti->IsOctetString()) {
+		m_GenTypeStrBuf.Set("MyBuffer");
+	}
+	
+
+	return m_GenTypeStrBuf.Deref();
 }
 
 #endif // _MY_GENERATOR_CPP_

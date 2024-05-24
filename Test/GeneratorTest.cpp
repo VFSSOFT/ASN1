@@ -11,4 +11,9 @@ TEST(GeneratorTest, RFC4120Test) {
 
 	MyGenerator gen;
 	err = gen.Process(parser.Result());
+	ASSERT_EQ(err, 0);
+
+	MyStringA code;
+	err = gen.GenCode(&code);
+	ASSERT_EQ(err, 0);
 }

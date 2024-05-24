@@ -12,6 +12,15 @@ public:
 	MyTypeInfo(const char* name) {
 		strcpy(TypeInfoName, name);
 	}
+
+	bool IsInteger() { return STR_EQUALS(TypeInfoName, "Integer"); }
+	bool IsBitString() { return STR_EQUALS(TypeInfoName, "BitString"); }
+	bool IsOctetString() { return STR_EQUALS(TypeInfoName, "OctetString"); }
+	bool IsCharString() { return STR_EQUALS(TypeInfoName, "CharString"); }
+	bool IsRefType() { return STR_EQUALS(TypeInfoName, "RefType"); }
+	bool IsSequence() { return STR_EQUALS(TypeInfoName, "Sequence"); }
+	bool IsTagged() { return STR_EQUALS(TypeInfoName, "Tagged"); }
+	bool IsSequenceOf() { return STR_EQUALS(TypeInfoName, "SequenceOf"); }
 };
 
 class MyOIDTypeInfo : public MyTypeInfo {
@@ -22,6 +31,11 @@ public:
 class MyOctetStringTypeInfo : public MyTypeInfo {
 public:
 	MyOctetStringTypeInfo() : MyTypeInfo("OctetString") {}
+};
+
+class MyBitStringTypeInfo : public MyTypeInfo {
+public:
+	MyBitStringTypeInfo() : MyTypeInfo("BitString") {}
 };
 
 class MyIntegerTypeInfo : public MyTypeInfo {

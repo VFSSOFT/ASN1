@@ -18,6 +18,7 @@ public:
 	virtual ~MyGenerator();
 
 	int Process(MyModuleDef* modDef);
+	int GenCode(MyStringA* ret);
 
 private:
 	int ProcessModuleId(MyModuleID* moduleId);
@@ -39,6 +40,9 @@ private:
 
 	int ProcessValue(MyValue* val, MyValueInfo** retValueInfo);
 	int ProcessBuiltinValue(MyBuiltinValue* val, MyValueInfo** retValueInfo);
+
+	int GenType(MyTypeAssignInfo* ass);
+	const char* GenTypeStr(MyTypeInfo* ti);
 private:
 
 	MyStringA m_ModuleReference;
@@ -48,6 +52,10 @@ private:
 
 	MyValArray<MyValueAssignInfo*> m_ValueAssigns;
 	MyValArray<MyTypeAssignInfo*>  m_TypeAssigns;
+
+
+	MyStringA m_OutputCode;
+	MyStringA m_GenTypeStrBuf;
 
 	MY_LAST_ERROR_DECL;
 };
